@@ -40,7 +40,11 @@ class Customer:
         self.name = name
         self.number_id = number_id
         self._id = customer_id if customer_id else str(uuid.uuid4())
+```
 
+Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase persona, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
+
+```python
     def to_dict(self):
         return {
             "name": self.name,
@@ -48,8 +52,8 @@ class Customer:
             "_id": self._id
         }
 ```
-
-Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase persona, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
+ 
+Con el método `to_dict` vamos a convertir los objetos de la clase `Customer` en un diccionario de Python con las claves `name`, `number_id` y `_id`.
 
 -----------
 
