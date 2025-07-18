@@ -28,6 +28,8 @@ Y adicional a eso, tenemos características extras como:
 
 <h3 align="center"> People </h3>
 
+### Customer
+
 -----------
 
 <h3 align="center"> Products </h3>
