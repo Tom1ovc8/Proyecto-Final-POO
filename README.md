@@ -71,6 +71,17 @@ class Supplier:
 
 Por medio del constructor `self` vamos a referenciar también los atributos de nuestra clase `Supplier`, los cuales serian similares a los de la clase anterior, pero no los mismos. En este caso los atributos serian `name`, `contact_number` (cambia en relación con la clase `Customer`) y `supplier_id`, que al igual que con la clase anterior, vamos a randomizar por medio de la versión de UUID `uuid4`.
 
+```python
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "contact_number": self.contact_number,
+            "_id": self._id
+        }
+```
+
+Al igual que con la clase anterior, vamos a convertir los objetos de nuestra clase `Supplier` en un diccionario con las claves `name`, `contact_number` y `_id`.
+
 -----------
 
 <h3 align="center"> Products </h3>
