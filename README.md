@@ -30,7 +30,7 @@ Y adicional a eso, tenemos características extras como:
 
 #### Customer:
 
-En la clase `Customer` vamos a definir a nuestro cliente, con atributos principales como `name`, `number_id` y `customer_id`.
+En la clase `Customer`, por medio del metodo `__init__` vamos a definir a nuestro cliente, con atributos principales como `name`, `number_id` y `customer_id`.
 
 ```python
 import uuid
@@ -42,7 +42,7 @@ class Customer:
         self._id = customer_id if customer_id else str(uuid.uuid4())
 ```
 
-Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase persona, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
+Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase `Customer`, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
 
 ```python
     def to_dict(self):
