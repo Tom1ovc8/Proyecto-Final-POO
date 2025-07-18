@@ -14,7 +14,7 @@ Y adicional a eso, tenemos características extras como:
   + Manejo de archivos para persistencia de datos
   + Generación de reportes en forma de documentos
 
-<h3 align="center"> Índice </h3>
+<h2 align="center"> Índice </h2>
 
 -----------
 
