@@ -30,8 +30,7 @@ Y adicional a eso, tenemos características extras como:
 
 #### Customer:
 
-```pyton
-import uuid
+```pyton import uuid
 
 class Customer:
     def __init__(self, name, number_id, customer_id=None):
