@@ -18,6 +18,10 @@ Y adicional a eso, tenemos características extras como:
 
 -----------
 
+<h3 align="center"> Class Diagram </h3>
+
+-----------
+
 <h3 align="center"> Inventory_Management </h3>
 
 #### Inventory Record:
