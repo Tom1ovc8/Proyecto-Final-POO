@@ -30,7 +30,7 @@ Y adicional a eso, tenemos características extras como:
 
 #### Customer:
 
-En la clase `customer` vamos a definir a nuestro cliente, con atributos principales como `name`, `number_id` y `customer_id`.
+En la clase `Customer` vamos a definir a nuestro cliente, con atributos principales como `name`, `number_id` y `customer_id`.
 
 ```python
 import uuid
