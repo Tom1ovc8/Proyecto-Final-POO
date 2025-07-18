@@ -49,6 +49,8 @@ class Customer:
         }
 ```
 
+Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase persona, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
+
 -----------
 
 <h3 align="center"> Products </h3>
