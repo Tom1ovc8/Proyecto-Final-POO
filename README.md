@@ -1,4 +1,4 @@
-<h0 align="center"> Gestión de Inventarios </h0>
+<h1 align="center"> Gestión de Inventarios </h1>
 
 <h2 align="center"> Proyecto Final POO </h2>
 
