@@ -1,6 +1,6 @@
-<h1 align="center"> Gestion de Inventarios </h1>
+<h1 align="center"> GESTION DE IVENTARIOS </h1>
 
-<h2 align="center"> Proyecto Final POO </h2>
+<h2 align="center"> PROYECTO FINAL POO </h2>
 
 El objetivo principal de este proyecto es hacer una aplicación que emula un sistema de gestión de inventario para una bodega por medio de una interfaz gráfica de usuario (GUI).
 El programa tiene operaciones que podemos realizar como:
