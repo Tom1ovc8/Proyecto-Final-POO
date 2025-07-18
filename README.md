@@ -20,6 +20,24 @@ Y adicional a eso, tenemos características extras como:
 
 <h3 align="center"> Inventory_Management </h3>
 
+#### Inventory Record:
+
+En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`.
+
+```python
+class InventoryRecord:
+    def __init__(self, product, stock, location):
+        self.product = product
+        self.stock = stock
+        self.location = location
+```
+
+
+
+#### Inventory:
+#### Location:
+#### Stock:
+
 -----------
 
 <h3 align="center"> Operations_Center </h3>
