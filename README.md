@@ -8,6 +8,7 @@ El programa tiene operaciones que podemos realizar como:
   - Operaciones de registro de entrada y salida
   - Método para obtener listado de inventario actual
   - Manejo de fechas en los registros
+
 Y adicional a eso, tenemos características extras como:
 + Carga masiva de registros
  + Manejo de archivos para persistencia de datos
