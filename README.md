@@ -55,6 +55,22 @@ Mediante el constructor `self` referenciamos los atributos que va a tener nuestr
  
 Con el método `to_dict` vamos a convertir los objetos de la clase `Customer` en un diccionario de Python con las claves `name`, `number_id` y `_id`.
 
+#### Supplier:
+
+En la clase `Supplier`, por medio del metodo `__init__` tambien vamos a definir a nuestro proveedor, con atributos principales como `name`, `contact_number` y `supplier_id`.
+
+```python
+import uuid
+
+class Supplier:
+    def __init__(self, name, contact_number, supplier_id=None):
+        self._id = supplier_id if supplier_id else str(uuid.uuid4())
+        self.name = name
+        self.contact_number = contact_number
+```
+
+Por medio del constructor `self` vamos a referenciar también los atributos de nuestra clase `Supplier`, los cuales serian similares a los de la clase anterior, pero no los mismos. En este caso los atributos serian `name`, `contact_number` (cambia en relación con la clase `Customer`) y `supplier_id`, que al igual que con la clase anterior, vamos a randomizar por medio de la versión de UUID `uuid4`.
+
 -----------
 
 <h3 align="center"> Products </h3>
