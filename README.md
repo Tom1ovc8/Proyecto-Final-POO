@@ -180,6 +180,23 @@ Ahora se van a contar estantes para esa categoría. Si es la primera vez que apa
         return cls(aisle, shelf)
 ```
 
+Definimos el método `set_shelf` que permite cambiar únicamente el número de estante del producto por otro en el mismo pasillo.
+
+```python
+    def set_shelf(self, shelf):
+        self.shelf = shelf
+```
+
+Por medio del método `to_dict` vamos a convertir la información de la ubicación del producto a un diccionario con las claves `aisle` y `shelf`.
+
+```python
+    def to_dict(self):
+        return {
+            "aisle": self.aisle,
+            "shelf": self.shelf
+        }
+```
+
 #### Stock:
 
 
