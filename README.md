@@ -47,7 +47,7 @@ Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio
         }
 ```
 
-
+Convertimos los atributos de nuestra clase `InventoryRecord` en un diccionario con las claves: `product`, `stock` y `location`.
 
 #### Inventory:
 #### Location:
@@ -86,7 +86,7 @@ Mediante el constructor `self` referenciamos los atributos que va a tener nuestr
         }
 ```
  
-Con el método `to_dict` vamos a convertir los objetos de la clase `Customer` en un diccionario de Python con las claves `name`, `number_id` y `_id`.
+Con el método `to_dict` vamos a convertir los objetos de la clase `Customer` en un diccionario de Python con las claves: `name`, `number_id` y `_id`.
 
 #### Supplier:
 
@@ -113,7 +113,7 @@ Por medio del constructor `self` vamos a referenciar también los atributos de n
         }
 ```
 
-Al igual que con la clase anterior, vamos a convertir los objetos de nuestra clase `Supplier` en un diccionario con las claves `name`, `contact_number` y `_id`.
+Al igual que con la clase anterior, vamos a convertir los objetos de nuestra clase `Supplier` en un diccionario con las claves: `name`, `contact_number` y `_id`.
 
 -----------
 
