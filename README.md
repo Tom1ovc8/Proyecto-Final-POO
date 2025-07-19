@@ -78,6 +78,16 @@ Definimos la función `get_record`, la cual nos servirá para consultar el códi
         return self.records.get(code)
 ```
 
+Se definió la función `remove_record` para, como lo dice su nombre, poder remover el registro de código de un producto por medio de la instrucción `del`. La función va a buscar el código de la biblioteca de registros. Si se encuentra el código, se procede con la función correctamente y se elimina el registro de la biblioteca. Si el código no se encuentra, el sistema arroja el mensaje “*No record found with this code*”.
+
+```python
+    def remove_record(self, code):
+        if code in self.records:
+            del self.records[code]
+        else:
+            print("No record found with this code.")
+```
+
 
 
 #### Location:
