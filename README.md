@@ -36,7 +36,16 @@ class InventoryRecord:
         self.location = location
 ```
 
+Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio de nuestro constructor `self` con los nombres de `product`, `stock` y `location`.
 
+```python
+    def to_dict(self):
+        return {
+            "product": self.product.to_dict(),
+            "stock": self.stock.to_dict(),
+            "location": self.location.to_dict()
+        }
+```
 
 #### Inventory:
 #### Location:
