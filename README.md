@@ -152,6 +152,16 @@ class Location:
     _shelf_counter_by_category = {}
 ```
 
+Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pasillos) y `shelf` (estantes).
+
+```python
+    def __init__(self, aisle, shelf):
+        self.aisle = aisle
+        self.shelf = shelf
+```
+
+
+
 #### Stock:
 
 
