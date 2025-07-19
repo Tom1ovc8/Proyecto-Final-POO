@@ -98,6 +98,18 @@ Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de p
         self.records[product_code].stock.update_stock(delta, movement)
 ```
 
+En caso de que se quiera consultar cada movimiento, se definió la función `get_movements_by_code`, que permite hacer la consulta de todos los movimientos en forma de lista de un producto en especifico por medio de su código.
+
+```python
+    def get_movements_by_code(self, code):
+        return [
+            movement for movement in self.movements if 
+                movement.product.code == code
+        ]
+```
+
+
+
 #### Location:
 #### Stock:
 
