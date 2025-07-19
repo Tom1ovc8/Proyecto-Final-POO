@@ -125,6 +125,22 @@ El método `generate_stock_report` genera un reporte (`report` que es una lista 
         return report
 ```
 
+El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este revisa producto por producto y su estado de stock e identifica si esta o no por debajo del mínimo. En caso de que si lo esté, crea una lista de sugerencias vacía `suggestions` donde va a agregar los productos que necesitan el restock con la siguiente información: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto), y `”Minimum Required”` (el mínimo necesario de stock definido como `record.stock.minimum_stock`).
+
+```python
+    def restock_suggestions(self):
+        suggestions = []
+        for record in self.records.values():
+            if record.stock.check_stock() == "Stock is below the minimum.":
+                suggestions.append({
+                    "Name": record.product.name,
+                    "Code": record.product.code,
+                    "Current Stock": record.stock.get_actual_stock(),
+                    "Minimum Required": record.stock.minimum_stock
+                })
+        return suggestions
+```
+
 #### Location:
 #### Stock:
 
