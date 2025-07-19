@@ -50,6 +50,18 @@ Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio
 Convertimos los atributos de nuestra clase `InventoryRecord` en un diccionario con las claves: `product`, `stock` y `location`.
 
 #### Inventory:
+
+En la clase `Inventory` definimos dos atributos donde almacenaremos datos, que se crean directamente desde el objeto sin necesidad de recibirlos como parámetro. Estos son: `self.records` que es un diccionario vacío, y `self.movements` que es una lista vacía.
+
+```python
+class Inventory:
+    def __init__(self):
+        self.records = {}
+        self.movements = []
+```
+
+
+
 #### Location:
 #### Stock:
 
