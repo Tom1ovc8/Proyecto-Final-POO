@@ -47,6 +47,8 @@ Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio
         }
 ```
 
+
+
 #### Inventory:
 #### Location:
 #### Stock:
