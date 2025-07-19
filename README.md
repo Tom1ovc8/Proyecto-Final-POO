@@ -24,7 +24,7 @@ Y adicional a eso, tenemos características extras como:
 
 <h3 align="center"> Inventory_Management </h3>
 
-#### Inventory Record:
+#### **Inventory Record:**
 
 En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`.
 
