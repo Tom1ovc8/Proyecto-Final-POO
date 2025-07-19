@@ -60,7 +60,7 @@ class Inventory:
         self.movements = []
 ```
 
-Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en la lista de registros `records[]`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en la lista de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
+Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
 
 ```python
     def add_record(self, record):
@@ -69,6 +69,13 @@ Al método `add_record` le definimos un atributo `record`, el cual usaremos post
             self.records[code] = record
         else:
             print("This product already exists in the inventory.")
+```
+
+Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`.
+
+```python
+    def get_record(self, code):
+        return self.records.get(code)
 ```
 
 #### Location:
