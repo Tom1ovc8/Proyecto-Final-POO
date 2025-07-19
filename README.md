@@ -78,6 +78,8 @@ Definimos la función `get_record`, la cual nos servirá para consultar el códi
         return self.records.get(code)
 ```
 
+
+
 #### Location:
 #### Stock:
 
