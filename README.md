@@ -143,7 +143,14 @@ El método `restock_suggestions` sugiere que productos necesitan ser reabastecid
 
 #### Location:
 
+Creamos la clase `Location` a la cual le vamos a asignar unos atributos privados que están fuera del constructor y son compartidos entre todas las instancias de la clase. Estos son `_category_aisles` que es la categoría de cada uno de los pasillos y es un diccionario vacío; `_next_aisle_number` que dicta cual será el siguiente pasillo pasando de uno en uno; `_shelf_counter_by_category` que cuenta cuantos estantes ya han sido asignados por categoría (también es un diccionario vacío).
 
+```python
+class Location:
+    _category_aisles = {}
+    _next_aisle_number = 1
+    _shelf_counter_by_category = {}
+```
 
 #### Stock:
 
