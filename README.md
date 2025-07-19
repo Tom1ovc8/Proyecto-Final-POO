@@ -199,6 +199,12 @@ Por medio del método `to_dict` vamos a convertir la información de la ubicaci�
 
 #### Stock:
 
+Del modulo `Inventory_System.Transactions.movements` importamos la clase `Movement`.
+
+```python
+from Inventory_System.Transactions.movements import Movement
+```
+
 
 
 -----------
