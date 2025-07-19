@@ -160,7 +160,25 @@ Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pas
         self.shelf = shelf
 ```
 
+Con el decorador `@classmethod` indicamos que el programa trabaja con la clase completa y no solo con objetos individuales. Definimos el método `assign_location` con `cls` en vez de `self`, es decir que puede modificar y acceder a los atributos de clase. Si la instancia de categoría `category` no tiene un pasillo asignado, se le asignara uno disponible, de forma que si hay un pasillo ocupado, se revisara el siguiente hasta que se encuentre uno disponible.
 
+```python
+    @classmethod
+    def assign_location(cls, category):
+        if category not in cls._category_aisles:
+            cls._category_aisles[category] = cls._next_aisle_number
+            cls._next_aisle_number += 1
+```
+
+Ahora se van a contar estantes para esa categoría. Si es la primera vez que aparece esa categoría, el contador inicia en 0, y luego se incrementa de uno en uno para asignar un nuevo estante. Luego retorna el numero de pasillo y de estante de dicho producto por medio de `cls(aisle, shelf)`.
+
+```python
+        aisle = cls._category_aisles[category]
+        cls._shelf_counter_by_category.setdefault(category, 0)
+        cls._shelf_counter_by_category[category] += 1
+        shelf = cls._shelf_counter_by_category[category]
+        return cls(aisle, shelf)
+```
 
 #### Stock:
 
