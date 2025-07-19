@@ -108,7 +108,22 @@ En caso de que se quiera consultar cada movimiento, se definió la función `get
         ]
 ```
 
+El método `generate_stock_report` genera un reporte (`report` que es una lista vacía) del estado actual del inventario, producto por producto. Para cada producto guardado en el diccionario de registros, el método agrega un diccionario con los datos del producto: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto) y `”Status”` (estado en el que se encuentra el stock del producto: *Suficiente, bajo o agotado*, según el mínimo y máximo establecido).
 
+```python
+    def generate_stock_report(self):
+        report = []
+        for record in self.records.values():
+            product = record.product
+            stock = record.stock
+            report.append({
+                "Name": product.name,
+                "Code": product.code,
+                "Current Stock": stock.get_actual_stock(),
+                "Status": stock.check_stock()
+            })
+        return report
+```
 
 #### Location:
 #### Stock:
