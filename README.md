@@ -26,7 +26,7 @@ Y adicional a eso, tenemos características extras como:
 
 #### Inventory Record:
 
-En la clase `InventoryRecord`, por **medio** del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`.
+En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`.
 
 ```python
 class InventoryRecord:
@@ -60,7 +60,16 @@ class Inventory:
         self.movements = []
 ```
 
+Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en la lista de registros `records[]`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en la lista de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
 
+```python
+    def add_record(self, record):
+        code = record.product._code
+        if code not in self.records:
+            self.records[code] = record
+        else:
+            print("This product already exists in the inventory.")
+```
 
 #### Location:
 #### Stock:
