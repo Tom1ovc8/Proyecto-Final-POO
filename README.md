@@ -142,7 +142,12 @@ El método `restock_suggestions` sugiere que productos necesitan ser reabastecid
 ```
 
 #### Location:
+
+
+
 #### Stock:
+
+
 
 -----------
 
