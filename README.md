@@ -64,14 +64,14 @@ Al método `add_record` le definimos un atributo `record`, el cual usaremos post
 
 ```python
     def add_record(self, record):
-        code = record.product._code
+        code = record.product.code
         if code not in self.records:
             self.records[code] = record
         else:
             print("This product already exists in the inventory.")
 ```
 
-Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`.
+Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`. En caso de que el código no exista en el diccionario, retorna `None`.
 
 ```python
     def get_record(self, code):
@@ -88,7 +88,15 @@ Se definió la función `remove_record` para, como lo dice su nombre, poder remo
             print("No record found with this code.")
 ```
 
+Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. El comando `product_code` se define como el código del producto del movimiento. `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
 
+```python
+    def add_movement(self, movement):
+        self.movements.append(movement)
+        product_code = movement.product.code
+        delta = movement.get_delta()
+        self.records[product_code].stock.update_stock(delta, movement)
+```
 
 #### Location:
 #### Stock:
