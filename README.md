@@ -215,12 +215,25 @@ Creamos la clase `Stock` con atributos como `actual_stock`, `mínimum_stock`, `m
         self._record = []
 ```
 
-Se define la función `get_actual_stock` el cual, en caso de querer consultar el stock actual, nos lo va a retornar.
+Se define el método `get_actual_stock` el cual, en caso de querer consultar el stock actual, nos lo va a retornar.
 
 ```python
     def get_actual_stock(self):
         return self._actual_stock
 ```
+
+Definimos el método `check_stock`, con el que vamos a comparar el stock actual de un producto con el stock mínimo definido. Si el stock actual es menor al stock mínimo, nos retorna el mensaje `”Stock is below the minimum”`. SI el stock actual es mayor al stock máximo, nos retorna el mensaje `”Stock excedes the maximum”`. En caso de que el stock este entre el mínimo y el máximo, nos retorna el mensaje `”Stock is within an aceptable range”`.
+
+```python
+    def check_stock(self):
+        if self._actual_stock < self.minimum_stock:
+            return "Stock is below the minimum."
+        elif self._actual_stock > self.maximum_stock:
+            return "Stock exceeds the maximum."
+        else:
+            return "Stock is within an acceptable range."
+```
+
 
 
 
