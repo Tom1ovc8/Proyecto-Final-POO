@@ -205,6 +205,23 @@ Del modulo `Inventory_System.Transactions.movements` importamos la clase `Moveme
 from Inventory_System.Transactions.movements import Movement
 ```
 
+Creamos la clase `Stock` con atributos como `actual_stock`, `mínimum_stock`, `máximum_stock` y `_record` que es una lista vacia.
+
+```python
+    def __init__(self, actual_stock, minimum_stock, maximum_stock):
+        self._actual_stock = actual_stock
+        self.minimum_stock = minimum_stock
+        self.maximum_stock = maximum_stock
+        self._record = []
+```
+
+Se define la función `get_actual_stock` el cual, en caso de querer consultar el stock actual, nos lo va a retornar.
+
+```python
+    def get_actual_stock(self):
+        return self._actual_stock
+```
+
 
 
 -----------
