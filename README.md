@@ -234,8 +234,29 @@ Definimos el método `check_stock`, con el que vamos a comparar el stock actual 
             return "Stock is within an acceptable range."
 ```
 
+Se define el método `is_valid_update` con un atributo `delta` que representa el cambio de stock. El método revisa que antes de que se modifique el stock, el cambio no deje el stock ni por debajo del mínimo, ni por encima del máximo permitido.
 
+```python
+    def is_valid_update(self, delta):
+        new_stock = self._actual_stock + delta
+        return 0 <= new_stock <= self.maximum_stock
+```
 
+El método `update_stock` se define para actualizar el stock de un producto. Por medio de este método, si la actualización del stock no es válida, retornara el mensaje `”Cannot update stock”`. En caso de que si sea válida, se sumara el movimiento `delta` al stock actual ya sea entrada o salida. Si se paso un movimiento, se guarda en el diccionario de registros, si no, retorna el mensaje `”Only Movement instances are allowed to update stock”`.
+
+```python
+    def update_stock(self, delta, movement = None):
+        if not self.is_valid_update(delta):
+            print("Cannot update stock.")
+            return False
+        self._actual_stock += delta
+        if movement:
+            if isinstance(movement, Movement):
+                self._record.append(movement)
+            else:
+                raise TypeError("Only Movement instances are allowed to update stock.")
+        return True
+```
 
 -----------
 
