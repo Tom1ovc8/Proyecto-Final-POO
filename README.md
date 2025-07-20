@@ -258,6 +258,37 @@ El método `update_stock` se define para actualizar el stock de un producto. Por
         return True
 ```
 
+Definimos el método `update_stock_limits` con las instancias `new_min` y `new_max` para poder actualizar el mínimo y máximo de stock de algún producto. En caso de que se quiera actualizar el mínimo o máximo stock a un valor menor a 0, retornara el mensaje de error `”Stock limits cannot be negative”`. En caso de que se quiera actualizar el mínimo stock, y que este sea superior al máximo stock, retornara el mensaje de error `”Minimum stock cannot exceed máximum stock”`. En caso de que el cambio sea correcto, se actualizará.
+
+```python
+    def update_stock_limits(self, new_min, new_max):
+        if new_min < 0 or new_max < 0:
+            raise ValueError("Stock limits cannot be negative.")
+        if new_min > new_max:
+            raise ValueError("Minimum stock cannot exceed maximum stock.")
+        self.minimum_stock = new_min
+        self.maximum_stock = new_max
+```
+
+Se define el método `show_history` para que se imprima toda la lista de movimientos en forma de diccionario.
+
+```python
+    def show_history(self):
+        for stock_record in self._record:
+            print(stock_record.to_dict())        
+```
+
+El método `to_dict` retorna el stock actual, el stock mínimo y el stock máximo en diccionario con las claves `actual_stock`, `mínimum_stock` y `máximum_stock`.
+
+```python
+    def to_dict(self):
+        return {
+            "actual_stock": self._actual_stock,
+            "minimum_stock": self.minimum_stock,
+            "maximum_stock": self.maximum_stock
+        }       
+```
+
 -----------
 
 <h3 align="center"> Operations_Center </h3>
