@@ -79,13 +79,14 @@ Convertimos los atributos de nuestra clase `InventoryRecord` en un diccionario c
 
 #### Location:
 
-Creamos la clase `Location` a la cual le vamos a asignar unos atributos privados que están fuera del constructor y son compartidos entre todas las instancias de la clase. Estos son `_category_aisles` que es la categoría de cada uno de los pasillos y es un diccionario vacío; `_next_aisle_number` que dicta cual será el siguiente pasillo pasando de uno en uno; `_shelf_counter_by_category` que cuenta cuantos estantes ya han sido asignados por categoría (también es un diccionario vacío).
+Creamos la clase `Location` a la cual le vamos a asignar unos atributos protegidos que están fuera del constructor y son compartidos entre todas las instancias de la clase. Estos son `_category_aisles` que es la categoría de cada uno de los pasillos y es un diccionario vacío; `_next_aisle_number` que dicta cual será el siguiente pasillo pasando de uno en uno; `_shelf_counter_by_category` que cuenta cuantos estantes ya han sido asignados por categoría (también es un diccionario vacío); `_product_shelving = {}` que es un diccionario de las estanterias de cada producto.
 
 ```python
 class Location:
     _category_aisles = {}
     _next_aisle_number = 1
     _shelf_counter_by_category = {}
+    _product_shelving = {}
 ```
 
 Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pasillos) y `shelf` (estantes).
@@ -96,31 +97,62 @@ Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pas
         self.shelf = shelf
 ```
 
-Con el decorador `@classmethod` indicamos que el programa trabaja con la clase completa y no solo con objetos individuales. Definimos el método `assign_location` con `cls` en vez de `self`, es decir que puede modificar y acceder a los atributos de clase. Si la instancia de categoría `category` no tiene un pasillo asignado, se le asignara uno disponible, de forma que si hay un pasillo ocupado, se revisara el siguiente hasta que se encuentre uno disponible.
+Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase completa. Definimos el metodo `sync_from_inventory` para que, por cada registro en el diccionario de registros, se le asigne un pasillo y estante y se tomen las variables `category`, `code`, `aisle` y `shelf`.
 
 ```python
     @classmethod
-    def assign_location(cls, category):
+    def sync_from_inventory(cls, records):
+        for record in records:
+            category = record.product.category
+            code = record.product._code
+            aisle = int(record.location.aisle)
+            shelf = int(record.location.shelf)
+```
+
+Si la categoria no se encuentra asignada a un pasillo especifico, este metodo le asignara uno disponible.
+
+```python
+    @classmethod
+    def sync_from_inventory(cls, records):
+        for record in records:
+            category = record.product.category
+            code = record.product._code
+            aisle = int(record.location.aisle)
+            shelf = int(record.location.shelf)
+
+            if category not in cls._category_aisles:
+                cls._category_aisles[category] = aisle
+                cls._next_aisle_number = max(cls._next_aisle_number, aisle+1)
+            cls._product_shelving[(category, code)] = shelf
+            cls._shelf_counter_by_category[category] = max(
+                cls._shelf_counter_by_category.get(category, 0),
+                shelf
+            )
+```
+
+Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase completa y no solo con objetos individuales. Definimos el método `assign_location`. Si la instancia de categoría `category` no tiene un pasillo asignado, se le asignara uno disponible, de forma que si hay un pasillo ocupado, se revisara el siguiente hasta que se encuentre uno disponible. Se tomaran las variables `aisle` y `key`.
+
+```python
+    @classmethod
+    def assign_location(cls, category, code):
         if category not in cls._category_aisles:
             cls._category_aisles[category] = cls._next_aisle_number
             cls._next_aisle_number += 1
-```
-
-Ahora se van a contar estantes para esa categoría. Si es la primera vez que aparece esa categoría, el contador inicia en 0, y luego se incrementa de uno en uno para asignar un nuevo estante. Luego retorna el numero de pasillo y de estante de dicho producto por medio de `cls(aisle, shelf)`.
-
-```python
         aisle = cls._category_aisles[category]
-        cls._shelf_counter_by_category.setdefault(category, 0)
-        cls._shelf_counter_by_category[category] += 1
-        shelf = cls._shelf_counter_by_category[category]
-        return cls(aisle, shelf)
+        key = (category, code)
 ```
 
-Definimos el método `set_shelf` que permite cambiar únicamente el número de estante del producto por otro en el mismo pasillo.
+Si la `key` esta en un pasillo, a la variable `shelf` se le asignará esta. En caso de que no, se le asignara un pasillo diponible comenzando desde 0 y verificando uno por uno a ver cual esta disponible.
 
 ```python
-    def set_shelf(self, shelf):
-        self.shelf = shelf
+        if key in cls._product_shelving:
+            shelf = cls._product_shelving[key]
+        else:
+            cls._shelf_counter_by_category.setdefault(category, 0)
+            cls._shelf_counter_by_category[category] += 1
+            shelf = cls._shelf_counter_by_category[category]
+            cls._product_shelving[key] = shelf
+        return cls(aisle, shelf)
 ```
 
 Por medio del método `to_dict` vamos a convertir la información de la ubicación del producto a un diccionario con las claves `aisle` y `shelf`.
@@ -158,18 +190,6 @@ Se define el método `get_actual_stock` el cual, en caso de querer consultar el 
         return self._actual_stock
 ```
 
-Definimos el método `check_stock`, con el que vamos a comparar el stock actual de un producto con el stock mínimo definido. Si el stock actual es menor al stock mínimo, nos retorna el mensaje `”Stock is below the minimum”`. SI el stock actual es mayor al stock máximo, nos retorna el mensaje `”Stock excedes the maximum”`. En caso de que el stock este entre el mínimo y el máximo, nos retorna el mensaje `”Stock is within an aceptable range”`.
-
-```python
-    def check_stock(self):
-        if self._actual_stock < self.minimum_stock:
-            return "Stock is below the minimum."
-        elif self._actual_stock > self.maximum_stock:
-            return "Stock exceeds the maximum."
-        else:
-            return "Stock is within an acceptable range."
-```
-
 Se define el método `is_valid_update` con un atributo `delta` que representa el cambio de stock. El método revisa que antes de que se modifique el stock, el cambio no deje el stock ni por debajo del mínimo, ni por encima del máximo permitido.
 
 ```python
@@ -181,16 +201,16 @@ Se define el método `is_valid_update` con un atributo `delta` que representa el
 El método `update_stock` se define para actualizar el stock de un producto. Por medio de este método, si la actualización del stock no es válida, retornara el mensaje `”Cannot update stock”`. En caso de que si sea válida, se sumara el movimiento `delta` al stock actual ya sea entrada o salida. Si se paso un movimiento, se guarda en el diccionario de registros, si no, retorna el mensaje `”Only Movement instances are allowed to update stock”`.
 
 ```python
-    def update_stock(self, delta, movement = None):
+    def update_stock(self, delta, movement):
         if not self.is_valid_update(delta):
             print("Cannot update stock.")
             return False
+        if not isinstance(movement, Movement):
+            raise TypeError(
+                "Only Movement instances are allowed to update stock."
+                )
         self._actual_stock += delta
-        if movement:
-            if isinstance(movement, Movement):
-                self._record.append(movement)
-            else:
-                raise TypeError("Only Movement instances are allowed to update stock.")
+        self._record.append(movement)
         return True
 ```
 
@@ -206,14 +226,6 @@ Definimos el método `update_stock_limits` con las instancias `new_min` y `new_m
         self.maximum_stock = new_max
 ```
 
-Se define el método `show_history` para que se imprima toda la lista de movimientos en forma de diccionario.
-
-```python
-    def show_history(self):
-        for stock_record in self._record:
-            print(stock_record.to_dict())        
-```
-
 El método `to_dict` retorna el stock actual, el stock mínimo y el stock máximo en diccionario con las claves `actual_stock`, `mínimum_stock` y `máximum_stock`.
 
 ```python
@@ -221,8 +233,9 @@ El método `to_dict` retorna el stock actual, el stock mínimo y el stock máxim
         return {
             "actual_stock": self._actual_stock,
             "minimum_stock": self.minimum_stock,
-            "maximum_stock": self.maximum_stock
-        }       
+            "maximum_stock": self.maximum_stock,
+            "record": [mov.to_dict() for mov in self._record]
+        }    
 ```
 
 #### Inventory:
@@ -236,7 +249,7 @@ class Inventory:
         self.movements = []
 ```
 
-Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
+El método `add_record` recibe la instancia `record`, del cual tomaremos el codigo del producto como la variable `code`. La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
 
 ```python
     def add_record(self, record):
@@ -247,11 +260,15 @@ Al método `add_record` le definimos un atributo `record`, el cual usaremos post
             print("This product already exists in the inventory.")
 ```
 
-Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`. En caso de que el código no exista en el diccionario, retorna `None`.
+Definimos la función `add_record`, la cual nos servira para añadir un registro al diccionario de registros con el codigo del producto, esto en caso de que este no se encuentre en el diccionario. SI el producto ya se encuentra en el diccionario, retorna un mensaje de error `"This product already exists in the inventory"`.
 
 ```python
-    def get_record(self, code):
-        return self.records.get(code)
+    def add_record(self, record):
+        code = record.product._code
+        if code not in self.records:
+            self.records[code] = record
+        else:
+            print("This product already exists in the inventory.")
 ```
 
 Se definió la función `remove_record` para, como lo dice su nombre, poder remover el registro de código de un producto por medio de la instrucción `del`. La función va a buscar el código de la biblioteca de registros. Si se encuentra el código, se procede con la función correctamente y se elimina el registro de la biblioteca. Si el código no se encuentra, el sistema arroja el mensaje “*No record found with this code*”.
@@ -264,14 +281,24 @@ Se definió la función `remove_record` para, como lo dice su nombre, poder remo
             print("No record found with this code.")
 ```
 
-Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. El comando `product_code` se define como el código del producto del movimiento. `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
+Se define el metodo `update_stock_limits`, con el que vamos a actualizar los limites minimos y maximos de stock de un producto permitidos. En caso de que el codigo de producto no se encuentre en el diccionario de registros, retornara el mensaje de error `"Product not found in inventory records"`.
 
 ```python
-    def add_movement(self, movement):
+    def update_stock_limits(self, product_code:str, new_min:int, new_max:int):
+        if product_code not in self.records:
+            raise ValueError("Product not found in inventory records.") 
+        self.records[product_code].stock.update_stock_limits(new_min, new_max)
+```
+
+Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. Si la actualizacion de stock aplica, entonces esta se guardara en el diccionario de registros con por codigo de producto (`product_code`). `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
+
+```python
+    def add_movement(self, movement, apply_stock: bool = True):
         self.movements.append(movement)
-        product_code = movement.product.code
-        delta = movement.get_delta()
-        self.records[product_code].stock.update_stock(delta, movement)
+        if apply_stock:
+            product_code = movement.product._code
+            delta = movement.get_delta()
+            self.records[product_code].stock.update_stock(delta, movement)
 ```
 
 En caso de que se quiera consultar cada movimiento, se definió la función `get_movements_by_code`, que permite hacer la consulta de todos los movimientos en forma de lista de un producto en especifico por medio de su código.
@@ -284,37 +311,29 @@ En caso de que se quiera consultar cada movimiento, se definió la función `get
         ]
 ```
 
-El método `generate_stock_report` genera un reporte (`report` que es una lista vacía) del estado actual del inventario, producto por producto. Para cada producto guardado en el diccionario de registros, el método agrega un diccionario con los datos del producto: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto) y `”Status”` (estado en el que se encuentra el stock del producto: *Suficiente, bajo o agotado*, según el mínimo y máximo establecido).
+El metodo `get_critical_records` lo usamos para que, por cada registro en el diccionario de registros, nos retorne todos los registros de productos cuyo stock actual este por debajo del minimo permitido.
 
 ```python
-    def generate_stock_report(self):
-        report = []
-        for record in self.records.values():
-            product = record.product
-            stock = record.stock
-            report.append({
-                "Name": product.name,
-                "Code": product.code,
-                "Current Stock": stock.get_actual_stock(),
-                "Status": stock.check_stock()
-            })
-        return report
+    def get_critical_records(self):
+        return [
+            r for r in self.records.values()
+            if r.stock.get_actual_stock() < r.stock.minimum_stock
+        ]
 ```
 
-El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este revisa producto por producto y su estado de stock e identifica si esta o no por debajo del mínimo. En caso de que si lo esté, crea una lista de sugerencias vacía `suggestions` donde va a agregar los productos que necesitan el restock con la siguiente información: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto), y `”Minimum Required”` (el mínimo necesario de stock definido como `record.stock.minimum_stock`).
+El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este toma los productos de la lista del metodo `get_critical_records` y nos retorna los valores de estos productos con las claves `Name`, `Code`, `Current Stock` y `Minimum Required`.
 
 ```python
     def restock_suggestions(self):
-        suggestions = []
-        for record in self.records.values():
-            if record.stock.check_stock() == "Stock is below the minimum.":
-                suggestions.append({
-                    "Name": record.product.name,
-                    "Code": record.product.code,
-                    "Current Stock": record.stock.get_actual_stock(),
-                    "Minimum Required": record.stock.minimum_stock
-                })
-        return suggestions
+        return [
+            {
+            "Name": r.product.name,
+            "Code": r.product._code,
+            "Current Stock": r.stock.get_actual_stock(),
+            "Minimum Required": r.stock.minimum_stock
+            }
+            for r in self.get_critical_records()
+        ]
 ```
 -----------
 
