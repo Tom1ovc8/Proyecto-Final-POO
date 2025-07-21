@@ -98,7 +98,7 @@ class MovementsReportPDF(PDF):
             "Date", "Type", "Product Code", 
             "Quantity", "Actor", "Reason"
             ]
-        col_widths = [30, 15, 30, 20, 40, 55]
+        col_widths = [25, 10, 25, 20, 60, 50]
         rows = []
 
         for movement in movements:
