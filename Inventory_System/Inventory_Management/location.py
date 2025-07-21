@@ -46,9 +46,6 @@ class Location:
 
         return cls(aisle, shelf)
     
-    def set_shelf(self, shelf):#**********************
-        self.shelf = shelf
-    
     def to_dict(self):
         return {
             "aisle": self.aisle,
