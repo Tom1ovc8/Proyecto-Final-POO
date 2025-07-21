@@ -370,6 +370,81 @@ class Payment:
         raise NotImplementedError("Subclasses must implement the to_dict() method.")
 ```
 
+#### Card(Payment):
+La clase `Card` hereda de `Payment`, y representa un método de pago con tarjeta. En su constructor (`__init__`) recibimos el número de tarjeta y el código CVV. Usamos `super()` para llamar al constructor de la clase base.
+
+```python
+class Card(Payment):
+    def __init__(self, number, cvv):
+        super().__init__()
+        self._number = number
+        self._cvv = cvv
+```
+El método `pay` en esta clase simula la acción de pagar con tarjeta. Imprime un mensaje en consola que indica cuánto se va a pagar y muestra los últimos 4 dígitos del número de la tarjeta.
+
+```python
+    def pay(self, amount):
+        print(f"Paying {amount} with card ending in {self._number[-4:]}")
+        return True
+```
+
+El método `to_dict` convierte los datos de la tarjeta en un diccionario, ocultando el número completo por motivos de seguridad. Solo muestra los últimos 4 dígitos.
+
+```python
+    def to_dict(self):
+        return {
+            "method": "Card",
+            "card_number": f"**** **** **** {self._number[-4:]}"
+        }
+```
+
+Finalmente, con el método `__str__`, devolvemos una representación en texto legible del objeto `Card`, también mostrando solo los últimos dígitos del número.
+
+```python
+    def __str__(self):
+        return f"Card - **** **** **** {self._number[-4:]}"
+```
+
+#### Cash(Payment):
+La clase `Cash` también hereda de `Payment`, pero representa pagos en efectivo. En su constructor, se guarda el valor entregado por el cliente.
+
+```python
+class Cash(Payment):
+    def __init__(self, cash_given):
+        super().__init__()
+        self.cash_given = cash_given
+```
+
+El método `pay` verifica si el efectivo entregado es suficiente para cubrir el valor del pago. Si es suficiente, calcula el cambio y lo imprime; si no lo es, informa cuánto falta.
+
+```python
+    def pay(self, amount):
+        if self.cash_given >= amount:
+            change = self.cash_given - amount
+            print(f"Cash payment accepted. Change returned: {change}")
+            return True
+        else:
+            print(f"Insufficient cash. Missing: {amount - self.cash_given}")
+            return False
+```
+
+El método `to_dict` convierte los datos de pago en efectivo en un diccionario que guarda el método y el valor entregado.
+
+```python
+    def to_dict(self):
+        return {
+            "method": "Cash",
+            "cash_given": self.cash_given
+        }
+```
+
+Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, indicando cuánto dinero entregó el cliente.
+
+```python
+    def __str__(self):
+        return f"Cash - Given: ${self.cash_given:.2f}"
+```
+
 -----------
 
 <h3 align="center"> Transactions </h3>
