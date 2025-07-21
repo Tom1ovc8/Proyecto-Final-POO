@@ -510,7 +510,7 @@ class InventoryApp:
                         actor = Customer(name, contact)
                         self.system.add_customer(actor)
 
-                    self.system.restock(
+                    self.system.make_sale(
                         product._code, cantidad, actor, reason
                     )
 
