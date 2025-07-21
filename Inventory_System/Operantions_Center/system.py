@@ -30,7 +30,7 @@ class System(Inventory):
         self.add_movement(movement)
         print(f"Product {product.name} added at {location.to_dict()}")
 
-    def restock(self, product_code, amount, customer, reason):#** Puede llamarse make_sale
+    def make_sale(self, product_code, amount, customer, reason):
         if product_code not in self.records:
             raise ValueError("Product code not found in inventory.")
         
