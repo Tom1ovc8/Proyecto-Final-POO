@@ -30,10 +30,11 @@ class InventoryApp:
             ("💾 Export to JSON archive", self.export_to_json),
             ("➕ Add Product", self.add_product_method),
             ("📋 Inventory Report", self.generate_inventory_pdf),
-            ("🔄 Add Movement", self.add_movement_dialog),
-            ("🧾 Cash Register", self.create_bill_dialog),
+            ("🔄 Add Movement", self.add_movement_method),
+            ("🧾 Cash Register", self.create_bill_method),
+            ("📋 Generate movements report", self.export_movements_report),
             ("📜 Customer/Supplier History", self.generate_actor_history),
-            ("📤 Export Bill", self.export_bill_dialog),
+            ("📤 Export Bill", self.export_bill),
             ("📈 Sales Summary", self.generate_sales_summary),
             ("📦 Restock Suggestions", self.show_restock_suggestions),
             ("🚪 Quit", root.quit)
@@ -316,7 +317,7 @@ class InventoryApp:
             except Exception as e:
                 messagebox.showerror("Error", f"Couldn't export:\n{e}")
 
-    def add_movement_dialog(self):
+    def add_movement_method(self):
         if not self.system.records:
             messagebox.showwarning(
                 "No products available", 
@@ -526,7 +527,7 @@ class InventoryApp:
             main_frame, text="Register", command=register_movement
         ).pack(pady=15, fill="x")
 
-    def create_bill_dialog(self):
+    def create_bill_method(self):
         if not self.system.records:
             messagebox.showwarning(
                 "No products available", 
@@ -853,7 +854,16 @@ class InventoryApp:
             main_frame, text="Create bill", command=submit
         ).pack(pady=10)
 
-    def export_bill_dialog(self):
+    def export_movements_report(self):
+        try:
+            self.system.export_movements_pdf()
+            messagebox.showinfo(
+                "Success", "Movements report saved as 'movement_report.pdf'."
+            )
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+            
+    def export_bill(self):
         bill_id = simple_input_dialog("Enter the ID of the bill:")
         if bill_id not in self.system.bills:
             messagebox.showerror(
