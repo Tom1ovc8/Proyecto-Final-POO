@@ -439,6 +439,69 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
         }
 ```
 
+#### Movements:
+
+La clase `Movement` representa un registro individual de movimiento de inventario. Cada movimiento está relacionado con un producto, una cantidad (`amount`), una razón o motivo del movimiento, y un actor (cliente o proveedor) que lo genera. También se registra la fecha y se determina si el movimiento es de entrada o salida.
+
+#### Constructor `__init__`
+
+Este método inicializa un nuevo movimiento con la información proporcionada: el producto involucrado, la cantidad de unidades, el actor (cliente o proveedor) que lo realiza, y la razón del movimiento.
+
+```python
+class Movement:
+    def __init__(self, product, amount, actor, reason):
+        self.product = product
+        self.amount = amount
+        self.date = datetime.now()
+        if not isinstance(actor, (Customer, Supplier)):
+            raise TypeError("actor must be a Customer or Supplier")
+        self.actor = actor
+        self._actor_id = actor._id
+        self.actor_type = "customer" if isinstance(actor, Customer) else "supplier"
+        self.type = "out" if isinstance(actor, Customer) else "in"
+        self.reason = reason
+```
+-Se guarda la referencia del producto y la cantidad (`amount`) directamente.
+
+-Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
+
+-Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
+
+-Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
+
+-Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
+
+-Por último, se guarda la razón del movimiento.
+
+El metodo `get_delta` calcula el cambio que representa este movimiento sobre el inventario del producto.
+
+```python
+    def get_delta(self):
+        return self.amount if self.type == "in" else -self.amount
+```
+-Si el movimiento es de entrada (`"in"`), devuelve la cantidad en positivo.
+
+-Si el movimiento es de salida (`"out"`), devuelve la cantidad como negativa.
+
+-Este resultado puede utilizarse directamente para actualizar el inventario del producto.
+
+```python
+    def to_dict(self):
+        return {
+            "Product": self.product.name,
+            "Code": self.product._code,
+            "Quantity": self.amount,
+            "Type": self.type,
+            "Date": self.date.strftime("%Y-%m-%d"),
+            "Actor": self.actor.name if self.actor else "N/A",
+            "Actor_ID": self._actor_id,
+            "Reason": self.reason
+        }
+```
+Devuelve la información clave del movimiento, como el nombre y código del producto, la cantidad, el tipo de movimiento (`in` o `out`), la fecha formateada, el nombre del actor y su ID, y la razón registrada.
+
+El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
+
 #### Payment:
 En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
 
