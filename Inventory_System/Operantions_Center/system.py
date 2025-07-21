@@ -110,11 +110,6 @@ class System(Inventory):
         print(f"Bill {bill._bill_id} created for {entity.name}.")
         return bill
 
-    def search_bill(self, bill_id): #** Si se usa??
-        if bill_id not in self.bills:
-            raise ValueError("Bill not found.")
-        return self.bills[bill_id]
-    
     def export_full_system(self, path="full_backup.json"):
         Extracts.export_full_system(self, path)
 
