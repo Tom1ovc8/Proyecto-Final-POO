@@ -10,5 +10,5 @@ class Customer:
         return {
             "name": self.name,
             "number_id": self.number_id,
-            "_id": self._id #*****, puede ser sin el guion???
+            "_id": self._id
         }
