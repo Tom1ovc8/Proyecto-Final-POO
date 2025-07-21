@@ -5,9 +5,6 @@ class State:
         self._condition = condition
         self._expiration_date = expiration_date
 
-    def get_condition(self):#*************************************
-        return self._condition
-
     def is_expired(self):
         if self._expiration_date:
             today = datetime.date.today()
