@@ -49,9 +49,6 @@ class System(Inventory):
         self.add_movement(movement) 
         print(f"Movement for {record.product.name} recorded successfully.")
         return True
-
-    def generate_movement_history(self): #*** Esperemos por el pdf
-        return [movement.to_dict() for movement in self.movements]
     
     def add_customer(self, customer):
         if customer._id in self.customers:
@@ -163,21 +160,30 @@ class System(Inventory):
 
     def export_actor_history_pdf(self, actor_id: str, filename=None):
         try:
-            actor = self.customers.get(actor_id) or self.suppliers.get(actor_id)
+            actor = (
+                self.customers.get(actor_id) or 
+                self.suppliers.get(actor_id)
+            )
             if not actor:
                 raise ValueError(f"No actor found with ID {actor_id}")
 
-            actor_type = "customer" if actor_id in self.customers else "supplier"
+            actor_type = (
+                "customer" if actor_id in self.customers else "supplier"
+            )
             actor_name = actor.name
 
-            filtered_movements = [m for m in self.movements if m._actor_id == actor_id]
+            filtered_movements = [
+                m for m in self.movements if m._actor_id == actor_id
+            ]
 
             if not filtered_movements:
                 print(f"No movements found for {actor_type} '{actor_name}'.")
                 return
 
             if not filename:
-                filename = f"{actor_type}_{actor_name.replace(' ', '_')}_history.pdf"
+                filename = (
+                    f"{actor_type}_{actor_name.replace(' ', '_')}_history.pdf"
+                )
 
             pdf = ActorHistoryPDF(actor_name, actor_type)
             pdf.generate(filtered_movements, filename)
@@ -186,18 +192,20 @@ class System(Inventory):
         except Exception as e:
             print(f"Error generating actor history PDF: {e}")
 
-    def export_sales_summary_pdf(self, filename="sales_summary.pdf", product_code=None):
+    def export_sales_summary_pdf(
+        self, filename="sales_summary.pdf", product_code=None
+    ):
         try:
-            # Filtrar movimientos
             movements = self.movements
             if product_code:
-                movements = [m for m in movements if m.product._code == product_code]
+                movements = [
+                    m for m in movements if m.product._code == product_code
+                ]
 
             if not movements:
-                print("No hay datos para generar el reporte.")
+                print("There're no data to make a report.")
                 return
-            
-            # Agrupar movimientos por producto
+
             summary = {}
             for m in movements:
                 code = m.product._code
@@ -215,12 +223,13 @@ class System(Inventory):
                     summary[code]["out"]["qty"] += m.amount
                     summary[code]["out"]["cost"] += m.amount * m.final_price
 
-            # Título dinámico
             title = f"Resumen de Ventas y Compras"
             if product_code:
-                title += f" - Producto: {summary[product_code]['name']} ({product_code})"
+                title += (
+                    f" - Producto: {summary[product_code]['name']} "
+                    f"({product_code})"
+                )
 
-            # Generar PDF
             pdf = SalesSummaryPDF(title)
             pdf.generate(summary, filename)
             print(f"Resumen generado en: {filename}")
