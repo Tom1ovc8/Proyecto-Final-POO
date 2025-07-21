@@ -16,6 +16,28 @@ Y adicional a eso, tenemos características extras como:
 
 <h2 align="center"> Índice </h2>
 
+- [Class Diagram]()
+- [Products]()
+  - [Product]()
+  - [State]()
+- [Inventory_Management[()
+  - [Inventory_Record]()
+  - [Location]()
+  - [Stock]()
+  - [Inventory]()
+- [People]()
+  - [Customer]()
+  - [Supplier]()
+- [Transactions]()
+  - [Movements]()
+  - [Payment]()
+  - [Bills]()
+- [Operations_Center]()
+  - [System]()
+  - [Extracts]()
+  - [Generatepdf]()
+  - [App]()
+
 -----------
 
 <h3 align="center"> Class Diagram </h3>
