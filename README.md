@@ -432,7 +432,6 @@ class Payment:
         raise NotImplementedError("Subclasses must implement the to_dict() method.")
 ```
 
-#### Card(Payment):
 La clase `Card` hereda de `Payment`, y representa un método de pago con tarjeta. En su constructor (`__init__`) recibimos el número de tarjeta y el código CVV. Usamos `super()` para llamar al constructor de la clase base.
 
 ```python
