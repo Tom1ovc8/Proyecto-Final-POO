@@ -355,6 +355,54 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 <h3 align="center"> Products </h3>
 
+#### Bills:
+Este módulo permite gestionar facturas de compras o ventas, asociadas a una entidad (ya sea un cliente o un proveedor), con una lista de productos, sus cantidades, precios y el método de pago correspondiente.
+
+#### BillItem:
+La clase `BillItem` representa un único ítem dentro de una factura. Contiene tres atributos esenciales: el `producto`, la `cantidad` adquirida, y el `precio` unitario de dicho producto.
+
+```python
+class BillItem:
+    def __init__(self, product, quantity, price):
+        self.product = product
+        self.quantity = quantity
+        self.price = price
+```
+
+Con el método `get_total_price`, calculamos el precio total del ítem multiplicando la cantidad por el precio unitario.
+
+```python
+    def get_total_price(self):
+        return self.quantity * self.price
+```
+
+El método `to_dict` permite convertir el ítem a un diccionario de Python, útil para serialización o almacenamiento. Incluye el nombre y código del producto, la cantidad, el precio unitario y el total.
+
+```python
+    def to_dict(self):
+        return {
+            "Product": self.product.name,
+            "Code": self.product._code,
+            "Quantity": self.quantity,
+            "Price": self.price,
+            "Total": self.get_total_price()
+        }
+```
+
+La clase `Bill` representa una factura completa. Esta incluye una entidad (puede ser un cliente o un proveedor), la fecha de emisión, un identificador único, el método de pago, y una lista de ítems (`BillItem`) que componen la factura.
+
+```python
+class Bill:
+    def __init__(self, entity, payment_method):
+        self._bill_id = str(uuid.uuid4())
+        self.date = datetime.now()
+        self.entity = entity
+        self.entity_type = "Customer" if isinstance(entity, Customer) else "Supplier"
+        self.payment_method = payment_method
+        self.items = []
+```
+En este constructor, se genera automáticamente un ID único para la factura usando `uuid4`, y se registra la fecha actual usando `datetime.now()`. Se identifica el tipo de entidad (`Customer` o `Supplier`) verificando la clase del objeto recibido. También se inicializa la lista vacía de ítems que luego se agregarán a la factura.
+
 #### Payment:
 En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
 
