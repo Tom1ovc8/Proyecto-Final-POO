@@ -13,7 +13,9 @@ class Movement:
             raise TypeError("actor must be a Customer or Supplier")
         self.actor = actor
         self._actor_id = actor._id
-        self.actor_type = "customer" if isinstance(actor, Customer) else "supplier"
+        self.actor_type = (
+            "customer" if isinstance(actor, Customer) else "supplier"
+        )
         self.type = "out" if isinstance(actor, Customer) else "in"
         self.reason = reason
         self._bill_id = bill_id
