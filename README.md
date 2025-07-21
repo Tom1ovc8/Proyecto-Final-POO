@@ -22,11 +22,17 @@ Y adicional a eso, tenemos características extras como:
 
 -----------
 
+<h3 align="center"> Products </h3>
+
+vsvsv
+
+-----------
+
 <h3 align="center"> Inventory_Management </h3>
 
 #### Inventory Record:
 
-En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`.
+En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`. Estos van a actuar como objetos.
 
 ```python
 class InventoryRecord:
@@ -48,98 +54,6 @@ Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio
 ```
 
 Convertimos los atributos de nuestra clase `InventoryRecord` en un diccionario con las claves: `product`, `stock` y `location`.
-
-#### Inventory:
-
-En la clase `Inventory` definimos dos atributos donde almacenaremos datos, que se crean directamente desde el objeto sin necesidad de recibirlos como parámetro. Estos son: `self.records` que es un diccionario vacío, y `self.movements` que es una lista vacía.
-
-```python
-class Inventory:
-    def __init__(self):
-        self.records = {}
-        self.movements = []
-```
-
-Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
-
-```python
-    def add_record(self, record):
-        code = record.product.code
-        if code not in self.records:
-            self.records[code] = record
-        else:
-            print("This product already exists in the inventory.")
-```
-
-Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`. En caso de que el código no exista en el diccionario, retorna `None`.
-
-```python
-    def get_record(self, code):
-        return self.records.get(code)
-```
-
-Se definió la función `remove_record` para, como lo dice su nombre, poder remover el registro de código de un producto por medio de la instrucción `del`. La función va a buscar el código de la biblioteca de registros. Si se encuentra el código, se procede con la función correctamente y se elimina el registro de la biblioteca. Si el código no se encuentra, el sistema arroja el mensaje “*No record found with this code*”.
-
-```python
-    def remove_record(self, code):
-        if code in self.records:
-            del self.records[code]
-        else:
-            print("No record found with this code.")
-```
-
-Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. El comando `product_code` se define como el código del producto del movimiento. `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
-
-```python
-    def add_movement(self, movement):
-        self.movements.append(movement)
-        product_code = movement.product.code
-        delta = movement.get_delta()
-        self.records[product_code].stock.update_stock(delta, movement)
-```
-
-En caso de que se quiera consultar cada movimiento, se definió la función `get_movements_by_code`, que permite hacer la consulta de todos los movimientos en forma de lista de un producto en especifico por medio de su código.
-
-```python
-    def get_movements_by_code(self, code):
-        return [
-            movement for movement in self.movements if 
-                movement.product.code == code
-        ]
-```
-
-El método `generate_stock_report` genera un reporte (`report` que es una lista vacía) del estado actual del inventario, producto por producto. Para cada producto guardado en el diccionario de registros, el método agrega un diccionario con los datos del producto: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto) y `”Status”` (estado en el que se encuentra el stock del producto: *Suficiente, bajo o agotado*, según el mínimo y máximo establecido).
-
-```python
-    def generate_stock_report(self):
-        report = []
-        for record in self.records.values():
-            product = record.product
-            stock = record.stock
-            report.append({
-                "Name": product.name,
-                "Code": product.code,
-                "Current Stock": stock.get_actual_stock(),
-                "Status": stock.check_stock()
-            })
-        return report
-```
-
-El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este revisa producto por producto y su estado de stock e identifica si esta o no por debajo del mínimo. En caso de que si lo esté, crea una lista de sugerencias vacía `suggestions` donde va a agregar los productos que necesitan el restock con la siguiente información: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto), y `”Minimum Required”` (el mínimo necesario de stock definido como `record.stock.minimum_stock`).
-
-```python
-    def restock_suggestions(self):
-        suggestions = []
-        for record in self.records.values():
-            if record.stock.check_stock() == "Stock is below the minimum.":
-                suggestions.append({
-                    "Name": record.product.name,
-                    "Code": record.product.code,
-                    "Current Stock": record.stock.get_actual_stock(),
-                    "Minimum Required": record.stock.minimum_stock
-                })
-        return suggestions
-```
 
 #### Location:
 
@@ -289,10 +203,97 @@ El método `to_dict` retorna el stock actual, el stock mínimo y el stock máxim
         }       
 ```
 
------------
+#### Inventory:
 
-<h3 align="center"> Operations_Center </h3>
+En la clase `Inventory` definimos dos atributos donde almacenaremos datos, que se crean directamente desde el objeto sin necesidad de recibirlos como parámetro. Estos son: `self.records` que es un diccionario vacío, y `self.movements` que es una lista vacía.
 
+```python
+class Inventory:
+    def __init__(self):
+        self.records = {}
+        self.movements = []
+```
+
+Al método `add_record` le definimos un atributo `record`, el cual usaremos posteriormente para crear el registro de código de un producto (esta acción la llamamos `code`). La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
+
+```python
+    def add_record(self, record):
+        code = record.product.code
+        if code not in self.records:
+            self.records[code] = record
+        else:
+            print("This product already exists in the inventory.")
+```
+
+Definimos la función `get_record`, la cual nos servirá para consultar el código de algún producto registrado previamente en el diccionario `records`. En caso de que el código no exista en el diccionario, retorna `None`.
+
+```python
+    def get_record(self, code):
+        return self.records.get(code)
+```
+
+Se definió la función `remove_record` para, como lo dice su nombre, poder remover el registro de código de un producto por medio de la instrucción `del`. La función va a buscar el código de la biblioteca de registros. Si se encuentra el código, se procede con la función correctamente y se elimina el registro de la biblioteca. Si el código no se encuentra, el sistema arroja el mensaje “*No record found with this code*”.
+
+```python
+    def remove_record(self, code):
+        if code in self.records:
+            del self.records[code]
+        else:
+            print("No record found with this code.")
+```
+
+Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. El comando `product_code` se define como el código del producto del movimiento. `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
+
+```python
+    def add_movement(self, movement):
+        self.movements.append(movement)
+        product_code = movement.product.code
+        delta = movement.get_delta()
+        self.records[product_code].stock.update_stock(delta, movement)
+```
+
+En caso de que se quiera consultar cada movimiento, se definió la función `get_movements_by_code`, que permite hacer la consulta de todos los movimientos en forma de lista de un producto en especifico por medio de su código.
+
+```python
+    def get_movements_by_code(self, code):
+        return [
+            movement for movement in self.movements if 
+                movement.product.code == code
+        ]
+```
+
+El método `generate_stock_report` genera un reporte (`report` que es una lista vacía) del estado actual del inventario, producto por producto. Para cada producto guardado en el diccionario de registros, el método agrega un diccionario con los datos del producto: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto) y `”Status”` (estado en el que se encuentra el stock del producto: *Suficiente, bajo o agotado*, según el mínimo y máximo establecido).
+
+```python
+    def generate_stock_report(self):
+        report = []
+        for record in self.records.values():
+            product = record.product
+            stock = record.stock
+            report.append({
+                "Name": product.name,
+                "Code": product.code,
+                "Current Stock": stock.get_actual_stock(),
+                "Status": stock.check_stock()
+            })
+        return report
+```
+
+El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este revisa producto por producto y su estado de stock e identifica si esta o no por debajo del mínimo. En caso de que si lo esté, crea una lista de sugerencias vacía `suggestions` donde va a agregar los productos que necesitan el restock con la siguiente información: `”Name”` (nombre del producto), `”Code”` (código del producto), `”Current Stock”` (stock actual del producto), y `”Minimum Required”` (el mínimo necesario de stock definido como `record.stock.minimum_stock`).
+
+```python
+    def restock_suggestions(self):
+        suggestions = []
+        for record in self.records.values():
+            if record.stock.check_stock() == "Stock is below the minimum.":
+                suggestions.append({
+                    "Name": record.product.name,
+                    "Code": record.product.code,
+                    "Current Stock": record.stock.get_actual_stock(),
+                    "Minimum Required": record.stock.minimum_stock
+                })
+        return suggestions
+```
 -----------
 
 <h3 align="center"> People </h3>
@@ -353,18 +354,161 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 -----------
 
-<h3 align="center"> Products </h3>
-
-vsvsv
-
------------
-
 <h3 align="center"> Transactions </h3>
+
+#### Movements:
+
+La clase `Movement` representa un registro individual de movimiento de inventario. Cada movimiento está relacionado con un producto, una cantidad (`amount`), una razón o motivo del movimiento, y un actor (cliente o proveedor) que lo genera. También se registra la fecha y se determina si el movimiento es de entrada o salida.
+
+El constructor `__init__` es un método inicializa un nuevo movimiento con la información proporcionada: el producto involucrado, la cantidad de unidades, el actor (cliente o proveedor) que lo realiza, y la razón del movimiento.
+
+```python
+class Movement:
+    def __init__(self, product, amount, actor, reason):
+        self.product = product
+        self.amount = amount
+        self.date = datetime.now()
+        if not isinstance(actor, (Customer, Supplier)):
+            raise TypeError("actor must be a Customer or Supplier")
+        self.actor = actor
+        self._actor_id = actor._id
+        self.actor_type = "customer" if isinstance(actor, Customer) else "supplier"
+        self.type = "out" if isinstance(actor, Customer) else "in"
+        self.reason = reason
+```
+-Se guarda la referencia del producto y la cantidad (`amount`) directamente.
+
+-Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
+
+-Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
+
+-Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
+
+-Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
+
+-Por último, se guarda la razón del movimiento.
+
+El metodo `get_delta` calcula el cambio que representa este movimiento sobre el inventario del producto.
+
+```python
+    def get_delta(self):
+        return self.amount if self.type == "in" else -self.amount
+```
+-Si el movimiento es de entrada (`"in"`), devuelve la cantidad en positivo.
+
+-Si el movimiento es de salida (`"out"`), devuelve la cantidad como negativa.
+
+-Este resultado puede utilizarse directamente para actualizar el inventario del producto.
+
+El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
+
+```python
+    def to_dict(self):
+        return {
+            "Product": self.product.name,
+            "Code": self.product._code,
+            "Quantity": self.amount,
+            "Type": self.type,
+            "Date": self.date.strftime("%Y-%m-%d"),
+            "Actor": self.actor.name if self.actor else "N/A",
+            "Actor_ID": self._actor_id,
+            "Reason": self.reason
+        }
+```
+Devuelve la información clave del movimiento, como el nombre y código del producto, la cantidad, el tipo de movimiento (`in` o `out`), la fecha formateada, el nombre del actor y su ID, y la razón registrada.
+
+#### Payment:
+En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
+
+```python
+class Payment:
+    def __init__(self):
+        pass
+
+    def pay(self, amount):
+        raise NotImplementedError("Subclasses must implement the pay() method.")
+
+    def to_dict(self):
+        raise NotImplementedError("Subclasses must implement the to_dict() method.")
+```
+
+#### Card(Payment):
+La clase `Card` hereda de `Payment`, y representa un método de pago con tarjeta. En su constructor (`__init__`) recibimos el número de tarjeta y el código CVV. Usamos `super()` para llamar al constructor de la clase base.
+
+```python
+class Card(Payment):
+    def __init__(self, number, cvv):
+        super().__init__()
+        self._number = number
+        self._cvv = cvv
+```
+El método `pay` en esta clase simula la acción de pagar con tarjeta. Imprime un mensaje en consola que indica cuánto se va a pagar y muestra los últimos 4 dígitos del número de la tarjeta.
+
+```python
+    def pay(self, amount):
+        print(f"Paying {amount} with card ending in {self._number[-4:]}")
+        return True
+```
+
+El método `to_dict` convierte los datos de la tarjeta en un diccionario, ocultando el número completo por motivos de seguridad. Solo muestra los últimos 4 dígitos.
+
+```python
+    def to_dict(self):
+        return {
+            "method": "Card",
+            "card_number": f"**** **** **** {self._number[-4:]}"
+        }
+```
+
+Finalmente, con el método `__str__`, devolvemos una representación en texto legible del objeto `Card`, también mostrando solo los últimos dígitos del número.
+
+```python
+    def __str__(self):
+        return f"Card - **** **** **** {self._number[-4:]}"
+```
+
+La clase `Cash` también hereda de `Payment`, pero representa pagos en efectivo. En su constructor, se guarda el valor entregado por el cliente.
+
+```python
+class Cash(Payment):
+    def __init__(self, cash_given):
+        super().__init__()
+        self.cash_given = cash_given
+```
+
+El método `pay` verifica si el efectivo entregado es suficiente para cubrir el valor del pago. Si es suficiente, calcula el cambio y lo imprime; si no lo es, informa cuánto falta.
+
+```python
+    def pay(self, amount):
+        if self.cash_given >= amount:
+            change = self.cash_given - amount
+            print(f"Cash payment accepted. Change returned: {change}")
+            return True
+        else:
+            print(f"Insufficient cash. Missing: {amount - self.cash_given}")
+            return False
+```
+
+El método `to_dict` convierte los datos de pago en efectivo en un diccionario que guarda el método y el valor entregado.
+
+```python
+    def to_dict(self):
+        return {
+            "method": "Cash",
+            "cash_given": self.cash_given
+        }
+```
+
+Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, indicando cuánto dinero entregó el cliente.
+
+```python
+    def __str__(self):
+        return f"Cash - Given: ${self.cash_given:.2f}"
+```
 
 #### Bills:
 Este módulo permite gestionar facturas de compras o ventas, asociadas a una entidad (ya sea un cliente o un proveedor), con una lista de productos, sus cantidades, precios y el método de pago correspondiente.
 
-#### BillItem:
 La clase `BillItem` representa un único ítem dentro de una factura. Contiene tres atributos esenciales: el `producto`, la `cantidad` adquirida, y el `precio` unitario de dicho producto.
 
 ```python
@@ -439,159 +583,8 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
         }
 ```
 
-#### Movements:
+-----------
 
-La clase `Movement` representa un registro individual de movimiento de inventario. Cada movimiento está relacionado con un producto, una cantidad (`amount`), una razón o motivo del movimiento, y un actor (cliente o proveedor) que lo genera. También se registra la fecha y se determina si el movimiento es de entrada o salida.
+<h3 align="center"> Operations_Center </h3>
 
-#### Constructor `__init__`
-
-Este método inicializa un nuevo movimiento con la información proporcionada: el producto involucrado, la cantidad de unidades, el actor (cliente o proveedor) que lo realiza, y la razón del movimiento.
-
-```python
-class Movement:
-    def __init__(self, product, amount, actor, reason):
-        self.product = product
-        self.amount = amount
-        self.date = datetime.now()
-        if not isinstance(actor, (Customer, Supplier)):
-            raise TypeError("actor must be a Customer or Supplier")
-        self.actor = actor
-        self._actor_id = actor._id
-        self.actor_type = "customer" if isinstance(actor, Customer) else "supplier"
-        self.type = "out" if isinstance(actor, Customer) else "in"
-        self.reason = reason
-```
--Se guarda la referencia del producto y la cantidad (`amount`) directamente.
-
--Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
-
--Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
-
--Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
-
--Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
-
--Por último, se guarda la razón del movimiento.
-
-El metodo `get_delta` calcula el cambio que representa este movimiento sobre el inventario del producto.
-
-```python
-    def get_delta(self):
-        return self.amount if self.type == "in" else -self.amount
-```
--Si el movimiento es de entrada (`"in"`), devuelve la cantidad en positivo.
-
--Si el movimiento es de salida (`"out"`), devuelve la cantidad como negativa.
-
--Este resultado puede utilizarse directamente para actualizar el inventario del producto.
-
-El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
-
-```python
-    def to_dict(self):
-        return {
-            "Product": self.product.name,
-            "Code": self.product._code,
-            "Quantity": self.amount,
-            "Type": self.type,
-            "Date": self.date.strftime("%Y-%m-%d"),
-            "Actor": self.actor.name if self.actor else "N/A",
-            "Actor_ID": self._actor_id,
-            "Reason": self.reason
-        }
-```
-Devuelve la información clave del movimiento, como el nombre y código del producto, la cantidad, el tipo de movimiento (`in` o `out`), la fecha formateada, el nombre del actor y su ID, y la razón registrada.
-
-
-#### Payment:
-En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
-
-```python
-class Payment:
-    def __init__(self):
-        pass
-
-    def pay(self, amount):
-        raise NotImplementedError("Subclasses must implement the pay() method.")
-
-    def to_dict(self):
-        raise NotImplementedError("Subclasses must implement the to_dict() method.")
-```
-
-#### Card(Payment):
-La clase `Card` hereda de `Payment`, y representa un método de pago con tarjeta. En su constructor (`__init__`) recibimos el número de tarjeta y el código CVV. Usamos `super()` para llamar al constructor de la clase base.
-
-```python
-class Card(Payment):
-    def __init__(self, number, cvv):
-        super().__init__()
-        self._number = number
-        self._cvv = cvv
-```
-El método `pay` en esta clase simula la acción de pagar con tarjeta. Imprime un mensaje en consola que indica cuánto se va a pagar y muestra los últimos 4 dígitos del número de la tarjeta.
-
-```python
-    def pay(self, amount):
-        print(f"Paying {amount} with card ending in {self._number[-4:]}")
-        return True
-```
-
-El método `to_dict` convierte los datos de la tarjeta en un diccionario, ocultando el número completo por motivos de seguridad. Solo muestra los últimos 4 dígitos.
-
-```python
-    def to_dict(self):
-        return {
-            "method": "Card",
-            "card_number": f"**** **** **** {self._number[-4:]}"
-        }
-```
-
-Finalmente, con el método `__str__`, devolvemos una representación en texto legible del objeto `Card`, también mostrando solo los últimos dígitos del número.
-
-```python
-    def __str__(self):
-        return f"Card - **** **** **** {self._number[-4:]}"
-```
-
-
-
-#### Cash(Payment):
-La clase `Cash` también hereda de `Payment`, pero representa pagos en efectivo. En su constructor, se guarda el valor entregado por el cliente.
-
-```python
-class Cash(Payment):
-    def __init__(self, cash_given):
-        super().__init__()
-        self.cash_given = cash_given
-```
-
-El método `pay` verifica si el efectivo entregado es suficiente para cubrir el valor del pago. Si es suficiente, calcula el cambio y lo imprime; si no lo es, informa cuánto falta.
-
-```python
-    def pay(self, amount):
-        if self.cash_given >= amount:
-            change = self.cash_given - amount
-            print(f"Cash payment accepted. Change returned: {change}")
-            return True
-        else:
-            print(f"Insufficient cash. Missing: {amount - self.cash_given}")
-            return False
-```
-
-El método `to_dict` convierte los datos de pago en efectivo en un diccionario que guarda el método y el valor entregado.
-
-```python
-    def to_dict(self):
-        return {
-            "method": "Cash",
-            "cash_given": self.cash_given
-        }
-```
-
-Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, indicando cuánto dinero entregó el cliente.
-
-```python
-    def __str__(self):
-        return f"Cash - Given: ${self.cash_given:.2f}"
-```
 
