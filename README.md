@@ -485,6 +485,8 @@ El metodo `get_delta` calcula el cambio que representa este movimiento sobre el 
 
 -Este resultado puede utilizarse directamente para actualizar el inventario del producto.
 
+El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
+
 ```python
     def to_dict(self):
         return {
@@ -500,7 +502,6 @@ El metodo `get_delta` calcula el cambio que representa este movimiento sobre el 
 ```
 Devuelve la información clave del movimiento, como el nombre y código del producto, la cantidad, el tipo de movimiento (`in` o `out`), la fecha formateada, el nombre del actor y su ID, y la razón registrada.
 
-El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
 
 #### Payment:
 En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
