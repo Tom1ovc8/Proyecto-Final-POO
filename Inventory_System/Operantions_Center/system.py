@@ -123,10 +123,9 @@ class System(Inventory):
         pdf.output(filename)
 
     def export_movements_pdf(self, filename="movements_report.pdf"):
-        data = [m.to_dict() for m in self.movements]
+        data = [movement.to_dict() for movement in self.movements]
         pdf = MovementsReportPDF()
         pdf.generate(data)
-        pdf.output(filename)
 
     def export_bill_pdf(self, bill_id: str, filename="bill_report.pdf"):
         try:
