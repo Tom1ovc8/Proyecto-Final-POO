@@ -452,7 +452,9 @@ Finalmente, con el método `__str__`, devolvemos una representación en texto le
     def __str__(self):
         return f"Card - **** **** **** {self._number[-4:]}"
 ```
+
 -----------
+
 #### Cash(Payment):
 La clase `Cash` también hereda de `Payment`, pero representa pagos en efectivo. En su constructor, se guarda el valor entregado por el cliente.
 
