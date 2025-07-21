@@ -242,7 +242,7 @@ class Extracts:
                     and x.contact_number == supplier["contact_number"]
                 ), None
             )
-            if not existing:#*********, porque solo supplier?
+            if not existing:
                 system.add_supplier(Extracts.dict_to_supplier(supplier))
         for record in data["records"]:
             product_code = record["product"]["code"]
