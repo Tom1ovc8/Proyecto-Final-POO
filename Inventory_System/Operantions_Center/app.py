@@ -828,8 +828,8 @@ class InventoryApp:
                     else:
                         self.system.add_supplier(actor)
 
-                for mv in manual_movements:
-                    self.system.add_movement(mv)
+                for movement in manual_movements:
+                    self.system.add_movement(movement)
  
                 bill = self.system.create_bill(actor, all_movements, payment)
                 if bill is None:
