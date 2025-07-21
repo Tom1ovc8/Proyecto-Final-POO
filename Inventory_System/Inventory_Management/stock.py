@@ -9,13 +9,6 @@ class Stock:
 
     def get_actual_stock(self):
         return self._actual_stock
-
-    def check_stock(self):#******************
-        if self._actual_stock < self.minimum_stock:
-            return "Stock is below the minimum."
-        elif self._actual_stock > self.maximum_stock:
-            return "Stock exceeds the maximum."
-        return "Stock is within an acceptable range."
         
     def is_valid_update(self, delta):
         new_stock = self._actual_stock + delta
