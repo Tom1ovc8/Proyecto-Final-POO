@@ -356,11 +356,18 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 <h3 align="center"> Products </h3>
 
 #### Payment:
-Constructor vacío de la clase base `Payment`. Esta clase es abstracta: no se usa directamente, sino como base para otras clases como `Card` o `Cash`.
+En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
 
 ```python
-  def __init__(self):
-    pass
+class Payment:
+    def __init__(self):
+        pass
+
+    def pay(self, amount):
+        raise NotImplementedError("Subclasses must implement the pay() method.")
+
+    def to_dict(self):
+        raise NotImplementedError("Subclasses must implement the to_dict() method.")
 ```
 
 -----------
