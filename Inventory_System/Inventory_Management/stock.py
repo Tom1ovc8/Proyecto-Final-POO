@@ -14,7 +14,7 @@ class Stock:
         new_stock = self._actual_stock + delta
         return 0 <= new_stock <= self.maximum_stock
 
-    def update_stock(self, delta, movement):#*** Mirar si siempre manda un movement
+    def update_stock(self, delta, movement):
         if not self.is_valid_update(delta):
             print("Cannot update stock.")
             return False
