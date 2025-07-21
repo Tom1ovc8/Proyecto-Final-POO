@@ -355,6 +355,8 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 <h3 align="center"> Products </h3>
 
+vsvsv
+
 -----------
 
 <h3 align="center"> Transactions </h3>
