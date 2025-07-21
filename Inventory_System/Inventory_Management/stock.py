@@ -27,17 +27,13 @@ class Stock:
         self._record.append(movement)
         return True
 
-    def update_stock_limits(self, new_min, new_max):#**************
+    def update_stock_limits(self, new_min, new_max):
         if new_min < 0 or new_max < 0:
             raise ValueError("Stock limits cannot be negative.")
         if new_min > new_max:
             raise ValueError("Minimum stock cannot exceed maximum stock.")
         self.minimum_stock = new_min
         self.maximum_stock = new_max
-
-    def show_history(self): #****** si se usa??
-        for stock_record in self._record:
-            print(stock_record.to_dict())           
 
     def to_dict(self):
         return {
