@@ -10,10 +10,7 @@ class Inventory:
         else:
             print("This product already exists in the inventory.")
     
-    def get_record(self, code):#************
-        return self.records.get(code)
-    
-    def remove_record(self, code):#*** consola
+    def remove_record(self, code):
         if code in self.records:
             del self.records[code]
         else:
