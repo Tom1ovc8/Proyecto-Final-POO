@@ -20,7 +20,7 @@ Y adicional a eso, tenemos características extras como:
 - [Products]()
   - [Product]()
   - [State]()
-- [Inventory_Management[()
+- [Inventory_Management]()
   - [Inventory_Record]()
   - [Location]()
   - [Stock]()
