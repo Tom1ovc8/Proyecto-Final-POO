@@ -355,6 +355,14 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 <h3 align="center"> Products </h3>
 
+#### Payment:
+Constructor vacío de la clase base `Payment`. Esta clase es abstracta: no se usa directamente, sino como base para otras clases como `Card` o `Cash`.
+
+```python
+  def __init__(self):
+    pass
+```
+
 -----------
 
 <h3 align="center"> Transactions </h3>
