@@ -403,6 +403,36 @@ class Bill:
 ```
 En este constructor, se genera automáticamente un ID único para la factura usando `uuid4`, y se registra la fecha actual usando `datetime.now()`. Se identifica el tipo de entidad (`Customer` o `Supplier`) verificando la clase del objeto recibido. También se inicializa la lista vacía de ítems que luego se agregarán a la factura.
 
+Con el método `add_item`, se agregan productos a la factura. Se crea un nuevo objeto `BillItem` con el producto, cantidad y precio, y luego se añade a la lista de ítems.
+
+```python
+    def add_item(self, product, quantity, price):
+        item = BillItem(product, quantity, price)
+        self.items.append(item)
+```
+
+El método `calculate_total` suma el total de todos los ítems que han sido agregados a la factura, usando la función `get_total_price` definida en cada `BillItem`.
+
+```python
+    def calculate_total(self):
+        return sum(item.get_total_price() for item in self.items)
+```
+
+Finalmente, `to_dict` convierte toda la información de la factura en un diccionario estructurado. Esto incluye el ID, la fecha en formato año-mes-día, el nombre de la entidad, su tipo, el método de pago (convertido a diccionario si está presente), la lista de ítems (también como diccionarios), y el total general.
+
+```python
+    def to_dict(self):
+        return {
+            "bill_id": self._bill_id,
+            "date": self.date.strftime("%Y-%m-%d"),
+            "entity": self.entity.name,
+            "entity_type": self.entity_type,
+            "payment_method": self.payment_method.to_dict() if self.payment_method else "N/A",
+            "items": [item.to_dict() for item in self.items],
+            "total": self.calculate_total()
+        }
+```
+
 #### Payment:
 En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
 
