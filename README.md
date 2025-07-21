@@ -355,6 +355,10 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 <h3 align="center"> Products </h3>
 
+-----------
+
+<h3 align="center"> Transactions </h3>
+
 #### Bills:
 Este módulo permite gestionar facturas de compras o ventas, asociadas a una entidad (ya sea un cliente o un proveedor), con una lista de productos, sus cantidades, precios y el método de pago correspondiente.
 
@@ -524,8 +528,4 @@ Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, in
     def __str__(self):
         return f"Cash - Given: ${self.cash_given:.2f}"
 ```
-
------------
-
-<h3 align="center"> Transactions </h3>
 
