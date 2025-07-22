@@ -772,11 +772,8 @@ def export_to_json(data, filename):
 Este metodo:
 
 -Guarda cualquier data (lista de diccionarios) en un archivo .json.
-
 -Usa indentación para hacerlo legible.
-
 -ensure_ascii=False permite guardar caracteres especiales (como acentos).
-
 -Captura errores de escritura y lanza una excepción explicativa.
 
 
