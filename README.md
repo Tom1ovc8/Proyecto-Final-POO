@@ -1206,9 +1206,93 @@ En caso de que se haya escogido `expiration date`, tambien se verifica que todos
                         )
 ```
 
+Continuando con el campo de proveedores, en caso de que se haya elegido `existent`, se toman los proveedores del diccionario uno por uno y el nombre se guarda en la variable `supplier`. En caso de que se haya elegido `new`, se verifica que los campos `supplier_name` y `supplier contact` hayan sido diligenciados, en caso de que no, retorna el error `"You must enter the supplier name and contact"`. Se verifica tambien que el `supplier_contact` sea un valor numerico, y en caso de que no, retorna el mensaje `"The contact number must be numeric only"`.
 
+```python
+                if (
+                    supplier_option.get() == "existent" and
+                    self.system.suppliers
+                ):
+                    supplier = next(
+                        (
+                            s for s in self.system.suppliers.values() 
+                            if s.name == supplier_var.get()
+                         ), None
+                    )
+                else:
+                    supplier_name = new_supplier_name.get().strip()
+                    supplier_contact = new_supplier_contact.get().strip()
+                    if not supplier_name or not supplier_contact:
+                        raise ValueError(
+                            "You must enter the supplier name and contact."
+                        )
+                    if not supplier_contact.isdigit():
+                        raise ValueError(
+                            "The contact number must be numeric only"
+                        )
+```
 
-Definimos la función `export_to_json`
+Si el proveedor es existente, se agrega a la variable `supplier`. Si no, a la variable `supplier` se le asignan los valores de `Supplier(supplier_name, supplier_contact)` y se añade a la biblioteca de proveedores por medio del metodo `system.add_supplier`.
+
+```python
+                    existing = [
+                        supplier for supplier in self.system.suppliers.values() 
+                        if (
+                            supplier.name == supplier_name and
+                            supplier.contact == supplier_contact
+                        )
+                    ]
+                    if existing:
+                        supplier = existing[0]
+                    else:
+                        supplier = Supplier(supplier_name, supplier_contact)
+                        self.system.add_supplier(supplier)
+```
+
+A la variable `product` se le asignan los valores de `Product(name, category, code, price, state)` y se añaden a la biblioteca de registros junto con los datos de `product`, `amount`, `supplier` y `reason` que sera `"New add"`. Si el registro se realiza correctamente, se generará un messagebox con el mensaje `"Success", "Product added"` especificando el producto. En caso de que ocurra un error, se generará un messagebox con el mensaje `"Error", "Couldn't add the product"` y especificando el error ocurrido.
+
+```python
+                product = Product(name, category, code, price, state)
+                self.system.entry_record(
+                    product, amount, supplier, reason="New add"
+                )
+                messagebox.showinfo("Success", f"Product '{name}' added.")
+                dialog.destroy()
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                messagebox.showerror(
+                    "Error", f"Couldn't add the product:\n{str(e)}"
+                )
+```
+
+Finalmente, se genera un botón llamado `Add Product` con el comando `submit`, que va a enviar los datos a los diccionarios correspondientes y cerrará la ventana.
+
+```python
+        ttk.Button(
+            main_frame, text="Add Product", command=submit
+        ).pack(pady=10)
+```
+
+Definimos la función `export_to_json` para abrir guardar el archivo .JSON con el nombre `"Save Backup"`. Si la ruta seleccionada por el usuario es correcta, se genera un messagebox con el mensaje `"Success", "Backup saved in:"` y especifica la ruta seleccionada. En caso de que ocurra algún error, se genera un messagebox con el mensaje `"Error", "Couldn't export"` y especificando el error ocurrido.
+
+```python
+    def export_to_json(self):
+        filepath = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON Files", "*.json")],
+            title="Save Backup"
+        )
+        if filepath:
+            try:
+                self.system.export_full_system(filepath)
+                messagebox.showinfo(
+                    "Success", f"Backup saved in:\n{filepath}"
+                )
+            except Exception as e:
+                messagebox.showerror("Error", f"Couldn't export:\n{e}")
+```
 
 Definimos la función `add_movement_method`
 
