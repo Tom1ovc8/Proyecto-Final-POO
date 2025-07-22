@@ -1127,6 +1127,85 @@ Si se eligio la opción de añadir un nuevo proveedor, entonces se generarán do
         )
 ```
 
+Se define la función `toggle_supplier_frames()` para que, si se eligio escoger un proveedor existente, se oculte el menu de agregar un nuevo proveedor y viceversa.
+
+```python
+        def toggle_supplier_frames():
+            if supplier_option.get() == "existent":
+                new_supplier_frame.pack_forget()
+                existing_supplier_frame.pack(pady=5, fill="x")
+            else:
+                existing_supplier_frame.pack_forget()
+                new_supplier_frame.pack(pady=5, fill="x")
+
+        supplier_option.trace_add(
+            "write", lambda *args: toggle_supplier_frames()
+        )
+```
+
+La función `submit` la usaremos para guardar el producto con todos los parametros dados en el diccionario de registros de `System`. Esta función primeramente verifica que cada uno de los campos de ingreso de datos no este vacia, es decir que todos los campos tengan algun valor en ellas. En caso de que alguno de los campos `name`, `category`, `code`, `prices_str` o `amount_str` no tenga valor alguno, va a retornar el mensaje de error `"All fields must be filled"`.
+
+```python
+        def submit():
+            try:
+                name = entries["Name"].get().strip()
+                category = entries["Category"].get().strip()
+                code = entries["Code"].get().strip()
+                price_str = entries["Price"].get().strip()
+                amount_str = entries["Initial Amount"].get().strip()
+
+                if (
+                    not name or not category or not code or
+                    not price_str or not amount_str
+                ):
+                    raise ValueError("All fields must be filled")
+```
+
+Si todos los campos de texto tienen algun valor, entonces la función comienza a evaluar los campos uno por uno para manejar las diferentes excepciones que puedan tener estas por separado. Comienza con los campos `price` y `amount`, que se guardarán como variables `float` e `int` respectivamente. Si el precio o el monto son iguales o menores a 0, va a retornar el error `"Price and Amount must be bigger than zero"`. En caso de que en estos campos no se hayan ingresado valores numericos, va a retornar el error `"Price and Amount must be numeric"`.
+
+```python
+                try:
+                    price = float(price_str)
+                    amount = int(amount_str)
+                    if price <= 0 or amount <= 0:
+                        raise ValueError(
+                            "Price and Amount must be bigger than zero"
+                        )
+                except ValueError:
+                    raise ValueError("Price and Amount must be numeric.")
+```
+
+Luego, se evalua el campo `state_type`, donde si se escogio `"condition"`, se verifica que se haya llenado el campo, o si no retorna el error `"You must fill the condition"`.
+
+```python
+                if state_type.get() == "condition":
+                    if (
+                        not condition_entry or
+                        not condition_entry.get().strip()
+                    ):
+                        raise ValueError("You must fill the codition.")
+                    state = State(condition=condition_entry.get().strip())
+```
+
+En caso de que se haya escogido `expiration date`, tambien se verifica que todos los campos de la fecha hayan sido diligenciados, o retornara el error `"You must fill the entire date"`. Cuando se llenen todos los campos, se tomarán las entradas de los campos y se hará una tupla con ellos llamada `state`, donde se verificará que esten bien diligenciadas las fechas, pues, en caso de que no, retornara el ValueError `"Date fields must be valid numbers"`.
+
+```python
+                else:
+                    if not year_entry or not month_entry or not day_entry:
+                        raise ValueError("You must fill the entire date.")
+                    try:
+                        state_tuple = (
+                            int(year_entry.get().strip()),
+                            int(month_entry.get().strip()),
+                            int(day_entry.get().strip())
+                        )
+                        state = State(expiration_date=state_tuple)
+                    except ValueError:
+                        raise ValueError(
+                            "Date fields must be valid numbers."
+                        )
+```
+
 
 
 Definimos la función `export_to_json`
