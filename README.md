@@ -1428,11 +1428,11 @@ Se definen los encabezados para la tabla: fecha, nombre del producto, código, c
 ```
 Se crea la lista `rows` para almacenar cada movimiento como una fila de la tabla. Para cada objeto `movement`:
 
--Se convierte la fecha a formato `YYYY-MM-DD`.
+- Se convierte la fecha a formato `YYYY-MM-DD`.
 
--Se accede al nombre del producto y su código (el cual es privado).
+- Se accede al nombre del producto y su código (el cual es privado).
 
--Se registra la cantidad de producto involucrado (`amount`), el tipo de movimiento (`type`), y la razón (`reason`).
+- Se registra la cantidad de producto involucrado (`amount`), el tipo de movimiento (`type`), y la razón (`reason`).
 
 Cada uno de estos datos se agrupa en una fila que se añade a la tabla.
 
