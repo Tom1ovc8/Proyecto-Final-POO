@@ -715,12 +715,52 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
 
 <h3 align="center"> Operations_Center </h3>
 
-<h3 align="center"> Extracts </h3>
+<h3 align="left"> Extracts </h3>
+
+La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, importar y reconstruir datos del sistema de inventario.
+
+<h4 align="left"> Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
+
+```python
+@staticmethod
+def get_movements(system):
+    return [movement.to_dict() for movement in system.movements]
+```
+
+Este metodo recorre todos los movimientos (`system.movements`) y llama a `to_dict()` en cada uno, convirtiéndolos en diccionarios para facilitar su exportación.
+
+```python
+@staticmethod
+def get_bills(system):
+    return [bill.to_dict() for bill in system.bills.values()]
+```
+Este metodo extrae todas las facturas del sistema (system.bills es un diccionario), las convierte a diccionario con to_dict() y retorna una lista con todas ellas.
+
+```python
+@staticmethod
+def get_records(system):
+    return [record.to_dict() for record in system.records.values()]
+```
+Este metodo convierte todos los registros de inventario (que contienen productos y stock) a formato de diccionario.
+
+```python
+@staticmethod
+def get_customers(system):
+    return [customer.to_dict() for customer in system.customers.values()]
+```
+Este metodo devuelve todos los clientes del sistema como una lista de diccionarios, útil para guardarlos o reconstruirlos luego.
+
+```python
+@staticmethod
+def get_suppliers(system):
+    return [supplier.to_dict() for supplier in system.suppliers.values()]
+```
+Este metodo es similar al anterior, pero para proveedores.
+
+<h4 align="left"> Exportación genérica de datos a archivos `.json` </h4>
+
+hi
 
 
-
-<h4 align="center"> Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
-
-efwq
 
 
