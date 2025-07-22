@@ -858,6 +858,100 @@ return Product(name, category, code, price, state)
 ```
 Retorna un objeto `Product` completo y listo para usarse.
 
+Importamos la biblioteca `tkinter` como `tk`, y de esta misma importamos los módulos `filedialog`, `messagebox`, `Toplevel`, `StringVar`, `OptionMenu` y `ttk`
+
+```python
+import tkinter as tk
+from tkinter import (
+    filedialog, messagebox, Toplevel, StringVar, OptionMenu, ttk
+)
+```
+
+<h3 align="left"> App </h3>
+
+De los distintos módulos de `Inventory_System`, importamos las clases `System`, `Extracts`, `Product`, `State`, `Supplier`, `Customer`, `Bill`, `Card`, `Cash` y `Movement`.
+
+```python 
+from Inventory_System.Operantions_Center.system import System
+from Inventory_System.Operantions_Center.extracts import Extracts
+from Inventory_System.Products.product import Product
+from Inventory_System.Products.state import State
+from Inventory_System.People.supplier import Supplier
+from Inventory_System.People.customer import Customer
+from Inventory_System.Transactions.bills import Bill
+from Inventory_System.Transactions.payment import Card, Cash
+from Inventory_System.Transactions.movements import Movement
+```
+
+Creamos una clase `InventoryApp`, en la cual vamos a definir absolutamente todo lo que tiene que ver con la interfaz grafica (GUI). Definimos el constructor `__init__` con las instancias `root` y `system`, y le damos el título `Inventory Management System` a nuestra aplicación. También especificamos el estilo a usar y el tamaño de la interfaz.
+
+```python
+class InventoryApp:
+    def __init__(self, root, system):
+        self.root = root
+        root.title("Inventory Management System")
+        self.system = system
+
+        style = ttk.Style()
+        style.theme_use("clam")
+
+        main_frame = ttk.Frame(root, padding=20)
+        main_frame.pack(fill="both", expand=True)
+```
+
+Definimos los botones que va a tener la interfaz principal, y que función va a tener cada uno de estos al ser presionado.
+
+```python
+        buttons = [
+            ("📂 Load JSON archive", self.load_json),
+            ("💾 Export to JSON archive", self.export_to_json),
+            ("➕ Add Product", self.add_product_method),
+            ("📋 Inventory Report", self.generate_inventory_pdf),
+            ("🔄 Add Movement", self.add_movement_method),
+            ("🧾 Cash Register", self.create_bill_method),
+            ("📋 Generate movements report", self.export_movements_report),
+            ("📜 Customer/Supplier History", self.generate_actor_history),
+            ("📤 Export Bill", self.export_bill),
+            ("📈 Sales Summary", self.generate_sales_summary),
+            ("📦 Restock Suggestions", self.show_restock_suggestions),
+            ("🚪 Quit", root.quit)
+        ]
+```
+
+Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text` y `command`, es decir, que tamaño va a tener cada botón, que va a decir cada uno, y que función va a tener. Se especifican las márgenes y se hace posible ser expandir el texto al expandir la interfaz.
+
+```python
+        for i, (text, command) in enumerate(buttons):
+            ttk.Button(
+                main_frame, text=text, command=command
+            ).pack(pady=6, fill="x")
+```
+
+Definimos la función `load_json`
+
+Definimos la función `generate_inventory_pdf`
+
+Definimos la función `generate_actor_history`
+
+Definimos la función `add_product_method`
+
+Definimos la función `export_to_json`
+
+Definimos la función `add_movement_method`
+
+Definimos la función `créate_bill_method`
+
+Definimos la función `export_movements_report`
+
+Definimos la función `export_bill`
+
+Definimos la función `generate_sales_summary`
+
+Definimos la función `show_restock_suggestions`
+
+Definimos la función `simple_input_dialog`
+
+
 
 
 
