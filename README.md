@@ -718,9 +718,7 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
 <h3 align="left"> Extracts </h3>
 
 La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, importar y reconstruir datos del sistema de inventario.
-***
-Es importante aclarar que, al principio de cada metodo, se utiliza el decorador @staticmethod en cada uno de los métodos de la clase Extracts porque estos métodos no necesitan acceder ni modificar ningún atributo o estado interno de una instancia específica de la clase. Es decir, su comportamiento depende exclusivamente de los datos que reciben como argumentos, no de propiedades internas de self o cls. Usar @staticmethod en este contexto permite organizar funcionalmente utilidades de exportación e importación dentro de una misma clase, sin necesidad de crear instancias de la misma, lo cual es más eficiente y claro desde el punto de vista del diseño del software.
-***
+*Es importante aclarar que, al principio de cada metodo, se utiliza el decorador `@staticmethod` en cada uno de los métodos de la clase `Extracts` porque estos métodos no necesitan acceder ni modificar ningún atributo o estado interno de una instancia específica de la clase. Es decir, su comportamiento depende exclusivamente de los datos que reciben como argumentos, no de propiedades internas de `self`. Usar `@staticmethod` en este contexto permite organizar funcionalmente utilidades de exportación e importación dentro de una misma clase, sin necesidad de crear instancias de la misma, lo cual es más eficiente y claro desde el punto de vista del diseño del software.*
 
 <h4 align="left"> Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
 
