@@ -1513,7 +1513,7 @@ Finalmente, se llama a `generate_table` para renderizar los encabezados y filas 
 
 
 
-
+---------
 
 Importamos la biblioteca `tkinter` como `tk`, y de esta misma importamos los módulos `filedialog`, `messagebox`, `Toplevel`, `StringVar`, `OptionMenu` y `ttk`
 
