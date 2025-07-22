@@ -46,7 +46,87 @@ Y adicional a eso, tenemos características extras como:
 
 <h3 align="center"> Products </h3>
 
-vsvsv
+
+#### Product
+
+
+En la clase `Product`, a través del método `__init__`, vamos a definir los productos que harán parte de nuestro sistema de inventario. Cada producto tiene cinco atributos principales: `name`, `category`, `code`, `price` y `state`. El atributo name representa el nombre comercial del producto, mientras que `category` nos permite clasificarlo dentro de una categoría general (como por ejemplo: "Vegetables" o "Grains"). El campo `code`, que está protegido mediante el uso del guion bajo (`_code`), corresponde al identificador interno del producto, que permite distinguirlo del resto en el sistema. A su vez, `price` (también con acceso protegido como `_price`) indica el valor monetario del producto, y `state` es un objeto que describe su estado actual. Este último puede ser `None` si no se ha definido un estado al momento de crear el producto.
+
+
+```python
+class Product:
+    def __init__(self, name, category, code, price, state):
+        self.name = name
+        self.category = category
+        self._code = code
+        self._price = price
+        self._state = state
+```
+
+Con el método `to_dict` vamos a convertir cada instancia de `Product` en un diccionario de Python, útil para tareas como el almacenamiento en bases de datos con los Json. El diccionario incluye claves como `"name"`, `"category"`, `"code"`, `"price"` y `"state"`, y sus respectivos valores corresponden a los atributos del objeto. En particular, si el atributo `_state` existe, también será convertido a un diccionario mediante su propio método `to_dict`; de lo contrario, se registrará como `None`.
+
+```python
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "category": self.category,
+            "code": self._code,
+            "price": self._price,
+            "state": self._state.to_dict() if self._state else None
+        }
+```
+Esta estructura nos permite mantener toda la información del producto organizada y fácilmente accesible para su procesamiento dentro del sistema de inventario.
+
+
+#### State
+
+La clase `State` representa el estado en el que se encuentra un producto del inventario. Cada instancia debe contener al menos uno de los dos atributos: una condición (`condition`) o una fecha de expiración (`expiration_date`). Aunque ambos parámetros son opcionales en la firma del constructor, la lógica del sistema asume que como mínimo uno debe estar presente para que el estado tenga sentido.
+
+```python
+class State:
+    def __init__(self, condition = None, expiration_date = None):
+        self._condition = condition
+        self._expiration_date = expiration_date
+```
+
+El atributo `_condition` es una cadena que puede representar, por ejemplo, que el producto está "Fresco", por ejemplo(este se usa para productos como `Fruits` o `Vegetables`). Por su parte, `_expiration_date` debe recibirse como una tupla de tres valores (`YYYY`, `MM`, `DD`), y representa la fecha en la que el producto deja de ser válido o útil (este se usa para productos empacados con su fecha de vencimiento especifica). Aunque ninguno de los dos campos es obligatorio por separado, el sistema espera que al menos uno esté definido.
+
+Uno de los métodos centrales es `is_expired`, el cual permite verificar si la fecha de expiración del producto ya pasó. Si se ha definido `_expiration_date`, se convierte en un objeto `datetime.date` y se compara con la fecha actual. Si el producto no tiene fecha de expiración, el método simplemente retorna `False`.
+
+```python
+    def is_expired(self):
+        if self._expiration_date:
+            today = datetime.date.today()
+            expiration = datetime.date(*self._expiration_date)
+            return today > expiration
+        return False
+```
+El método `to_dict` convierte el estado del producto en un diccionario. Si el estado tiene una condición, se incluirá bajo la clave `"condition"`; si tiene una fecha de expiración, se incluirá como `"expiration_date"`. Si ambos están presentes, ambos se reflejan en el diccionario.
+
+```python
+    def to_dict(self):
+        state_dict = {}
+        if self._condition is not None:
+            state_dict["condition"] = self._condition
+        if self._expiration_date is not None:
+            state_dict["expiration_date"] = self._expiration_date
+        return state_dict
+```
+Además, la clase implementa el método especial `__str__`, que genera una representación legible del estado del producto. Si existe una condición válida, se mostrará como `"Condition: <condición>"`. Si hay fecha de expiración, se mostrará en el formato `"Expires: YYYY-MM-DD"`. Cuando ambos atributos existen, se concatenan separados por coma; si no hay ninguno (aunque esto no debería suceder según la lógica del sistema), se devuelve la cadena `"Unknown"`.
+
+```python
+    def __str__(self):
+        state_parts = []
+        if isinstance(self._condition, str):
+            state_parts.append(f"Condition: {self._condition}")
+        if self._expiration_date:
+            date = datetime.date(*self._expiration_date)
+            date_str = date.strftime("%Y-%m-%d")
+            state_parts.append(f"Expires: {date_str}")
+        return ", ".join(state_parts) if state_parts else "Unknown"
+```
+En resumen, la clase `State` permite describir el estado físico o temporal de un producto, garantizando que al menos haya un criterio para determinar si ese producto está en condiciones de uso, vencido o necesita revisión. Esta clase puede integrarse fácilmente con otras partes del sistema mediante sus métodos `to_dict` y `__str__`.
+
 
 -----------
 
