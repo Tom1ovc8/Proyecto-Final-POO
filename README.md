@@ -1132,7 +1132,7 @@ from Inventory_System.Transactions.payment import Card, Cash
 from Inventory_System.Transactions.movements import Movement
 ```
 
-Creamos una clase `InventoryApp`, en la cual vamos a definir absolutamente todo lo que tiene que ver con la interfaz grafica (GUI). Definimos el constructor `__init__` con las instancias `root` y `system`, y le damos el título `Inventory Management System` a nuestra aplicación. También especificamos el estilo a usar y el tamaño de la interfaz.
+Creamos una clase `InventoryApp`, en la cual vamos a definir absolutamente todo lo que tiene que ver con la interfaz grafica (GUI). Definimos el constructor `__init__` con las instancias `root` y `system`, y le damos el título `Inventory Management System` a nuestra aplicación. También especificamos el estilo a usar y las margenes de la interfaz.
 
 ```python
 class InventoryApp:
@@ -1167,7 +1167,7 @@ Definimos los botones que va a tener la interfaz principal, y que función va a 
         ]
 ```
 
-Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text` y `command`, es decir, que tamaño va a tener cada botón, que va a decir cada uno, y que función va a tener. Se especifican las márgenes y se hace posible ser expandir el texto al expandir la interfaz.
+Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text` y `command`, es decir, que tamaño va a tener cada botón, que va a decir cada uno, y que función va a tener. Se especifican las márgenes y se hace posible ajustar el texto al expandir la interfaz.
 
 ```python
         for i, (text, command) in enumerate(buttons):
@@ -1176,7 +1176,7 @@ Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text`
             ).pack(pady=6, fill="x")
 ```
 
-Definimos la función `load_json`, la cual vamos a utilizar para carcar el archivo .JSON donde vamos a tener las bibliotecas de datos. Este nos va a permitir abrir el explorador de archivos para añadir nuestro archivo especificamente .JSON. Si la ruta del archivo es correcta, se hara backup correctamente y aparecerá un messagebox con el mensaje `"Success", "JSON archive has been loaded"`. En caso de que salga un error, el mensaje sera `"Error", "Couldn't load the archive"` y nos especificara el tipo de error ocurrido.
+Definimos la función `load_json`, la cual vamos a utilizar para cargar el archivo .JSON donde vamos a tener las bibliotecas de datos. Este nos va a permitir abrir el explorador de archivos para añadir nuestro archivo especificamente .JSON. Si la ruta del archivo es correcta, se hara backup correctamente y aparecerá un messagebox con el mensaje `"Success", "JSON archive has been loaded"`. En caso de que salga un error, el mensaje sera `"Error", "Couldn't load the archive"` y nos especificara el tipo de error ocurrido.
 
 ```python
     def load_json(self):
@@ -1256,7 +1256,7 @@ Para cada campo definido, se va a generar un cuadro de texto (`Label`) donde el 
             entries[field] = entry
 ```
 
-Se generará tambien otro campo llamado `"Select State type:"` en donde se crearán dos botones llamados `State` y `Expiration Date`. De estos solo se podra elegir uno a la vez, y nos permitirán ingresar el estado del producto al momento de ser ingresado al inventario, ya sea su estado fisico, o su fecha de expiración según corresponda. Estos valores se almacenaran con las claves `condition` y `date` respectivamente.
+Se generará tambien otro campo llamado `"Select State type:"` en donde se crearán dos botones llamados `State` y `Expiration Date`. De estos solo se podra elegir uno a la vez, y nos permitirán ingresar el estado del producto al momento de ser ingresado al inventario, ya sea su estado fisico, o su fecha de vencimiento según corresponda. Estos valores se almacenaran con las claves `condition` y `date` respectivamente.
 
 ```python
         ttk.Label(
@@ -1298,7 +1298,7 @@ Si el estado a ingresar es la fecha de expiración del producto, se generarán t
         )
 ```
 
-Se define la función `update_state_fields()` para que, en caso de que elijamos ingresar la condición del producto, el menú de fechas de expiración se oculte, y viceversa.
+Se define la función `update_state_fields()` para que, en caso de que elijamos ingresar la condición del producto, el menú de fechas de vencimiento se oculte, y viceversa.
 
 ```python
         def update_state_fields():
@@ -1455,7 +1455,7 @@ En caso de que se haya escogido `expiration date`, tambien se verifica que todos
                         )
 ```
 
-Continuando con el campo de proveedores, en caso de que se haya elegido `existent`, se toman los proveedores del diccionario uno por uno y el nombre se guarda en la variable `supplier`. En caso de que se haya elegido `new`, se verifica que los campos `supplier_name` y `supplier contact` hayan sido diligenciados, en caso de que no, retorna el error `"You must enter the supplier name and contact"`. Se verifica tambien que el `supplier_contact` sea un valor numerico, y en caso de que no, retorna el mensaje `"The contact number must be numeric only"`.
+Continuando con el campo de proveedores, en caso de que se haya elegido `existent`, se toman los proveedores del diccionario uno por uno y el objeto se guarda en la variable `supplier`. En caso de que se haya elegido `new`, se verifica que los campos `supplier_name` y `supplier contact` hayan sido diligenciados, en caso de que no, retorna el error `"You must enter the supplier name and contact"`. Se verifica tambien que el `supplier_contact` sea un valor numerico, y en caso de que no, retorna el mensaje `"The contact number must be numeric only"`.
 
 ```python
                 if (
@@ -1524,7 +1524,7 @@ Finalmente, se genera un botón llamado `Add Product` con el comando `submit`, q
         ).pack(pady=10)
 ```
 
-Definimos la función `export_to_json` para abrir guardar el archivo .JSON con el nombre `"Save Backup"`. Si la ruta seleccionada por el usuario es correcta, se genera un messagebox con el mensaje `"Success", "Backup saved in:"` y especifica la ruta seleccionada. En caso de que ocurra algún error, se genera un messagebox con el mensaje `"Error", "Couldn't export"` y especificando el error ocurrido.
+Definimos la función `export_to_json` para guardar el archivo .JSON con el nombre `"Save Backup"`. Si la ruta seleccionada por el usuario es correcta, se genera un messagebox con el mensaje `"Success", "Backup saved in:"` y especifica la ruta seleccionada. En caso de que ocurra algún error, se genera un messagebox con el mensaje `"Error", "Couldn't export"` y especificando el error ocurrido.
 
 ```python
     def export_to_json(self):
