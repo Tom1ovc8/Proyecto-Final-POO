@@ -771,11 +771,94 @@ def export_to_json(data, filename):
 ```
 Este metodo guarda cualquier `data` (lista de diccionarios) en un archivo `.json`.
 
--Usa indentación para hacerlo legible.
+Usa indentación para hacerlo legible.
 
--ensure_ascii=False permite guardar caracteres especiales (como acentos).
+`ensure_ascii=False` permite guardar caracteres especiales (como acentos).
 
--Captura errores de escritura y lanza una excepción explicativa.
+Captura errores de escritura y lanza una excepción explicativa.
+
+<h4 align="left"> Exportaciones específicas por tipo de objeto </h4>
+
+Cada uno de estos métodos usa los anteriores (`get_...`) y el exportador general:
+
+```python
+@staticmethod
+def export_movements(system, filename="movements.json"):
+    Extracts.export_to_json(Extracts.get_movements(system), filename)
+```
+Este metodo exporta todos los movimientos del sistema a `movements.json`.
+
+```python
+@staticmethod
+def export_bills(system, filename="bills.json"):
+    Extracts.export_to_json(Extracts.get_bills(system), filename)
+```
+Este metodo exporta todas las facturas a bills.json.
+
+<h4 align="left"> Exportación completa del sistema </h4>
+
+```python
+@staticmethod
+def export_full_system(system, filename="full_backup.json"):
+    data = {
+        "movements": Extracts.get_movements(system),
+        "bills": Extracts.get_bills(system),
+        "records": Extracts.get_records(system),
+        "customers": Extracts.get_customers(system),
+        "suppliers": Extracts.get_suppliers(system)
+    }
+    Extracts.export_to_json(data, filename)
+```
+
+Este metodo crea un diccionario con todos los datos clave del sistema, lo exporta en un solo archivo. Este archivo se puede usar como backup general o para cargar todo el sistema en otro momento.
+
+<h4 align="left"> Importación de productos desde archivo JSON </h4>
+
+```python
+@staticmethod
+def import_all_products(filename):
+    with open(filename, 'r') as f:
+        data = json.load(f)
+    return [Extracts.dict_to_product(d) for d in data]
+```
+Este metodo abre el archivo `filename`, luego carga los datos como una lista de diccionarios (`data`) y por cada diccionario llama al metodo `dict_to_product` para convertirlo en un objeto `Product`
+
+<h4 align="left"> Reconstrucción de productos </h4>
+
+```python
+@staticmethod
+def dict_to_product(data):
+    name = data["name"]
+    category = data["category"]
+    code = data["code"]
+    price = data["price"]
+    state_data = data["state"]
+```
+
+Este bloque extrae los campos esenciales del diccionario `data`, para luego determinar el tipo de estado:
+
+```python
+if isinstance(state_data, dict):
+    if "expiration_date" in state_data:
+        expiration = tuple(state_data["expiration_date"])
+        state = State(expiration_date=expiration)
+    elif "condition" in state_data:
+        state = State(state_data["condition"])
+    else:
+        raise ValueError("Unknown format for product state")
+elif isinstance(state_data, str):
+    state = State(state_data)
+else:
+    raise ValueError("Unsupported type for product state")
+```
+Lo que hace este metodo es que si el estado es un diccionario con `"expiration_date"`, lo convierte a una tupla y crea un `State`. Si tiene `"condition"`, crea un `State` con esa condición, y si el tipo de dato no es compatible lanza errores de tipo `ValueError`, para finalmente:
+
+```python
+return Product(name, category, code, price, state)
+```
+Retorna un objeto `Product` completo y listo para usarse.
+
+
 
 
 
