@@ -1100,6 +1100,342 @@ for m in system.movements:
 Finalmente, se establece la relación entre los movimientos de inventario y las facturas a las que pertenecen. Para cada movimiento, se compara su producto, cantidad y actor con los ítems dentro de cada factura. Si se encuentra una coincidencia, se le asigna al movimiento el ID de la factura correspondiente. Este paso permite, por ejemplo, que un movimiento de salida pueda ser rastreado hasta una venta específica, lo cual es esencial para trazabilidad y control administrativo.
 
 
+<h3 align="left"> generatePDF </h3>
+
+Primero se definen las clases con sus metodos:
+
+<h4 align="left"> Clase PDF </h4>
+
+```python
+class PDF(FPDF):
+    def __init__(self, title="Report"):
+        super().__init__()
+        self.title = title
+```
+Se define la clase base `PDF`, que hereda de `FPDF`, la cual permite construir archivos PDF en Python. En su constructor (`__init__`), se inicializa la clase padre con `super().__init__()` y se guarda el título que se mostrará en el encabezado del documento, por defecto `"Report"`.
+
+```python
+    def header(self):
+        self.set_font("Helvetica", "B", 14)
+        self.cell(0, 10, self.title, ln=True, align="C")
+        self.set_font("Helvetica", "", 10)
+        self.cell(
+            0, 10, f"Date: {datetime.now().strftime('%Y-%m-%d')}",
+            ln=True, align="C"
+        )
+        self.ln(5)
+```
+Este método define el encabezado del PDF. Primero, se configura una fuente Helvetica en negrita de tamaño 14 y se escribe el título centrado. Luego, con una fuente más pequeña (Helvetica 10), se imprime la fecha actual centrada. Se deja un pequeño espacio vertical de 5 unidades después del encabezado.
+
+```python
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Helvetica", "I", 8)
+        self.cell(0, 10, f"Page {self.page_no()}", align="C")
+```
+Aquí se define el pie de página. Se posiciona el cursor 15 unidades antes del borde inferior, se selecciona una fuente cursiva y pequeña, y se imprime el número de página actual centrado.
+
+```python
+    def setup_page(self):
+        self.set_auto_page_break(auto=True, margin=15)
+        self.add_page()
+```
+Este método ayuda a configurar la página al activar el salto automático de página con un margen inferior de 15 unidades y agregar una nueva página.
+
+```python
+    def _add_table_header(self, headers, col_widths):
+        self.set_font("Helvetica", "B", 10)
+        for i, header in enumerate(headers):
+            self.cell(col_widths[i], 8, header, border=1, align="C")
+        self.ln()
+```
+Este método interno permite crear la fila de encabezados de una tabla. Usa fuente en negrita y escribe cada celda del encabezado con bordes y alineación centrada, según el ancho especificado por `col_widths`.
+
+```python
+    def _add_table_row(self, row_data, col_widths, line_height=8):
+        self.set_font("Helvetica", "", 10)
+        for i, cell in enumerate(row_data):
+            self.cell(col_widths[i], line_height, str(cell), border=1)
+        self.ln()
+```
+Este método agrega una fila de datos a la tabla. Usa fuente normal y recorre cada valor en la fila para escribirlo en una celda con el ancho correspondiente y borde.
+
+```python
+    def generate_table(self, headers, rows, col_widths):
+        self._add_table_header(headers, col_widths)
+        for row in rows:
+            self._add_table_row(row, col_widths)
+```
+Este método permite construir una tabla completa recibiendo encabezados, filas y anchos. Primero escribe la fila de encabezados y luego cada fila de datos.
+
+<h4 align="left"> Clase InventoryReportPDF </h4>
+
+```python
+class InventoryReportPDF(PDF):
+    def __init__(self):
+        super().__init__(title="Inventory Report")
+```
+Esta clase hereda de `PDF` y representa un reporte del inventario. En su constructor se llama al constructor de la clase base (`PDF`) con un título personalizado: `"Inventory Report"`, que será mostrado en el encabezado de cada página.
+
+```python
+    def generate(self, records, filename="inventory_report.pdf"):
+        self.setup_page()
+        headers = [
+            "Code", "Name", "Category", "Stock",
+            "Min", "Max", "Location", "State"
+        ]
+        col_widths = [15, 30, 25, 15, 15, 15, 35, 40]
+        rows = []
+```
+El método `generate` se encarga de construir el contenido del PDF. Comienza configurando la página y luego define los títulos de columna (`headers`) y el ancho de cada una (`col_widths`). Se inicializa también una lista vacía `rows`, que almacenará cada fila de la tabla.
+
+```python
+        for record in records:
+            product = record["product"]
+            stock = record["stock"]
+            location = record["location"]
+
+            state_data = product["state"]
+            if "expiration_date" in state_data:
+                exp = state_data["expiration_date"]
+                state_str = f"Expires: {exp[0]:04d}-{exp[1]:02d}-{exp[2]:02d}"
+            elif "condition" in state_data:
+                state_str = f"Condition: {state_data['condition']}"
+            else:
+                state_str = "Unknown"
+```
+Se recorre cada registro en `records`, y se extrae el producto, su información de inventario (`stock`) y su ubicación. Luego se revisa si el estado del producto incluye una fecha de vencimiento o una condición específica, y se construye la cadena `state_str` de forma adecuada.
+
+```python
+            rows.append([
+                product["code"],
+                product["name"],
+                product["category"],
+                stock["actual_stock"],
+                stock["minimum_stock"],
+                stock["maximum_stock"],
+                f"Aisle {location['aisle']} - Shelf {location['shelf']}",
+                state_str
+            ])
+```
+Con toda la información procesada, se construye una lista que representa una fila en la tabla del PDF y se agrega a `rows`.
+
+```python
+        self.generate_table(headers, rows, col_widths)
+        self.output(filename)
+```
+Finalmente, se llama al método `generate_table` (heredado) para construir la tabla y se guarda el archivo PDF con el nombre proporcionado (`inventory_report.pdf` por defecto).
+
+<h4 align="left"> Clase MovementsReportPDF </h4>
+
+```python
+class MovementsReportPDF(PDF):
+    def __init__(self):
+        super().__init__(title="Inventory Movements Report")
+```
+Esta clase genera un reporte de movimientos de inventario. En su constructor se pasa un título específico a la clase base: `"Inventory Movements Report"`.
+
+```python
+    def generate(self, movements, filename="movements_report.pdf"):
+        self.setup_page()
+        headers = [
+            "Date", "Type", "Product Code", 
+            "Quantity", "Actor", "Reason"
+        ]
+        col_widths = [25, 10, 25, 20, 60, 50]
+        rows = []
+```
+El método `generate` prepara la página y define los encabezados y anchos de columna. También se inicializa la lista `rows` para almacenar los movimientos.
+
+```python
+        for movement in movements:
+            rows.append([
+                movement["Date"],
+                movement["Type"],
+                movement["Code"],
+                movement["Quantity"],
+                movement["Actor"],
+                movement["Reason"]
+            ])
+```
+Se recorre cada movimiento y se extrae la información relevante para agregarla como una nueva fila de la tabla.
+
+```python
+        self.generate_table(headers, rows, col_widths)
+        self.output(filename)
+```
+Se genera la tabla con los datos y se guarda el PDF bajo el nombre indicado.
+
+
+<h4 align="left"> Clase BillPDF </h4>
+
+```python
+class BillPDF(PDF):
+    def generate(self, bill, filename="bill_report.pdf"):
+        self.add_page()
+        self.set_font("Helvetica", "", 12)
+```
+Esta clase también hereda de `PDF` y su propósito es generar una factura. A diferencia de otras, no define un constructor propio, por lo que usa el título por defecto `"Report"`. En el método `generate`, se añade una nueva página y se establece el tipo de letra base para el contenido del documento.
+
+```python
+        self.cell(0, 10, f"Bill ID: {bill._bill_id}", ln=True)
+        self.cell(0, 10, f"Date: {bill.date.strftime('%Y-%m-%d')}", ln=True)
+        self.cell(0, 10, f"Entity: {bill.entity.name}", ln=True)
+        self.cell(0, 10, f"Type: {bill.entity_type}", ln=True)
+        self.cell(0, 10, f"Payment Method: {bill.payment_method}", ln=True)
+```
+Se imprimen en el PDF varios detalles básicos de la factura: el ID, la fecha, la entidad involucrada (cliente o proveedor), el tipo de entidad y el método de pago.
+
+```python
+        if isinstance(bill.payment_method, Cash):
+            total = bill.calculate_total()
+            given = bill.payment_method.cash_given
+            if given >= total:
+                change = given - total
+                self.cell(
+                    0, 10, f"Paid for: ${given:.2f} - Change: ${change:.2f}",
+                    ln=True
+                )
+            else:
+                lack = total - given
+                self.cell(
+                    0, 10, f"Cash Insuficient. Lack: ${lack:.2f}", ln=True
+                )
+```
+Si el método de pago es en efectivo (`Cash`), se realiza una verificación adicional. Se calcula el total de la factura y el monto entregado. Si el monto es suficiente, se muestra el cambio a entregar; de lo contrario, se indica cuánto dinero hace falta. Esta sección ofrece un control adicional para pagos en efectivo.
+
+```python
+        self.ln(5)
+```
+Se añade un pequeño espacio vertical antes de continuar con la tabla de productos.
+
+```python
+        self.set_font("Helvetica", "B", 10)
+        headers = ["Code", "Product", "Amount", "Unit Cost", "Subtotal"]
+        col_widths = [30, 50, 30, 30, 30]
+        self._add_table_header(headers, col_widths)
+```
+Se establece una fuente en negrita para los encabezados de la tabla y luego se llama a `_add_table_header`, un método heredado que dibuja los encabezados con sus respectivos anchos.
+
+```python
+        self.set_font("Helvetica", "", 10)
+        for item in bill.items:
+            self._add_table_row([
+                item.product._code,
+                item.product.name,
+                item.quantity,
+                f"${item.price:.2f}",
+                f"${item.quantity * item.price:.2f}"
+            ], col_widths)
+```
+Se cambia a una fuente normal para las filas y se recorren los productos de la factura. Por cada uno, se extraen los datos y se genera una fila con código, nombre, cantidad, precio unitario y subtotal (cantidad × precio).
+
+```python
+        self.set_font("Helvetica", "B", 11)
+        self.cell(sum(col_widths[:-1]), 10, "Total", border=1, align="R")
+        self.cell(
+            col_widths[-1], 10, f"${bill.calculate_total():.2f}",
+            border=1, align="R"
+        )
+        self.ln()
+        self.output(filename)
+```
+Finalmente, se agrega una fila con el total general de la factura. Se hace con una celda que ocupa todas las columnas excepto la última (donde va el valor del total). Luego, se guarda el documento en un archivo PDF con el nombre especificado.
+
+<h4 align="left"> Clase CriticalStockPDF </h4>
+
+```python
+class CriticalStockPDF(PDF):
+    def __init__(self):
+        super().__init__(title="Critic Stock")
+```
+Esta clase hereda de `PDF` y se utiliza para generar un reporte de productos cuyo stock se encuentra en estado crítico (por debajo del mínimo). En el constructor, llama a la clase base (`PDF`) y define como título `"Critic Stock"`, que se mostrará en el encabezado del PDF.
+
+```python
+    def generate(self, records: list, filename="critical_stock.pdf"):
+        self.add_page()
+```
+El método `generate` toma como argumentos una lista de `records` (productos en estado crítico) y el nombre del archivo a generar. Inicia agregando una nueva página al documento PDF.
+
+```python
+        headers = [
+            "Code", "Product", "Category", "Stock", "Minimum", "Location"
+        ]
+        col_widths = [20, 45, 30, 20, 25, 50]
+```
+Se definen los encabezados de la tabla que se va a mostrar en el reporte, junto con los anchos correspondientes para cada columna. La información incluye el código, nombre del producto, categoría, cantidad actual, stock mínimo y ubicación.
+
+```python
+        rows = []
+        for record in records:
+            product = record.product
+            stock = record.stock
+            location = record.location
+```
+Se inicializa la lista `rows`, que contendrá las filas de datos. Luego, se recorre cada registro recibido. Se extrae el producto, su información de stock y la ubicación dentro del inventario.
+
+```python
+            rows.append([
+                product._code,
+                product.name,
+                product.category,
+                stock.get_actual_stock(),
+                stock.minimum_stock,
+                f"Aisle {location.aisle} - Shelf {location.shelf}"
+            ])
+```
+Se construye una fila con los datos del producto: el código (accedido como atributo privado), nombre, categoría, stock actual (usando el método `get_actual_stock()`), el mínimo requerido y la ubicación formateada como "Aisle X - Shelf Y". Cada fila se agrega a la lista `rows`.
+
+```python
+        self.generate_table(headers, rows, col_widths)
+        self.output(filename)
+```
+Finalmente, se llama al método `generate_table` para renderizar la tabla completa, usando los encabezados, las filas y los anchos definidos. Luego, se guarda el PDF con el nombre proporcionado.
+
+<h4 align="left"> Clase ActorHistoryPDF </h4>
+
+```python
+class ActorHistoryPDF(PDF):
+    def __init__(self, actor_name, actor_type):
+        title = f"History for {actor_type.capitalize()}: {actor_name}"
+        super().__init__(title)
+```
+Esta clase hereda de `PDF` y se utiliza para generar un historial de movimientos realizados por un actor específico del sistema (por ejemplo, un proveedor o un usuario). En el constructor, recibe el `actor_name` y el `actor_type`, y construye dinámicamente el título del reporte con el formato `"History for <ActorType>: <ActorName>"`. Luego pasa ese título a la clase base `PDF` para que sea utilizado como encabezado del documento.
+
+```python
+    def generate(self, movements: list, filename="actor_history.pdf"):
+        self.setup_page()
+```
+El método `generate` recibe la lista de movimientos que se desea reportar y el nombre del archivo de salida. Comienza inicializando la página del PDF con `setup_page()`.
+
+```python
+        headers = ["Date", "Product", "Code", "Amount", "Type", "Reason"]
+        col_widths = [25, 45, 25, 15, 20, 60]
+```
+Se definen los encabezados para la tabla: fecha, nombre del producto, código, cantidad, tipo de movimiento (entrada o salida), y la razón del movimiento. También se especifican los anchos para cada columna en el PDF.
+
+```python
+        rows = []
+        for movement in movements:
+            rows.append([
+                movement.date.strftime("%Y-%m-%d"),
+                movement.product.name,
+                movement.product._code,
+                movement.amount,
+                movement.type,
+                movement.reason
+            ])
+```
+Se crea la lista `rows` para almacenar cada movimiento como una fila de la tabla. Para cada objeto `movement`:
+
+-Se convierte la fecha a formato `YYYY-MM-DD`.
+
+-Se accede al nombre del producto y su código (el cual es privado).
+
+-Se registra la cantidad de producto involucrado (`amount`), el tipo de movimiento (`type`), y la razón (`reason`).
+
+Cada uno de estos datos se agrupa en una fila que se añade a la tabla.
+
 
 
 
