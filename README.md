@@ -757,9 +757,18 @@ def get_suppliers(system):
 ```
 Este metodo es similar al anterior, pero para proveedores.
 
-<h4 align="left"> Exportación genérica de datos a archivos `.json` </h4>
+#### Exportación genérica de datos a archivos `.json` 
 
-hi
+```python
+@staticmethod
+def export_to_json(data, filename):
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"Exported successfully to {filename}")
+    except Exception as e:
+        raise ValueError(f"Error exporting to {filename}: {e}")
+```
 
 
 
