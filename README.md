@@ -1436,6 +1436,78 @@ Se crea la lista `rows` para almacenar cada movimiento como una fila de la tabla
 
 Cada uno de estos datos se agrupa en una fila que se añade a la tabla.
 
+```python
+        self.generate_table(headers, rows, col_widths)
+        self.output(filename)
+```
+Finalmente, se llama a `generate_table` para construir visualmente la tabla en el PDF, y se guarda el archivo con el nombre especificado (`actor_history.pdf` por defecto).
+
+<h4 align="left"> Clase SalesSummaryPDF </h4>
+
+```python
+class SalesSummaryPDF(PDF):
+    def __init__(self, title="Sales Summary Report"):
+        super().__init__(title)
+```
+Esta clase también hereda de `PDF` y está diseñada para generar un informe de resumen de ventas. En el constructor, se puede especificar un título personalizado (por defecto, `"Sales Summary Report"`). Este título es enviado a la clase base `PDF`, y será mostrado automáticamente en el encabezado del documento.
+
+```python
+    def generate(self, summary_data: dict, filename="sales_summary.pdf"):
+        self.setup_page()
+```
+El método `generate` toma como entrada un diccionario `summary_data` que contiene el resumen de ventas por producto, y opcionalmente un nombre de archivo para guardar el PDF (`sales_summary.pdf` por defecto). Primero se configura la página llamando a `setup_page()`.
+
+```python
+        headers = [
+            "Code", "Product", "IN Qty", "IN Cost", "OUT Qty", "OUT Sales"
+        ]
+        col_widths = [30, 50, 25, 30, 25, 30]
+```
+Aquí se definen los encabezados de la tabla del reporte. Cada columna representa:
+
+- `Code`: el código del producto.
+
+- `Product`: el nombre del producto.
+
+- `IN Qty`: la cantidad total de unidades ingresadas al inventario.
+
+- `IN Cost`: el costo total de esas entradas.
+
+- `OUT Qty`: la cantidad total de unidades salientes (vendidas o despachadas).
+
+- `OUT Sales`: el valor de esas salidas.
+
+También se definen los anchos de las columnas para que se distribuyan de forma proporcional y clara en el PDF.
+
+```python
+        rows = []
+        for code, data in summary_data.items():
+            rows.append([
+                code,
+                data["name"],
+                str(data["in"]["qty"]),
+                f"${data['in']['cost']:.2f}",
+                str(data["out"]["qty"]),
+                f"${data['out']['cost']:.2f}"
+            ])
+```
+Se construyen las filas de la tabla recorriendo el diccionario `summary_data`, donde cada clave `code` representa un producto. Se extraen los valores asociados, que deben incluir:
+
+- El nombre del producto (`data["name"]`),
+
+- La cantidad y el costo total de las entradas (`data["in"]["qty"]` y `data["in"]["cost"]`),
+
+- La cantidad y el valor de las salidas (`data["out"]["qty"]` y `data["out"]["cost"]`).
+
+Los valores monetarios se formatean con dos decimales usando `f"${valor:.2f}"`.
+
+```python
+        self.generate_table(headers, rows, col_widths)
+        self.output(filename)
+```
+Finalmente, se llama a `generate_table` para renderizar los encabezados y filas en el PDF, y luego se guarda el archivo con `self.output(filename)`.
+
+
 
 
 
