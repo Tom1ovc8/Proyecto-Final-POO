@@ -1543,7 +1543,59 @@ Definimos la función `export_to_json` para abrir guardar el archivo .JSON con e
                 messagebox.showerror("Error", f"Couldn't export:\n{e}")
 ```
 
-Definimos la función `add_movement_method`
+Definimos la función `add_movement_method` para añadir un movimiento a la biblioteca de movimientos. Si no hay productos existentes, el metodo generará un messagebox con el mensaje de error `"No products available", "Unable to register movements, no products availables"`.
+
+```python
+    def add_movement_method(self):
+        if not self.system.records:
+            messagebox.showwarning(
+                "No products available", 
+                "Unable to register movements, no products availables"
+            )
+            return
+```
+
+En caso de que si hayan productos, se procede a generar una ventana emergente llamada `Register Movement` donde se ingresarán todos los datos del movimiento. En dicha ventana habrá un campo llamado `Select Movement type:`, en el cual se generarán dos botones llamados `In` y `Out`, donde vamos a especificar si el movimiento que vamos a registrar es una entrada o una salida de productos respectivamente, y solo vamos a poder escoger uno u otro.
+
+```python
+        dialog = tk.Toplevel()
+        dialog.title("Register Movement")
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=20)
+        main_frame.pack(fill="both", expand=True)
+
+        ttk.Label(
+            main_frame, text="Select Movement type:"
+        ).pack(pady=5, anchor="w")
+        movement_type = tk.StringVar(value="in")
+        ttk.Radiobutton(
+            main_frame, text="In", variable=movement_type, value="in", 
+            command=lambda: update_actor_menu()
+        ).pack(anchor="w")
+        ttk.Radiobutton(
+            main_frame, text="Out", variable=movement_type, value="out", 
+            command=lambda: update_actor_menu()
+        ).pack(anchor="w")
+```
+
+Se generará tambien un campo llamado `Select product:` donde vamos a poder escoger uno de los productos que se encuentran en la biblioteca de productos `system.records.values` (se tomaran los nombres de los productos (`product.name`)). En este campo habrá un menu de opciones donde va a aparecer toda la lista de nombres de los productos uno por uno, donde vamos a poder escoger solo uno.
+
+```python
+        ttk.Label(main_frame, text="Select product:").pack(pady=5, anchor="w")
+        product_var = tk.StringVar(main_frame)
+        if self.system.records:
+            product_var.set(
+                next(iter(self.system.records.values())).product.name
+            )
+        product_menu = ttk.OptionMenu(
+            main_frame, product_var, 
+            *[record.product.name for record in self.system.records.values()]
+        )
+        product_menu.pack(pady=5, fill="x")
+```
+
+Otro de los campos que se habilitarán en esta ventana, es ``
 
 Definimos la función `créate_bill_method`
 
