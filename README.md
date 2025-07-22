@@ -721,6 +721,6 @@ La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, i
 
 <h4 align="left">Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
 
-
+efwq
 
 
