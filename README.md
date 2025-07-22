@@ -718,6 +718,9 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
 <h3 align="left"> Extracts </h3>
 
 La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, importar y reconstruir datos del sistema de inventario.
+***
+Es importante aclarar que, al principio de cada metodo, se utiliza el decorador @staticmethod en cada uno de los métodos de la clase Extracts porque estos métodos no necesitan acceder ni modificar ningún atributo o estado interno de una instancia específica de la clase. Es decir, su comportamiento depende exclusivamente de los datos que reciben como argumentos, no de propiedades internas de self o cls. Usar @staticmethod en este contexto permite organizar funcionalmente utilidades de exportación e importación dentro de una misma clase, sin necesidad de crear instancias de la misma, lo cual es más eficiente y claro desde el punto de vista del diseño del software.
+***
 
 <h4 align="left"> Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
 
@@ -857,6 +860,252 @@ Lo que hace este metodo es que si el estado es un diccionario con `"expiration_d
 return Product(name, category, code, price, state)
 ```
 Retorna un objeto `Product` completo y listo para usarse.
+
+<h4 align="left"> Conversión de entidades desde diccionarios </h4>
+
+```python
+@staticmethod
+def dict_to_customer(data):
+    return Customer(data["name"], data["number_id"], data["_id"])
+```
+Este metodo reconstruye el objeto `Customer` desde un diccionario para poder usarlo en la carga de backups
+```python
+@staticmethod
+def dict_to_supplier(data):
+    return Supplier(data["name"], data["contact_number"], data["_id"])
+```
+Este metodo hace lo mismo, pero esta vez con  el objeto `Supplier`
+
+<h4 align="left"> Reconstrucción del stock (cantidad, mínimos, historial) </h4>
+
+```python
+@staticmethod
+def dict_to_stock(data, system):
+    actual = data["actual_stock"]
+    min_stock = data["minimum_stock"]
+    max_stock = data["maximum_stock"]
+    stock = Stock(actual, min_stock, max_stock)
+```
+Este metodo crea el objeto `Stock` con sus parametros de minimo y maximo, luego reconstruye el historial.
+
+```python
+if system and "record" in data:
+    seen = set()
+    for movement_data in data["record"]:
+        code = movement_data["Code"]
+        if code in system.records:
+            movement = Extracts.dict_to_movement(movement_data, system)
+            key = (movement.product._code, movement.amount, movement.actor._id, movement.date.isoformat())
+            if key not in seen:
+                stock._record.append(movement)
+                seen.add(key)
+```
+Lo que hace este metodo es que, si existe un historial de movimientos (`record`) lo reconstruye, evitando movimientos duplicados al usar un set (`seen`) de claves unicas.
+
+<h4 align="left"> Conversión de movimientos </h4>
+
+```python
+@staticmethod
+def dict_to_movement(data, system):
+    product_code = data["Code"]
+    product = system.records[product_code].product
+    amount = data["Quantity"]
+    actor_id = data["Actor_ID"]
+    reason = data["Reason"]
+```
+
+Este metodo recupera los campos en movimiento. Luego:
+
+```python
+if data["Type"] == "in":
+    actor = system.suppliers.get(actor_id)
+else:
+    actor = system.customers.get(actor_id)
+
+if actor is None:
+    raise ValueError(f"Actor with ID {actor_id} not found in system")
+
+return Movement(product, amount, actor, reason)
+```
+Este metodo determina si el actor es un proveedor o cliente según el tipo de movimiento. Crea un `Movement` con los datos correspondientes.
+
+<h4 align="left"> Reconstrucción de facturas </h4>
+
+```python
+@staticmethod
+def dict_to_bill(data, system):
+    bill_id = data["bill_id"]
+    date = data["date"]
+    entity_type = data["entity_type"]
+    entity_id = data.get("entity_id")
+    payment_data = data["payment_method"]
+```
+Este metodo extrae los datos basicos de la factura. Luego:
+
+```python
+if entity_type == "Customer":
+    entity = system.customers.get(entity_id)
+else:
+    entity = system.suppliers.get(entity_id)
+
+# reconstruir método de pago
+if payment_data["method"] == "Cash":
+    payment = Cash(payment_data["cash_given"])
+elif payment_data["method"] == "Card":
+    card_number = str(payment_data["card_number"])[-4:]
+    payment = Card("**** **** **** " + card_number, "***")
+else:
+    raise ValueError("Unknown payment method.")
+```
+Este metodo crea el objeto entidad y el método de pago adecuado. Luego se crea la factura y configura su ID y fecha:
+
+```python
+bill = Bill(entity, payment)
+bill._bill_id = bill_id
+bill.date = datetime.strptime(date, "%Y-%m-%d")
+```
+Ya por ultimo, se agregan los productos facturados:
+
+```python
+for item_data in data["items"]:
+    product_code = item_data["product"]["_code"]
+    product = system.records[product_code].product
+    quantity = item_data["quantity"]
+    price = item_data["price"]
+    bill.add_item(product, quantity, price)
+```
+
+#### Carga total del sistema desde un archivo `.json`
+
+```python
+@staticmethod
+def load_full_backup(path, system):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+```
+Aqui se abre el archivo JSON que contiene todo el respaldo del sistema. Ahora seguimos con los metodos despues de la carga del archivo JSON
+
+<h4 align="left"> Apertura del archivo y carga de datos </h4>
+
+```python
+with open(path, "r", encoding="utf-8") as f:
+    data = json.load(f)
+```
+Este primer bloque abre el archivo JSON que contiene el respaldo completo del sistema, utilizando la ruta proporcionada en el argumento `path`. El contenido del archivo se carga en memoria mediante `json.load(f)` y se almacena en la variable `data` como un diccionario de Python. Este diccionario contendrá claves como `"customers"`, `"suppliers"`, `"records"`, `"movements"` y `"bills"` que serán utilizadas para reconstruir los componentes del sistema.
+
+<h4 align="left"> Carga de clientes </h4>
+
+```python
+for customer in data["customers"]:
+    system.add_customer(Extracts.dict_to_customer(customer))
+```
+Luego, se procede a reconstruir los clientes. Para ello, se recorre cada elemento dentro de la lista `data["customers"]`, que representa los datos serializados de los clientes. Cada entrada se transforma en un objeto `Customer` usando el método auxiliar `dict_to_customer`, y luego se añade al sistema mediante `system.add_customer()`. Esto permite recuperar todos los clientes registrados antes de la exportación.
+
+<h4 align="left"> Carga de proveedores </h4>
+
+```python
+for supplier in data["suppliers"]:
+    existing = next(
+        (
+            x for x in system.suppliers.values() 
+            if x.name == supplier["name"] 
+            and x.contact_number == supplier["contact_number"]
+        ), None
+    )
+    if not existing:
+        system.add_supplier(Extracts.dict_to_supplier(supplier))
+```
+Para los proveedores, se realiza un paso adicional: antes de agregar un nuevo proveedor al sistema, se verifica si ya existe alguno con el mismo nombre y número de contacto. Si no se encuentra un proveedor duplicado, entonces se reconstruye el objeto `Supplier` a partir del diccionario usando `dict_to_supplier` y se agrega al sistema. Esto evita que se creen múltiples entradas para el mismo proveedor durante una restauración.
+
+<h4 align="left"> Carga de registros de inventario </h4>
+
+```python
+for record in data["records"]:
+    product_code = record["product"]["code"]
+    if product_code in system.records:
+        old_stock = system.records[product_code].stock
+        new_stock = Extracts.dict_to_stock(record["stock"], system)
+        existing_keys = {
+            (
+                m.product._code, m.amount, m.actor._id,
+                m.date.isoformat()
+            )
+            for m in old_stock._record
+        }
+        for m in new_stock._record:
+            key = (
+                m.product._code, m.amount, m.actor._id, 
+                m.date.isoformat()
+            )
+            if key not in existing_keys:
+                old_stock._record.append(m)
+    else:
+        record = Extracts.dict_to_inventory_record(record, system)
+        system.add_record(record)
+```
+En este bloque se restauran todos los registros de inventario. Si el producto ya existe en el sistema (verificado por su código), entonces se compara su historial de movimientos. El objetivo es evitar duplicar movimientos ya registrados, para lo cual se genera una clave única para cada movimiento (producto, cantidad, actor y fecha). Si algún movimiento nuevo no está en los ya existentes, se añade al historial. Si el producto no existía previamente en el sistema, se reconstruye el registro completo con `dict_to_inventory_record` y se agrega al sistema como un nuevo elemento.
+
+<h4 align="left"> Sincronización de ubicaciones </h4>
+
+```python
+Location.sync_from_inventory(system.records.values())
+```
+Una vez cargados todos los registros de inventario, se sincronizan las ubicaciones físicas de los productos. El método `sync_from_inventory` asegura que cada producto esté correctamente asignado a su estantería y pasillo dentro del sistema. Esta sincronización es importante porque la ubicación puede ser necesaria para la gestión física del inventario en el mundo real.
+
+<h4 align="left"> Carga de movimientos </h4>
+
+```python
+for movement_data in data["movements"]:
+    movement = Extracts.dict_to_movement(movement_data, system)
+    system.add_movement(movement, apply_stock=False)
+    for movement1 in system.movements:
+        code = movement1.product._code
+        stock = system.records[code].stock
+        key = (movement1.product._code, movement1.amount,
+            movement1.actor._id, movement1.date.isoformat())
+        seen = {
+            (
+                movement_stock.product._code, movement_stock.amount,
+                movement_stock.actor._id, 
+                movement_stock.date.isoformat()
+            )
+            for movement_stock in stock._record
+        }
+        if key not in seen:
+            stock._record.append(movement1)
+```
+Aquí se restaura el historial de movimientos de productos, tanto entradas como salidas. Primero se transforma cada entrada JSON a un objeto `Movement` y se agrega al sistema. Luego, se asocia ese movimiento al historial de stock correspondiente, verificando que no esté ya registrado para evitar duplicados. Este paso garantiza que el historial completo de operaciones esté disponible para futuras consultas o auditorías, sin interferir en el stock actual (por eso `apply_stock=False`).
+
+<h4 align="left"> Carga de facturas </h4>
+
+```python
+for bill_data in data.get("bills", []):
+    bill = Extracts.dict_to_bill(bill_data, system)
+    system.bills[bill._bill_id] = bill
+```
+Este bloque se encarga de restaurar todas las facturas del sistema. Cada factura en formato JSON se convierte en un objeto `Bill` utilizando `dict_to_bill`, que reconstruye tanto la entidad (cliente o proveedor) como el método de pago, los ítems comprados o vendidos, y la fecha. Luego, la factura se añade al sistema mediante su identificador único `_bill_id`, asegurando que las transacciones económicas queden registradas con precisión.
+
+<h4 align="left"> Asociación entre movimientos y facturas </h4>
+
+```python
+for m in system.movements:
+    for item in bill.items:
+        if (m.product._code == item.product._code
+            and m.amount == item.quantity
+            and m.actor._id == bill.entity._id):
+            m._bill_id = bill._bill_id
+            break
+
+```
+Finalmente, se establece la relación entre los movimientos de inventario y las facturas a las que pertenecen. Para cada movimiento, se compara su producto, cantidad y actor con los ítems dentro de cada factura. Si se encuentra una coincidencia, se le asigna al movimiento el ID de la factura correspondiente. Este paso permite, por ejemplo, que un movimiento de salida pueda ser rastreado hasta una venta específica, lo cual es esencial para trazabilidad y control administrativo.
+
+
+
+
+
+
+
+
 
 Importamos la biblioteca `tkinter` como `tk`, y de esta misma importamos los módulos `filedialog`, `messagebox`, `Toplevel`, `StringVar`, `OptionMenu` y `ttk`
 
