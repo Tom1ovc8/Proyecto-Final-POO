@@ -375,9 +375,9 @@ import uuid
 
 class Supplier:
     def __init__(self, name, contact_number, supplier_id=None):
-        self._id = supplier_id if supplier_id else str(uuid.uuid4())
         self.name = name
         self.contact_number = contact_number
+        self._id = supplier_id if supplier_id else str(uuid.uuid4())
 ```
 
 Por medio del constructor `self` vamos a referenciar también los atributos de nuestra clase `Supplier`, los cuales serian similares a los de la clase anterior, pero no los mismos. En este caso los atributos serian `name`, `contact_number` (cambia en relación con la clase `Customer`) y `supplier_id`, que al igual que con la clase anterior, vamos a randomizar por medio de la versión de UUID `uuid4`.
@@ -398,6 +398,14 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 <h3 align="center"> Transactions </h3>
 
 #### Movements:
+
+Importamos la biblioteca `datetime`, y de el modulo `Inventory_System.People`, importamos `Customer` y `Supplier`.
+
+```python
+from datetime import datetime
+from Inventory_System.People.customer import Customer
+from Inventory_System.People.supplier import Supplier
+```
 
 La clase `Movement` representa un registro individual de movimiento de inventario. Cada movimiento está relacionado con un producto, una cantidad (`amount`), una razón o motivo del movimiento, y un actor (cliente o proveedor) que lo genera. También se registra la fecha y se determina si el movimiento es de entrada o salida.
 
