@@ -927,13 +927,207 @@ Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text`
             ).pack(pady=6, fill="x")
 ```
 
-Definimos la función `load_json`
+Definimos la función `load_json`, la cual vamos a utilizar para carcar el archivo .JSON donde vamos a tener las bibliotecas de datos. Este nos va a permitir abrir el explorador de archivos para añadir nuestro archivo especificamente .JSON. Si la ruta del archivo es correcta, se hara backup correctamente y aparecerá un messagebox con el mensaje `"Success", "JSON archive has been loaded"`. En caso de que salga un error, el mensaje sera `"Error", "Couldn't load the archive"` y nos especificara el tipo de error ocurrido.
 
-Definimos la función `generate_inventory_pdf`
+```python
+    def load_json(self):
+        filepath = filedialog.askopenfilename(
+            filetypes=[("JSON Files", "*.json")]
+        )
+        if filepath:
+            try:
+                System.load_full_backup(self.system, filepath)
+                messagebox.showinfo(
+                    "Success", "JSON archive has been loaded."
+                )
+            except Exception as e:
+                messagebox.showerror(
+                    "Error", f"Couldn't load the archive:\n{e}"
+                )
+```
 
-Definimos la función `generate_actor_history`
+La función `generate_inventory_pdf` es definida para exportar el reporte de inventario como un archivo .PDF y guardarlo en la carpeta designada. Esto lo hara con el metodo `export_inventory_pdf` que viene del modulo `System`. En caso de que la exportación sea exitosa, aparecerá un messagebox con el mensaje `"Success", "Report has been generated as 'inventory_report.pdf'"`. En caso de que haya ocurrido un error, el mensaje será `"Error", "Couldn't generate the report"`, y especificara el error ocurrido.
 
-Definimos la función `add_product_method`
+```python
+    def generate_inventory_pdf(self):
+        try:
+            System.export_inventory_pdf(self.system)
+            messagebox.showinfo(
+                "Success", 
+                "Report has been generated as 'inventory_report.pdf'"
+            )
+        except Exception as e:
+            messagebox.showerror(
+                "Error", f"Couldn't generate the report:\n{e}"
+            )
+```
+
+Definimos la función `generate_actor_history` para generar y exportar el historial ya sea de los clientes o de los proveedores. Este generará una ventana donde nos pedira ingresar el ID del correspondiente actor. Si el ID ingresado es correcto, entonces aparecerá el mensaje `"Success", "History has been generated"`. En caso de que no sea correcto, no retornará nada. En caso de que ocurra un error, el mensaje será `"Error", "Couldn't generate the history"`, y especificara el error ocurrido.
+
+```python
+    def generate_actor_history(self):
+        actor_id = simple_input_dialog(
+            "Join the actor ID (customer/supplier):"
+        )
+        if not actor_id:
+            return
+        try:
+            System.export_actor_history_pdf(self.system, actor_id)
+            messagebox.showinfo("Success", f"History has been generated.")
+        except Exception as e:
+            messagebox.showerror(
+                "Error", f"Couldn't generate the history:\n{e}"
+            )
+```
+
+Definimos la función `add_product_method` para poder agregar un producto manualmente al inventario. Este generará una ventana emergente con titulo `Add Product`, de la cual definimos el tamaño de la interfaz, margenes, expansión, etc. Definimos los campos (`Fields`) que va a tener la ventana, que son `Name`, `Category`, `Code`, `Price` y `Initial Amount`.
+
+```python
+    def add_product_method(self):
+        dialog = Toplevel(self.root)
+        dialog.title("Add Product")
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=20)
+        main_frame.pack(fill="both", expand=True)
+
+        fields = ["Name", "Category", "Code", "Price", "Initial Amount"]
+        entries = {}
+```
+
+Para cada campo definido, se va a generar un cuadro de texto (`Label`) donde el usuario va a poder ingresar los valores correspondientes a su campo (`entries`), y lo que se ingrese en estos campos se va a guardar como una entrada (`entry`).
+
+```python
+        for field in fields:
+            ttk.Label(
+                main_frame, text=field).pack(padx=10, pady=2, anchor="w"
+            )
+            entry = ttk.Entry(main_frame)
+            entry.pack(padx=10, pady=2, fill="x")
+            entries[field] = entry
+```
+
+Se generará tambien otro campo llamado `"Select State type:"` en donde se crearán dos botones llamados `State` y `Expiration Date`. De estos solo se podra elegir uno a la vez, y nos permitirán ingresar el estado del producto al momento de ser ingresado al inventario, ya sea su estado fisico, o su fecha de expiración según corresponda. Estos valores se almacenaran con las claves `condition` y `date` respectivamente.
+
+```python
+        ttk.Label(
+            main_frame, text="Select State type:"
+        ).pack(pady=5, anchor="w")
+        state_type = tk.StringVar(value="condition")
+        ttk.Radiobutton(
+            main_frame, text="State", variable=state_type, value="condition"
+        ).pack(anchor="w")
+        ttk.Radiobutton(
+            main_frame, text="Expiration Date", 
+            variable=state_type, value="date"
+        ).pack(anchor="w")
+```
+
+Según el estado seleccionado, se generaran espacios para ingresar los datos de condición del producto. En caso de que el estado a ingresar sea la condición actual, se generará un cuadro de texto donde podremos ingresar el estado del producto.
+
+```python
+        state_container = ttk.Frame(main_frame)
+        state_container.pack(pady=5, fill="x")
+
+        condition_frame = ttk.Frame(state_container)
+        ttk.Label(condition_frame, text="Condition:").pack(pady=2, anchor="w")
+        condition_entry = ttk.Entry(condition_frame)
+        condition_entry.pack(pady=2, fill="x")
+```
+
+Si el estado a ingresar es la fecha de expiración del producto, se generarán tres espacios de texto llamados `Exp. Year`, `Exp. Month` y `Exp. Day`, donde ingresaremos el año, mes y dia de expiracion del producto respectivamente.
+
+```python
+        expiration_frame = ttk.Frame(state_container)
+        for label_text in ["Exp. Year:", "Exp. Month:", "Exp. Day:"]:
+            ttk.Label(
+                expiration_frame, text=label_text
+            ).pack(pady=2, anchor="w")
+            ttk.Entry(expiration_frame).pack(pady=2, fill="x")
+        year_entry, month_entry, day_entry = (
+            expiration_frame.winfo_children()[1::2]
+        )
+```
+
+Se define la función `update_state_fields()` para que, en caso de que elijamos ingresar la condición del producto, el menú de fechas de expiración se oculte, y viceversa.
+
+```python
+        def update_state_fields():
+            if state_type.get() == "condition":
+                expiration_frame.pack_forget()
+                condition_frame.pack(fill="x")
+            else:
+                condition_frame.pack_forget()
+                expiration_frame.pack(fill="x")
+
+        update_state_fields()
+        state_type.trace_add("write", lambda *args: update_state_fields())
+```
+
+Se generará tambien un campo llamado `Select Supplier type:`, donde, por medio de dos botones (donde solo se puede elegir uno) vamos a elegir entre dos opciones: Existente `Existent` (`existent`) y nuevo `New` (`new`), para buscar proveedores ya existentes o para ingresar los datos de un nuevo proveedor respectivamente.
+
+```python
+        ttk.Label(
+            main_frame, text="Select Supplier type:"
+        ).pack(pady=5, anchor="w")
+        supplier_option = tk.StringVar(value="existent")
+        ttk.Radiobutton(
+            main_frame, text="Existent", 
+            variable=supplier_option, value="existent"
+        ).pack(anchor="w")
+        ttk.Radiobutton(
+            main_frame, text="New", variable=supplier_option, value="new"
+        ).pack(anchor="w")
+
+        supplier_container = ttk.Frame(main_frame)
+        supplier_container.pack(fill="x")
+```
+
+En caso de que se elija la opción de elegir un proveedor existente, aparecerá un campo llamado `Select existent supplier:` y se generará con `ttk.OptionMenu` un widget donde nos aparecerán todos los proveedores existentes. Estos se tomarán del diccionario de proveedores  de `system.suppliers.values` y aparecerán uno por uno donde vamos a poder elegir a uno de ellos.
+
+```python
+        existing_supplier_frame = ttk.Frame(supplier_container)
+        ttk.Label(
+            existing_supplier_frame, text="Select existent supplier:"
+        ).pack(anchor="w")
+        supplier_var = tk.StringVar()
+
+        if self.system.suppliers:
+            supplier_names = [s.name for s in self.system.suppliers.values()]
+            supplier_var.set(supplier_names[0])
+            supplier_menu = ttk.OptionMenu(
+                existing_supplier_frame, supplier_var,
+                supplier_names[0],*supplier_names
+            )
+```
+
+En caso tal de que aún no hayan proveedores registrados, aparecerá el mensaje `There's not suppliers`, y el menu de opciones se inhabilitará hasta que se registre uno.
+
+```python
+        else:
+            supplier_var.set("There's not suppliers")
+            supplier_menu = ttk.OptionMenu(
+                existing_supplier_frame, supplier_var,
+                "There's not suppliers"
+            )
+            supplier_menu.state(["disabled"])
+        supplier_menu.pack(fill="x")
+        existing_supplier_frame.pack(pady=5, fill="x")
+```
+
+Si se eligio la opción de añadir un nuevo proveedor, entonces se generarán dos campos llamados `New supplier name:` y `New supplier contact:`. Estos tendran espacios de texto donde se colocarán el nombre y el numero de contacto del nuevo proveedor respectivamente.
+
+```python
+        new_supplier_frame = ttk.Frame(supplier_container)
+        for label in ["New supplier name:", "New supplier contact:"]:
+            ttk.Label(new_supplier_frame, text=label).pack(anchor="w")
+            ttk.Entry(new_supplier_frame).pack(fill="x", pady=2)
+        new_supplier_name, new_supplier_contact = (
+            new_supplier_frame.winfo_children()[1::2]
+        )
+```
+
+
 
 Definimos la función `export_to_json`
 
