@@ -719,7 +719,7 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
 
 La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, importar y reconstruir datos del sistema de inventario.
 
--
+--
 Consultas: obtener datos desde el sistema como listas de diccionarios:
 
 
