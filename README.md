@@ -482,7 +482,7 @@ from Inventory_System.People.supplier import Supplier
 
 The `Movement` class represents an individual inventory movement record. Each movement is related to a product, an amount (`amount`), a reason or motive for the movement, and an actor (customer or supplier) that generates it. The date is also recorded, and it is determined whether the movement is incoming or outgoing.
 
-El constructor `__init__` es un método inicializa un nuevo movimiento con la información proporcionada: el producto involucrado, la cantidad de unidades, el actor (cliente o proveedor) que lo realiza, y la razón del movimiento.
+The `__init__` constructor is a method that initializes a new movement with the provided information: the involved product, the quantity of units, the actor (customer or supplier) performing it, and the reason for the movement.
 
 ```python
 class Movement:
@@ -498,31 +498,31 @@ class Movement:
         self.type = "out" if isinstance(actor, Customer) else "in"
         self.reason = reason
 ```
-- Se guarda la referencia del producto y la cantidad (`amount`) directamente.
+- The reference to the product and the quantity (`amount`) are stored directly.
 
-- Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
+- `datetime.now()` is used to capture the date of the movement at the moment of its creation.
 
-- Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
+- It validates that the actor is an instance of either `Customer` or `Supplier`; otherwise, it raises a `TypeError`.
 
-- Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
+- The actor's identifier (`_actor_id`) is stored, and the actor is classified as either a customer or a supplier using `actor_type`.
 
-- Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
+- Automatically, the type of movement is set to `"out"` if performed by a customer (inventory outgoing), or `"in"` if performed by a supplier (inventory incoming).
 
-- Por último, se guarda la razón del movimiento.
+- Finally, the reason for the movement is saved.
 
-El metodo `get_delta` calcula el cambio que representa este movimiento sobre el inventario del producto.
+The `get_delta` method calculates the change this movement represents on the product's inventory.
 
 ```python
     def get_delta(self):
         return self.amount if self.type == "in" else -self.amount
 ```
--Si el movimiento es de entrada (`"in"`), devuelve la cantidad en positivo.
+- If the movement is incoming (`"in"`), it returns the quantity as a positive value.
 
--Si el movimiento es de salida (`"out"`), devuelve la cantidad como negativa.
+- If the movement is outgoing (`"out"`), it returns the quantity as a negative value.
 
--Este resultado puede utilizarse directamente para actualizar el inventario del producto.
+- This result can be used directly to update the product's inventory.
 
-El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal para serialización, almacenamiento o impresión estructurada.
+The `to_dict` method converts the movement into a Python dictionary, ideal for serialization, storage, or structured printing.
 
 ```python
     def to_dict(self):
@@ -537,10 +537,10 @@ El metodo `to_dict` convierte el movimiento en un diccionario de Python, ideal p
             "Reason": self.reason
         }
 ```
-Devuelve la información clave del movimiento, como el nombre y código del producto, la cantidad, el tipo de movimiento (`in` o `out`), la fecha formateada, el nombre del actor y su ID, y la razón registrada.
+It returns key information about the movement, such as the product’s name and code, the quantity, the movement type (`in` or `out`), the formatted date, the actor’s name and ID, and the recorded reason.
 
 #### Payment:
-En la clase `Payment`, vamos a definir una clase base abstracta para todos los métodos de pago. Es decir, esta clase no se va a usar directamente para hacer pagos, sino que sirve como plantilla para las clases hijas como `Card` y `Cash`. En ella definimos dos métodos (`pay` y `to_dict`) que deben ser implementados por las subclases.
+In the `Payment` class, we define an abstract base class for all payment methods. That is, this class will not be used directly to make payments, but serves as a template for child classes like `Card` and `Cash`. In it, we define two methods (`pay` and `to_dict`) that must be implemented by the subclasses.
 
 ```python
 class Payment:
@@ -554,7 +554,7 @@ class Payment:
         raise NotImplementedError("Subclasses must implement the to_dict() method.")
 ```
 
-La clase `Card` hereda de `Payment`, y representa un método de pago con tarjeta. En su constructor (`__init__`) recibimos el número de tarjeta y el código CVV. Usamos `super()` para llamar al constructor de la clase base.
+The `Card` class inherits from `Payment` and represents a card payment method. In its constructor (`__init__`), we receive the card number and the CVV code. We use `super()` to call the base class constructor.
 
 ```python
 class Card(Payment):
@@ -563,7 +563,7 @@ class Card(Payment):
         self._number = number
         self._cvv = cvv
 ```
-El método `pay` en esta clase simula la acción de pagar con tarjeta. Imprime un mensaje en consola que indica cuánto se va a pagar y muestra los últimos 4 dígitos del número de la tarjeta.
+The `pay` method in this class simulates the action of paying by card. It prints a console message indicating how much will be paid and shows the last 4 digits of the card number.
 
 ```python
     def pay(self, amount):
@@ -571,7 +571,7 @@ El método `pay` en esta clase simula la acción de pagar con tarjeta. Imprime u
         return True
 ```
 
-El método `to_dict` convierte los datos de la tarjeta en un diccionario, ocultando el número completo por motivos de seguridad. Solo muestra los últimos 4 dígitos.
+The `to_dict` method converts the card data into a dictionary, hiding the full number for security reasons. It only shows the last 4 digits.
 
 ```python
     def to_dict(self):
@@ -581,14 +581,14 @@ El método `to_dict` convierte los datos de la tarjeta en un diccionario, oculta
         }
 ```
 
-Finalmente, con el método `__str__`, devolvemos una representación en texto legible del objeto `Card`, también mostrando solo los últimos dígitos del número.
+Finally, with the `__str__` method, we return a readable text representation of the `Card` object, also showing only the last digits of the number.
 
 ```python
     def __str__(self):
         return f"Card - **** **** **** {self._number[-4:]}"
 ```
 
-La clase `Cash` también hereda de `Payment`, pero representa pagos en efectivo. En su constructor, se guarda el valor entregado por el cliente.
+The `Cash` class also inherits from `Payment`, but represents cash payments. In its constructor, it stores the amount given by the customer.
 
 ```python
 class Cash(Payment):
@@ -597,7 +597,7 @@ class Cash(Payment):
         self.cash_given = cash_given
 ```
 
-El método `pay` verifica si el efectivo entregado es suficiente para cubrir el valor del pago. Si es suficiente, calcula el cambio y lo imprime; si no lo es, informa cuánto falta.
+The `pay` method checks if the cash provided is enough to cover the payment amount. If sufficient, it calculates the change and prints it; if not, it informs how much is missing.
 
 ```python
     def pay(self, amount):
@@ -610,7 +610,7 @@ El método `pay` verifica si el efectivo entregado es suficiente para cubrir el 
             return False
 ```
 
-El método `to_dict` convierte los datos de pago en efectivo en un diccionario que guarda el método y el valor entregado.
+The `to_dict` method converts the cash payment data into a dictionary that stores the method and the amount given.
 
 ```python
     def to_dict(self):
@@ -620,7 +620,7 @@ El método `to_dict` convierte los datos de pago en efectivo en un diccionario q
         }
 ```
 
-Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, indicando cuánto dinero entregó el cliente.
+Finally, `__str__` returns a readable representation of the `Cash` object, indicating how much money the customer provided.
 
 ```python
     def __str__(self):
@@ -628,9 +628,9 @@ Finalmente, `__str__` devuelve una representación legible del objeto `Cash`, in
 ```
 
 #### Bills:
-Este módulo permite gestionar facturas de compras o ventas, asociadas a una entidad (ya sea un cliente o un proveedor), con una lista de productos, sus cantidades, precios y el método de pago correspondiente.
+This module allows managing purchase or sales invoices associated with an entity (either a customer or a supplier), including a list of products, their quantities, prices, and the corresponding payment method.
 
-La clase `BillItem` representa un único ítem dentro de una factura. Contiene tres atributos esenciales: el `producto`, la `cantidad` adquirida, y el `precio` unitario de dicho producto.
+The `BillItem` class represents a single item within an invoice. It contains three essential attributes: the `product`, the `quantity` purchased, and the unit `price` of that product.
 
 ```python
 class BillItem:
@@ -640,14 +640,14 @@ class BillItem:
         self.price = price
 ```
 
-Con el método `get_total_price`, calculamos el precio total del ítem multiplicando la cantidad por el precio unitario.
+With the `get_total_price` method, we calculate the total price of the item by multiplying the quantity by the unit price.
 
 ```python
     def get_total_price(self):
         return self.quantity * self.price
 ```
 
-El método `to_dict` permite convertir el ítem a un diccionario de Python, útil para serialización o almacenamiento. Incluye el nombre y código del producto, la cantidad, el precio unitario y el total.
+The `to_dict` method allows converting the item into a Python dictionary, useful for serialization or storage. It includes the product’s name and code, the quantity, unit price, and total.
 
 ```python
     def to_dict(self):
@@ -660,7 +660,7 @@ El método `to_dict` permite convertir el ítem a un diccionario de Python, úti
         }
 ```
 
-La clase `Bill` representa una factura completa. Esta incluye una entidad (puede ser un cliente o un proveedor), la fecha de emisión, un identificador único, el método de pago, y una lista de ítems (`BillItem`) que componen la factura.
+The `Bill` class represents a complete invoice. It includes an entity (which can be a customer or a supplier), the issue date, a unique identifier, the payment method, and a list of items (`BillItem`) that compose the invoice.
 
 ```python
 class Bill:
@@ -672,9 +672,9 @@ class Bill:
         self.payment_method = payment_method
         self.items = []
 ```
-En este constructor, se genera automáticamente un ID único para la factura usando `uuid4`, y se registra la fecha actual usando `datetime.now()`. Se identifica el tipo de entidad (`Customer` o `Supplier`) verificando la clase del objeto recibido. También se inicializa la lista vacía de ítems que luego se agregarán a la factura.
+In this constructor, a unique ID for the invoice is automatically generated using `uuid4`, and the current date is recorded using `datetime.now()`. The entity type (`Customer` or `Supplier`) is identified by checking the class of the received object. The empty list of items that will later be added to the invoice is also initialized.
 
-Con el método `add_item`, se agregan productos a la factura. Se crea un nuevo objeto `BillItem` con el producto, cantidad y precio, y luego se añade a la lista de ítems.
+With the `add_item` method, products are added to the invoice. A new `BillItem` object is created with the product, quantity, and price, and then added to the list of items.
 
 ```python
     def add_item(self, product, quantity, price):
@@ -682,14 +682,14 @@ Con el método `add_item`, se agregan productos a la factura. Se crea un nuevo o
         self.items.append(item)
 ```
 
-El método `calculate_total` suma el total de todos los ítems que han sido agregados a la factura, usando la función `get_total_price` definida en cada `BillItem`.
+The `calculate_total` method sums the total of all items that have been added to the invoice, using the `get_total_price` function defined in each `BillItem`.
 
 ```python
     def calculate_total(self):
         return sum(item.get_total_price() for item in self.items)
 ```
 
-Finalmente, `to_dict` convierte toda la información de la factura en un diccionario estructurado. Esto incluye el ID, la fecha en formato año-mes-día, el nombre de la entidad, su tipo, el método de pago (convertido a diccionario si está presente), la lista de ítems (también como diccionarios), y el total general.
+Finally, `to_dict` converts all the invoice information into a structured dictionary. This includes the ID, the date in year-month-day format, the entity’s name, its type, the payment method (converted to a dictionary if present), the list of items (also as dictionaries), and the grand total.
 
 ```python
     def to_dict(self):
@@ -710,12 +710,12 @@ Finalmente, `to_dict` convierte toda la información de la factura en un diccion
 
 <h3 align="left"> Extracts </h3>
 
-La clase `Extracts` encapsula todas las operaciones relacionadas con exportar, importar y reconstruir datos del sistema de inventario.
+The `Extracts` class encapsulates all operations related to exporting, importing, and reconstructing data from the inventory system.
 
 
-*Es importante aclarar que, al principio de cada metodo, se utiliza el decorador `@staticmethod` en cada uno de los métodos de la clase `Extracts` porque estos métodos no necesitan acceder ni modificar ningún atributo o estado interno de una instancia específica de la clase. Es decir, su comportamiento depende exclusivamente de los datos que reciben como argumentos, no de propiedades internas de `self`. Usar `@staticmethod` en este contexto permite organizar funcionalmente utilidades de exportación e importación dentro de una misma clase, sin necesidad de crear instancias de la misma, lo cual es más eficiente y claro desde el punto de vista del diseño del software.*
+*It is important to clarify that, at the beginning of each method, the `@staticmethod` decorator is used in all methods of the `Extracts` class because these methods do not need to access or modify any attribute or internal state of a specific instance of the class. That is, their behavior depends exclusively on the data they receive as arguments, not on internal properties of `self`. Using `@staticmethod` in this context allows organizing export and import utilities functionally within the same class, without needing to create instances of it, which is more efficient and clearer from a software design point of view.*
 
-<h4 align="left"> Consultas: obtener datos desde el sistema como listas de diccionarios: </h4>
+<h4 align="left"> Queries: retrieving data from the system as lists of dictionaries: </h4>
 
 ```python
 @staticmethod
@@ -723,38 +723,37 @@ def get_movements(system):
     return [movement.to_dict() for movement in system.movements]
 ```
 
-Este metodo recorre todos los movimientos (`system.movements`) y llama a `to_dict()` en cada uno, convirtiéndolos en diccionarios para facilitar su exportación.
+This method iterates over all movements (`system.movements`) and calls `to_dict()` on each one, converting them into dictionaries to facilitate their export.
 
 ```python
 @staticmethod
 def get_bills(system):
     return [bill.to_dict() for bill in system.bills.values()]
 ```
-Este metodo extrae todas las facturas del sistema (system.bills es un diccionario), las convierte a diccionario con to_dict() y retorna una lista con todas ellas.
+This method extracts all invoices from the system (`system.bills` is a dictionary), converts them to dictionaries using `to_dict()`, and returns a list with all of them.
 
 ```python
 @staticmethod
 def get_records(system):
     return [record.to_dict() for record in system.records.values()]
 ```
-Este metodo convierte todos los registros de inventario (que contienen productos y stock) a formato de diccionario.
+This method converts all inventory records (which contain products and stock) into dictionary format.
 
 ```python
 @staticmethod
 def get_customers(system):
     return [customer.to_dict() for customer in system.customers.values()]
 ```
-Este metodo devuelve todos los clientes del sistema como una lista de diccionarios, útil para guardarlos o reconstruirlos luego.
+This method returns all customers in the system as a list of dictionaries, useful for saving or reconstructing them later.
 
 ```python
 @staticmethod
 def get_suppliers(system):
     return [supplier.to_dict() for supplier in system.suppliers.values()]
 ```
-Este metodo es similar al anterior, pero para proveedores.
+This method is similar to the previous one, but for suppliers.
 
-#### Exportación genérica de datos a archivos `.json` 
-
+#### Generic data export to `.json` files
 ```python
 @staticmethod
 def export_to_json(data, filename):
@@ -765,33 +764,33 @@ def export_to_json(data, filename):
     except Exception as e:
         raise ValueError(f"Error exporting to {filename}: {e}")
 ```
-Este metodo guarda cualquier `data` (lista de diccionarios) en un archivo `.json`.
+This method saves any `data` (a list of dictionaries) into a `.json` file.
 
-Usa indentación para hacerlo legible.
+- It uses indentation to make the file readable.
 
-`ensure_ascii=False` permite guardar caracteres especiales (como acentos).
+- `ensure_ascii=False` allows saving special characters (like accents).
 
-Captura errores de escritura y lanza una excepción explicativa.
+- It catches write errors and raises an explanatory exception.
 
-<h4 align="left"> Exportaciones específicas por tipo de objeto </h4>
+<h4 align="left"> Specific exports by object type </h4>
 
-Cada uno de estos métodos usa los anteriores (`get_...`) y el exportador general:
+Each of these methods uses the previous (`get_...`) methods and the general exporter:
 
 ```python
 @staticmethod
 def export_movements(system, filename="movements.json"):
     Extracts.export_to_json(Extracts.get_movements(system), filename)
 ```
-Este metodo exporta todos los movimientos del sistema a `movements.json`.
+This method exports all system movements to `movements.json`.
 
 ```python
 @staticmethod
 def export_bills(system, filename="bills.json"):
     Extracts.export_to_json(Extracts.get_bills(system), filename)
 ```
-Este metodo exporta todas las facturas a bills.json.
+This method exports all invoices to `bills.json`.
 
-<h4 align="left"> Exportación completa del sistema </h4>
+<h4 align="left"> Full system export </h4>
 
 ```python
 @staticmethod
@@ -806,9 +805,9 @@ def export_full_system(system, filename="full_backup.json"):
     Extracts.export_to_json(data, filename)
 ```
 
-Este metodo crea un diccionario con todos los datos clave del sistema, lo exporta en un solo archivo. Este archivo se puede usar como backup general o para cargar todo el sistema en otro momento.
+This method creates a dictionary with all the system’s key data and exports it into a single file. This file can be used as a general backup or to load the entire system at another time.
 
-<h4 align="left"> Importación de productos desde archivo JSON </h4>
+<h4 align="left"> Importing products from a JSON file </h4>
 
 ```python
 @staticmethod
@@ -817,9 +816,9 @@ def import_all_products(filename):
         data = json.load(f)
     return [Extracts.dict_to_product(d) for d in data]
 ```
-Este metodo abre el archivo `filename`, luego carga los datos como una lista de diccionarios (`data`) y por cada diccionario llama al metodo `dict_to_product` para convertirlo en un objeto `Product`
+This method opens the `filename`, then loads the data as a list of dictionaries (`data`), and for each dictionary calls the `dict_to_product` method to convert it into a `Product` object.
 
-<h4 align="left"> Reconstrucción de productos </h4>
+<h4 align="left"> Product reconstruction </h4>
 
 ```python
 @staticmethod
@@ -831,7 +830,7 @@ def dict_to_product(data):
     state_data = data["state"]
 ```
 
-Este bloque extrae los campos esenciales del diccionario `data`, para luego determinar el tipo de estado:
+This block extracts the essential fields from the `data` dictionary to then determine the type of state:
 
 ```python
 if isinstance(state_data, dict):
@@ -847,29 +846,29 @@ elif isinstance(state_data, str):
 else:
     raise ValueError("Unsupported type for product state")
 ```
-Lo que hace este metodo es que si el estado es un diccionario con `"expiration_date"`, lo convierte a una tupla y crea un `State`. Si tiene `"condition"`, crea un `State` con esa condición, y si el tipo de dato no es compatible lanza errores de tipo `ValueError`, para finalmente:
+What this method does is that if the state is a dictionary with `"expiration_date"`, it converts it into a tuple and creates a `State`. If it has `"condition"`, it creates a `State` with that condition, and if the data type is not compatible, it raises `ValueError` exceptions, to finally:
 
 ```python
 return Product(name, category, code, price, state)
 ```
-Retorna un objeto `Product` completo y listo para usarse.
+Return a complete `Product` object ready to be used.
 
-<h4 align="left"> Conversión de entidades desde diccionarios </h4>
+<h4 align="left"> Converting entities from dictionaries </h4>
 
 ```python
 @staticmethod
 def dict_to_customer(data):
     return Customer(data["name"], data["number_id"], data["_id"])
 ```
-Este metodo reconstruye el objeto `Customer` desde un diccionario para poder usarlo en la carga de backups
+This method reconstructs the `Customer` object from a dictionary to be used when loading backups.
 ```python
 @staticmethod
 def dict_to_supplier(data):
     return Supplier(data["name"], data["contact_number"], data["_id"])
 ```
-Este metodo hace lo mismo, pero esta vez con  el objeto `Supplier`
+This method does the same, but this time with the `Supplier` object.
 
-<h4 align="left"> Reconstrucción del stock (cantidad, mínimos, historial) </h4>
+<h4 align="left"> Stock reconstruction (quantity, minimums, history) </h4>
 
 ```python
 @staticmethod
@@ -879,7 +878,7 @@ def dict_to_stock(data, system):
     max_stock = data["maximum_stock"]
     stock = Stock(actual, min_stock, max_stock)
 ```
-Este metodo crea el objeto `Stock` con sus parametros de minimo y maximo, luego reconstruye el historial.
+This method creates the `Stock` object with its minimum and maximum parameters, then reconstructs the history.
 
 ```python
 if system and "record" in data:
@@ -893,9 +892,9 @@ if system and "record" in data:
                 stock._record.append(movement)
                 seen.add(key)
 ```
-Lo que hace este metodo es que, si existe un historial de movimientos (`record`) lo reconstruye, evitando movimientos duplicados al usar un set (`seen`) de claves unicas.
+What this method does is, if there is a movement history (`record`), it reconstructs it, avoiding duplicate movements by using a set (`seen`) of unique keys.
 
-<h4 align="left"> Conversión de movimientos </h4>
+<h4 align="left"> Movement conversion </h4>
 
 ```python
 @staticmethod
@@ -907,7 +906,7 @@ def dict_to_movement(data, system):
     reason = data["Reason"]
 ```
 
-Este metodo recupera los campos en movimiento. Luego:
+This method retrieves the fields in the movement. Then:
 
 ```python
 if data["Type"] == "in":
@@ -920,9 +919,9 @@ if actor is None:
 
 return Movement(product, amount, actor, reason)
 ```
-Este metodo determina si el actor es un proveedor o cliente según el tipo de movimiento. Crea un `Movement` con los datos correspondientes.
+This method determines if the actor is a supplier or customer based on the movement type. It creates a `Movement` with the corresponding data.
 
-<h4 align="left"> Reconstrucción de facturas </h4>
+<h4 align="left"> Invoice reconstruction </h4>
 
 ```python
 @staticmethod
@@ -933,7 +932,7 @@ def dict_to_bill(data, system):
     entity_id = data.get("entity_id")
     payment_data = data["payment_method"]
 ```
-Este metodo extrae los datos basicos de la factura. Luego:
+This method extracts the basic invoice data. Then:
 
 ```python
 if entity_type == "Customer":
@@ -950,14 +949,14 @@ elif payment_data["method"] == "Card":
 else:
     raise ValueError("Unknown payment method.")
 ```
-Este metodo crea el objeto entidad y el método de pago adecuado. Luego se crea la factura y configura su ID y fecha:
+This method creates the entity object and the appropriate payment method. Then the invoice is created and its ID and date are set:
 
 ```python
 bill = Bill(entity, payment)
 bill._bill_id = bill_id
 bill.date = datetime.strptime(date, "%Y-%m-%d")
 ```
-Ya por ultimo, se agregan los productos facturados:
+Finally, the invoiced products are added:
 
 ```python
 for item_data in data["items"]:
@@ -968,7 +967,7 @@ for item_data in data["items"]:
     bill.add_item(product, quantity, price)
 ```
 
-#### Carga total del sistema desde un archivo `.json`
+#### Total system load from a `.json` file
 
 ```python
 @staticmethod
@@ -976,25 +975,25 @@ def load_full_backup(path, system):
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 ```
-Aqui se abre el archivo JSON que contiene todo el respaldo del sistema. Ahora seguimos con los metodos despues de la carga del archivo JSON
+Here the JSON file containing the full system backup is opened. Now we continue with the methods after loading the JSON file.
 
-<h4 align="left"> Apertura del archivo y carga de datos </h4>
+<h4 align="left"> Opening the file and loading data </h4>
 
 ```python
 with open(path, "r", encoding="utf-8") as f:
     data = json.load(f)
 ```
-Este primer bloque abre el archivo JSON que contiene el respaldo completo del sistema, utilizando la ruta proporcionada en el argumento `path`. El contenido del archivo se carga en memoria mediante `json.load(f)` y se almacena en la variable `data` como un diccionario de Python. Este diccionario contendrá claves como `"customers"`, `"suppliers"`, `"records"`, `"movements"` y `"bills"` que serán utilizadas para reconstruir los componentes del sistema.
+This first block opens the JSON file containing the complete system backup, using the path provided in the `path` argument. The file content is loaded into memory via `json.load(f)` and stored in the variable `data` as a Python dictionary. This dictionary will contain keys such as `"customers"`, `"suppliers"`, `"records"`, `"movements"`, and `"bills"` which will be used to reconstruct the system components.
 
-<h4 align="left"> Carga de clientes </h4>
+<h4 align="left"> Customer load </h4>
 
 ```python
 for customer in data["customers"]:
     system.add_customer(Extracts.dict_to_customer(customer))
 ```
-Luego, se procede a reconstruir los clientes. Para ello, se recorre cada elemento dentro de la lista `data["customers"]`, que representa los datos serializados de los clientes. Cada entrada se transforma en un objeto `Customer` usando el método auxiliar `dict_to_customer`, y luego se añade al sistema mediante `system.add_customer()`. Esto permite recuperar todos los clientes registrados antes de la exportación.
+Then, the customers are reconstructed. To do this, each element in the `data["customers"]` list, representing serialized customer data, is iterated over. Each entry is transformed into a `Customer` object using the helper method `dict_to_customer`, and then added to the system via `system.add_customer()`. This recovers all customers registered before export.
 
-<h4 align="left"> Carga de proveedores </h4>
+<h4 align="left"> Supplier load </h4>
 
 ```python
 for supplier in data["suppliers"]:
@@ -1008,9 +1007,9 @@ for supplier in data["suppliers"]:
     if not existing:
         system.add_supplier(Extracts.dict_to_supplier(supplier))
 ```
-Para los proveedores, se realiza un paso adicional: antes de agregar un nuevo proveedor al sistema, se verifica si ya existe alguno con el mismo nombre y número de contacto. Si no se encuentra un proveedor duplicado, entonces se reconstruye el objeto `Supplier` a partir del diccionario usando `dict_to_supplier` y se agrega al sistema. Esto evita que se creen múltiples entradas para el mismo proveedor durante una restauración.
+For suppliers, an additional step is performed: before adding a new supplier to the system, it checks if one already exists with the same name and contact number. If no duplicate supplier is found, the `Supplier` object is reconstructed from the dictionary using `dict_to_supplier` and added to the system. This prevents creating multiple entries for the same supplier during restoration.
 
-<h4 align="left"> Carga de registros de inventario </h4>
+<h4 align="left"> Inventory records upload </h4>
 
 ```python
 for record in data["records"]:
@@ -1036,16 +1035,16 @@ for record in data["records"]:
         record = Extracts.dict_to_inventory_record(record, system)
         system.add_record(record)
 ```
-En este bloque se restauran todos los registros de inventario. Si el producto ya existe en el sistema (verificado por su código), entonces se compara su historial de movimientos. El objetivo es evitar duplicar movimientos ya registrados, para lo cual se genera una clave única para cada movimiento (producto, cantidad, actor y fecha). Si algún movimiento nuevo no está en los ya existentes, se añade al historial. Si el producto no existía previamente en el sistema, se reconstruye el registro completo con `dict_to_inventory_record` y se agrega al sistema como un nuevo elemento.
+This block restores all inventory records. If the product already exists in the system (verified by its code), its movement history is compared. The goal is to avoid duplicating already recorded movements, for which a unique key is generated for each movement (product, quantity, actor, and date). If any new movement is not in the existing ones, it is added to the history. If the product did not previously exist in the system, the complete record is reconstructed with `dict_to_inventory_record` and added as a new item.
 
-<h4 align="left"> Sincronización de ubicaciones </h4>
+<h4 align="left"> Location synchronization </h4>
 
 ```python
 Location.sync_from_inventory(system.records.values())
 ```
-Una vez cargados todos los registros de inventario, se sincronizan las ubicaciones físicas de los productos. El método `sync_from_inventory` asegura que cada producto esté correctamente asignado a su estantería y pasillo dentro del sistema. Esta sincronización es importante porque la ubicación puede ser necesaria para la gestión física del inventario en el mundo real.
+Once all inventory records are loaded, the physical locations of the products are synchronized. The `sync_from_inventory` method ensures that each product is correctly assigned to its shelf and aisle within the system. This synchronization is important because the location may be necessary for physical inventory management in the real world.
 
-<h4 align="left"> Carga de movimientos </h4>
+<h4 align="left"> Movements load </h4>
 
 ```python
 for movement_data in data["movements"]:
