@@ -1,4 +1,4 @@
-<h1 align="center"> Gestión de Inventarios - Stokapp </h1>
+  <h1 align="center"> Gestión de Inventarios - Stokapp </h1>
 
 <h2 align="center"> Proyecto Final POO </h2>
 
@@ -2412,7 +2412,103 @@ Para registrar el movimiento en el sistema, definimos la opcion `register_moveme
                     raise ValueError("You have to enter a reason.")
 ```
 
-Para cada producto del diccionario `system.records.values`, 
+Para cada producto del diccionario `system.records.values`, nos retorna un objeto `r`, y si el nombre (`r.product.name`) es igual al `product_name` que ingresamos, entonces se verifica que la cantidad del producto ingresada sea un valor entero positivo, y que el campo `reason` sea diligenciado.
+
+```python
+                product_name = product_var.get()
+                product = next(
+                    r.product for r in self.system.records.values() 
+                    if r.product.name == product_name
+                )
+                cantidad = int(quantity_entry.get())
+                reason = reason_entry.get().strip()
+```
+
+En caso de que en el tipo de movimiento hayamos especificado que es un ingreso de productos (`in`), entonces se verifica que, en caso tal de que hayamos escogido la opcion de un actor existente, este se encuentre registrado en el sistema. En caso de que no se encuentre el actor, retornara el mensaje de error `"The supplier selected is invalid"`.
+
+```python
+                if movement_type.get() == "in":
+                    if actor_option.get() == "existent":
+                        actor = next(
+                            (
+                                s for s in self.system.suppliers.values() 
+                                if s.name == actor_var.get()
+                             ), None
+                        )
+                        if not actor:
+                            raise ValueError(
+                                "The supplier selected is invalid."
+                            )
+```
+
+Si escogimos que queremos añadir un nuevo actor al sistema, entonces se verificara que las entradas que hayamos colocado en los campos `name`, y `contact` hayan sido diligenciados. En caso de que no lo hayan sido, retornara el mensaje `"Enter the new supplier name and contact"`. Si todo esta diligenciado correctamente, se guardaran las entradas `name` y `contact` en un objeto llamado `actor`, el cual se mandara a los diccionarios del sistema.
+
+```python
+                    else:
+                        name = new_actor_name_entry.get().strip()
+                        contact = new_actor_contact_entry.get().strip()
+                        if not name or not contact:
+                            raise ValueError(
+                                "Enter the new supplier name and contact."
+                            )
+                        actor = Supplier(name, contact)
+                        self.system.add_supplier(actor)
+
+                    self.system.restock(
+                        product._code, cantidad, actor, reason
+                    )
+```
+
+Ahora, en caso de que en el apartado de tipo de movimiento, hayamos escogido movimiento de tipo salida (`out`) y hayamos sleccionado la opcion `existent`, automaticamente se creara el objeto `actor`, en el cual vamos a traer cada uno de los objetos `c` en el diccionario de clientes del sistema `system.customers.values`. Cada uno de estos objetos se comparan con el nombre escogido, y si estos no concuerdan, retornara el mensaje `"The customer selected is invalid"`.
+
+```python
+                else:
+                    if actor_option.get() == "existent":
+                        actor = next(
+                            (
+                                c for c in self.system.customers.values() 
+                                if c.name == actor_var.get()
+                             ), None
+                        )
+                        if not actor:
+                            raise ValueError(
+                                "The customer selected is invalid."
+                            )
+```
+
+En caso de que hayamos seleccionado la opcion `new` para registrar un nuevo cliente, entonces se verificara que los campos `name` y `contact` hayan sido diligenciados correctamente. En caso de que no, retornara el error `"Enter the new customer name and id"`. En caso de que esten bien diligenciados esos campos, se creara el objeto `actor`, al cual le asignaremos los atributos `name` y `contact` del objeto `Customer` traido de la biblioteca de clientes del sistema.
+
+```python
+                    else:
+                        name = new_actor_name_entry.get().strip()
+                        contact = new_actor_contact_entry.get().strip()
+                        if not name or not contact:
+                            raise ValueError(
+                                "Enter the new customer name and id."
+                            )
+                        actor = Customer(name, contact)
+                        self.system.add_customer(actor)
+
+                    self.system.make_sale(
+                        product._code, cantidad, actor, reason
+                    )
+```
+
+Sea cual haya sido la opcion seleccionada, si esta fue procesada correctamente, entonces el sistema generara un messagebox con el mensaje `"Success", "Movement registered"`, y eliminara esta pestaña. En caso de que ocurra un error desconocido, generara un messagebox con el mensaje `"Error", "Couldn't register the movement"` y especifica el error ocurrido. 
+
+```python
+                messagebox.showinfo("Success", "Movement registered.")
+                dialog.destroy()
+
+            except Exception as e:
+                messagebox.showerror(
+                    "Error", f"Couldn't register the movement:\n{e}"
+                )
+
+        ttk.Button(
+            main_frame, text="Register", command=register_movement
+        ).pack(pady=15, fill="x")
+```
 
 Definimos la función `créate_bill_method`
 
