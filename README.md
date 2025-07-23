@@ -50,7 +50,7 @@ In addition, it offers extra features like:
 #### Product
 
 
-En la clase `Product`, a través del método `__init__`, vamos a definir los productos que harán parte de nuestro sistema de inventario. Cada producto tiene cinco atributos principales: `name`, `category`, `code`, `price` y `state`. El atributo name representa el nombre comercial del producto, mientras que `category` nos permite clasificarlo dentro de una categoría general (como por ejemplo: "Vegetables" o "Grains"). El campo `code`, que está protegido mediante el uso del guion bajo (`_code`), corresponde al identificador interno del producto, que permite distinguirlo del resto en el sistema. A su vez, `price` (también con acceso protegido como `_price`) indica el valor monetario del producto, y `state` es un objeto que describe su estado actual. Este último puede ser `None` si no se ha definido un estado al momento de crear el producto.
+In the `Product` class, through the `__init__` method, we define the products that will be part of our inventory system. Each product has five main attributes: `name`, `category`, `code`, `price`, and `state`. The `name` attribute represents the product’s commercial name, while `category` allows us to classify it within a general category (such as "Vegetables" or "Grains"). The `code` field, which is protected using an underscore (`_code`), corresponds to the internal identifier of the product, allowing it to be distinguished from others in the system. Similarly, `price` (also protected as `_price`) indicates the monetary value of the product, and `state` is an object that describes its current status. The latter can be `None` if no state is defined at the time the product is created.
 
 
 ```python
@@ -63,7 +63,7 @@ class Product:
         self._state = state
 ```
 
-Con el método `to_dict` vamos a convertir cada instancia de `Product` en un diccionario de Python, útil para tareas como el almacenamiento en bases de datos con los Json. El diccionario incluye claves como `"name"`, `"category"`, `"code"`, `"price"` y `"state"`, y sus respectivos valores corresponden a los atributos del objeto. En particular, si el atributo `_state` existe, también será convertido a un diccionario mediante su propio método `to_dict`; de lo contrario, se registrará como `None`.
+With the `to_dict` method, we convert each instance of `Product` into a Python dictionary, which is useful for tasks like storing data in databases using JSON. The dictionary includes keys such as `"name"`, `"category"`, `"code"`, `"price"`, and `"state"`, and their respective values correspond to the object's attributes. In particular, if the `_state` attribute exists, it will also be converted into a dictionary using its own `to_dict` method; otherwise, it will be recorded as `None`.
 
 ```python
     def to_dict(self):
@@ -75,12 +75,14 @@ Con el método `to_dict` vamos a convertir cada instancia de `Product` en un dic
             "state": self._state.to_dict() if self._state else None
         }
 ```
-Esta estructura nos permite mantener toda la información del producto organizada y fácilmente accesible para su procesamiento dentro del sistema de inventario.
+This structure allows us to keep all the product information organized and easily accessible for processing within the inventory system.
+
 
 
 #### State
 
-La clase `State` representa el estado en el que se encuentra un producto del inventario. Cada instancia debe contener al menos uno de los dos atributos: una condición (`condition`) o una fecha de expiración (`expiration_date`). Aunque ambos parámetros son opcionales en la firma del constructor, la lógica del sistema asume que como mínimo uno debe estar presente para que el estado tenga sentido.
+The `State` class represents the condition in which a product in the inventory is found. Each instance must contain at least one of the two attributes: a `condition` or an `expiration_date`. Although both parameters are optional in the constructor’s signature, the system’s logic assumes that at least one of them must be present for the state to be meaningful.
+
 
 ```python
 class State:
@@ -89,9 +91,10 @@ class State:
         self._expiration_date = expiration_date
 ```
 
-El atributo `_condition` es una cadena que puede representar, por ejemplo, que el producto está "Fresco", por ejemplo(este se usa para productos como `Fruits` o `Vegetables`). Por su parte, `_expiration_date` debe recibirse como una tupla de tres valores (`YYYY`, `MM`, `DD`), y representa la fecha en la que el producto deja de ser válido o útil (este se usa para productos empacados con su fecha de vencimiento especifica). Aunque ninguno de los dos campos es obligatorio por separado, el sistema espera que al menos uno esté definido.
+The `_condition` attribute is a string that can represent, for example, that the product is "Fresh" (this is used for products like `Fruits` or `Vegetables`). On the other hand, `_expiration_date` must be provided as a tuple of three values (`YYYY`, `MM`, `DD`), and it represents the date on which the product is no longer valid or useful (this is used for packaged products with a specific expiration date). Although neither field is required individually, the system expects at least one of them to be defined.
 
-Uno de los métodos centrales es `is_expired`, el cual permite verificar si la fecha de expiración del producto ya pasó. Si se ha definido `_expiration_date`, se convierte en un objeto `datetime.date` y se compara con la fecha actual. Si el producto no tiene fecha de expiración, el método simplemente retorna `False`.
+One of the core methods is `is_expired`, which allows checking whether the product’s expiration date has already passed. If `_expiration_date` is defined, it is converted into a `datetime.date` object and compared with the current date. If the product has no expiration date, the method simply returns `False`.
+
 
 ```python
     def is_expired(self):
@@ -101,7 +104,7 @@ Uno de los métodos centrales es `is_expired`, el cual permite verificar si la f
             return today > expiration
         return False
 ```
-El método `to_dict` convierte el estado del producto en un diccionario. Si el estado tiene una condición, se incluirá bajo la clave `"condition"`; si tiene una fecha de expiración, se incluirá como `"expiration_date"`. Si ambos están presentes, ambos se reflejan en el diccionario.
+The `to_dict` method converts the product's state into a dictionary. If the state has a condition, it will be included under the `"condition"` key; if it has an expiration date, it will be included as `"expiration_date"`. If both are present, both will be reflected in the dictionary.
 
 ```python
     def to_dict(self):
@@ -112,7 +115,7 @@ El método `to_dict` convierte el estado del producto en un diccionario. Si el e
             state_dict["expiration_date"] = self._expiration_date
         return state_dict
 ```
-Además, la clase implementa el método especial `__str__`, que genera una representación legible del estado del producto. Si existe una condición válida, se mostrará como `"Condition: <condición>"`. Si hay fecha de expiración, se mostrará en el formato `"Expires: YYYY-MM-DD"`. Cuando ambos atributos existen, se concatenan separados por coma; si no hay ninguno (aunque esto no debería suceder según la lógica del sistema), se devuelve la cadena `"Unknown"`.
+Additionally, the class implements the special method `__str__`, which generates a readable representation of the product's state. If a valid condition exists, it will be shown as `"Condition: <condition>"`. If there is an expiration date, it will be displayed in the format `"Expires: YYYY-MM-DD"`. When both attributes exist, they are concatenated separated by a comma; if neither is present (although this should not happen according to the system logic), the string `"Unknown"` is returned.
 
 ```python
     def __str__(self):
@@ -125,8 +128,7 @@ Además, la clase implementa el método especial `__str__`, que genera una repre
             state_parts.append(f"Expires: {date_str}")
         return ", ".join(state_parts) if state_parts else "Unknown"
 ```
-En resumen, la clase `State` permite describir el estado físico o temporal de un producto, garantizando que al menos haya un criterio para determinar si ese producto está en condiciones de uso, vencido o necesita revisión. Esta clase puede integrarse fácilmente con otras partes del sistema mediante sus métodos `to_dict` y `__str__`.
-
+In summary, the `State` class allows describing the physical or temporal condition of a product, ensuring that there is at least one criterion to determine whether the product is usable, expired, or needs inspection. This class can be easily integrated with other parts of the system through its `to_dict` and `__str__` methods.
 
 -----------
 
@@ -134,7 +136,7 @@ En resumen, la clase `State` permite describir el estado físico o temporal de u
 
 #### Inventory Record:
 
-En la clase `InventoryRecord`, por medio del método `__init__` se definen los atributos que va a tener el registro de nuestro inventario, como serían: `product`, `stock` y `location`. Estos van a actuar como objetos.
+In the `InventoryRecord` class, the `__init__` method defines the attributes that the inventory record will have, such as `product`, `stock`, and `location`. These will act as objects.
 
 ```python
 class InventoryRecord:
@@ -144,7 +146,7 @@ class InventoryRecord:
         self.location = location
 ```
 
-Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio de nuestro constructor `self` con los nombres de `product`, `stock` y `location`.
+We reference the attributes of our `InventoryRecord` class through our constructor `self` using the names `product`, `stock`, and `location`.
 
 ```python
     def to_dict(self):
@@ -155,11 +157,11 @@ Referenciamos los atributos propios de nuestra clase `InventoryRecord` por medio
         }
 ```
 
-Convertimos los atributos de nuestra clase `InventoryRecord` en un diccionario con las claves: `product`, `stock` y `location`.
+We convert the attributes of our `InventoryRecord` class into a dictionary with the keys: `product`, `stock`, and `location`.
 
 #### Location:
 
-Creamos la clase `Location` a la cual le vamos a asignar unos atributos protegidos que están fuera del constructor y son compartidos entre todas las instancias de la clase. Estos son `_category_aisles` que es la categoría de cada uno de los pasillos y es un diccionario vacío; `_next_aisle_number` que dicta cual será el siguiente pasillo pasando de uno en uno; `_shelf_counter_by_category` que cuenta cuantos estantes ya han sido asignados por categoría (también es un diccionario vacío); `_product_shelving = {}` que es un diccionario de las estanterias de cada producto.
+We create the `Location` class to which we assign some protected attributes outside the constructor that are shared among all instances of the class. These are `_category_aisles`, which is the category of each aisle and is an empty dictionary; `_next_aisle_number`, which dictates the next aisle number, incrementing one by one; `_shelf_counter_by_category`, which counts how many shelves have been assigned per category (also an empty dictionary); and `_product_shelving = {}`, which is a dictionary of each product’s shelving.
 
 ```python
 class Location:
@@ -169,7 +171,8 @@ class Location:
     _product_shelving = {}
 ```
 
-Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pasillos) y `shelf` (estantes).
+We define the attributes of our `Location` class, which are `aisle` (aisles) and `shelf` (shelves).
+
 
 ```python
     def __init__(self, aisle, shelf):
@@ -177,7 +180,7 @@ Definimos los atributos de nuestra clase `Location`, los cuales son `aisle` (pas
         self.shelf = shelf
 ```
 
-Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase completa. Definimos el metodo `sync_from_inventory` para que, por cada registro en el diccionario de registros, se le asigne un pasillo y estante y se tomen las variables `category`, `code`, `aisle` y `shelf`.
+With the `@classmethod` decorator, we indicate that the method works with the entire class. We define the `sync_from_inventory` method so that, for each record in the records dictionary, an aisle and shelf are assigned, and the variables `category`, `code`, `aisle`, and `shelf` are taken.
 
 ```python
     @classmethod
@@ -189,7 +192,7 @@ Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase com
             shelf = int(record.location.shelf)
 ```
 
-Si la categoria no se encuentra asignada a un pasillo especifico, este metodo le asignara uno disponible.
+If the category is not assigned to a specific aisle, this method will assign it an available one.
 
 ```python
     @classmethod
@@ -210,7 +213,7 @@ Si la categoria no se encuentra asignada a un pasillo especifico, este metodo le
             )
 ```
 
-Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase completa y no solo con objetos individuales. Definimos el método `assign_location`. Si la instancia de categoría `category` no tiene un pasillo asignado, se le asignara uno disponible, de forma que si hay un pasillo ocupado, se revisara el siguiente hasta que se encuentre uno disponible. Se tomaran las variables `aisle` y `key`.
+With the `@classmethod` decorator, we indicate that the method works with the entire class and not just individual objects. We define the `assign_location` method. If the `category` instance does not have an assigned aisle, it will be assigned an available one, so that if one aisle is occupied, the next one will be checked until an available one is found. The variables `aisle` and `key` will be used.
 
 ```python
     @classmethod
@@ -222,7 +225,7 @@ Con el decorador `@classmethod` indicamos que el metodo trabaja con la clase com
         key = (category, code)
 ```
 
-Si la `key` esta en un pasillo, a la variable `shelf` se le asignará esta. En caso de que no, se le asignara un pasillo diponible comenzando desde 0 y verificando uno por uno a ver cual esta disponible.
+If the `key` is in an aisle, the variable `shelf` will be assigned to it. If not, an available aisle will be assigned, starting from 0 and checking one by one to see which is available.
 
 ```python
         if key in cls._product_shelving:
@@ -235,7 +238,8 @@ Si la `key` esta en un pasillo, a la variable `shelf` se le asignará esta. En c
         return cls(aisle, shelf)
 ```
 
-Por medio del método `to_dict` vamos a convertir la información de la ubicación del producto a un diccionario con las claves `aisle` y `shelf`.
+Through the `to_dict` method, we convert the product location information into a dictionary with the keys `aisle` and `shelf`.
+
 
 ```python
     def to_dict(self):
@@ -247,13 +251,13 @@ Por medio del método `to_dict` vamos a convertir la información de la ubicaci�
 
 #### Stock:
 
-Del modulo `Inventory_System.Transactions.movements` importamos la clase `Movement`.
+From the `Inventory_System.Transactions.movements` module, we import the `Movement` class.
 
 ```python
 from Inventory_System.Transactions.movements import Movement
 ```
 
-Creamos la clase `Stock` con atributos como `actual_stock`, `mínimum_stock`, `máximum_stock` y `_record` que es una lista vacia.
+We create the `Stock` class with attributes such as `actual_stock`, `minimum_stock`, `maximum_stock`, and `_record`, which is an empty list.
 
 ```python
     def __init__(self, actual_stock, minimum_stock, maximum_stock):
@@ -263,14 +267,14 @@ Creamos la clase `Stock` con atributos como `actual_stock`, `mínimum_stock`, `m
         self._record = []
 ```
 
-Se define el método `get_actual_stock` el cual, en caso de querer consultar el stock actual, nos lo va a retornar.
+The `get_actual_stock` method is defined, which, when called to check the current stock, will return it to us.
 
 ```python
     def get_actual_stock(self):
         return self._actual_stock
 ```
 
-Se define el método `is_valid_update` con un atributo `delta` que representa el cambio de stock. El método revisa que antes de que se modifique el stock, el cambio no deje el stock ni por debajo del mínimo, ni por encima del máximo permitido.
+The `is_valid_update` method is defined with an attribute `delta` that represents the stock change. The method checks that before modifying the stock, the change does not leave the stock below the minimum or above the maximum allowed.
 
 ```python
     def is_valid_update(self, delta):
@@ -278,7 +282,7 @@ Se define el método `is_valid_update` con un atributo `delta` que representa el
         return 0 <= new_stock <= self.maximum_stock
 ```
 
-El método `update_stock` se define para actualizar el stock de un producto. Por medio de este método, si la actualización del stock no es válida, retornara el mensaje `”Cannot update stock”`. En caso de que si sea válida, se sumara el movimiento `delta` al stock actual ya sea entrada o salida. Si se paso un movimiento, se guarda en el diccionario de registros, si no, retorna el mensaje `”Only Movement instances are allowed to update stock”`.
+The `update_stock` method is defined to update the stock of a product. Through this method, if the stock update is not valid, it will return the message `"Cannot update stock"`. If it is valid, the `delta` movement will be added to the current stock, whether it is incoming or outgoing. If a movement is passed, it is saved in the records dictionary; otherwise, it returns the message `"Only Movement instances are allowed to update stock"`.
 
 ```python
     def update_stock(self, delta, movement):
@@ -294,7 +298,7 @@ El método `update_stock` se define para actualizar el stock de un producto. Por
         return True
 ```
 
-Definimos el método `update_stock_limits` con las instancias `new_min` y `new_max` para poder actualizar el mínimo y máximo de stock de algún producto. En caso de que se quiera actualizar el mínimo o máximo stock a un valor menor a 0, retornara el mensaje de error `”Stock limits cannot be negative”`. En caso de que se quiera actualizar el mínimo stock, y que este sea superior al máximo stock, retornara el mensaje de error `”Minimum stock cannot exceed máximum stock”`. En caso de que el cambio sea correcto, se actualizará.
+We define the `update_stock_limits` method with the instances `new_min` and `new_max` to update the minimum and maximum stock of a product. If there is an attempt to update the minimum or maximum stock to a value less than 0, it will return the error message `"Stock limits cannot be negative"`. If the minimum stock is updated to be higher than the maximum stock, it will return the error message `"Minimum stock cannot exceed maximum stock"`. If the change is valid, it will be updated.
 
 ```python
     def update_stock_limits(self, new_min, new_max):
@@ -306,7 +310,7 @@ Definimos el método `update_stock_limits` con las instancias `new_min` y `new_m
         self.maximum_stock = new_max
 ```
 
-El método `to_dict` retorna el stock actual, el stock mínimo y el stock máximo en diccionario con las claves `actual_stock`, `mínimum_stock` y `máximum_stock`.
+The `to_dict` method returns the current stock, minimum stock, and maximum stock in a dictionary with the keys `actual_stock`, `minimum_stock`, and `maximum_stock`.
 
 ```python
     def to_dict(self):
@@ -320,7 +324,7 @@ El método `to_dict` retorna el stock actual, el stock mínimo y el stock máxim
 
 #### Inventory:
 
-En la clase `Inventory` definimos dos atributos donde almacenaremos datos, que se crean directamente desde el objeto sin necesidad de recibirlos como parámetro. Estos son: `self.records` que es un diccionario vacío, y `self.movements` que es una lista vacía.
+In the `Inventory` class, we define two attributes where we will store data, which are created directly from the object without needing to receive them as parameters. These are: `self.records`, which is an empty dictionary, and `self.movements`, which is an empty list.
 
 ```python
 class Inventory:
@@ -329,7 +333,7 @@ class Inventory:
         self.movements = []
 ```
 
-Definimos la función `add_record`, la cual nos servira para añadir un registro al diccionario de registros con el codigo del producto, esto en caso de que este no se encuentre en el diccionario. SI el producto ya se encuentra en el diccionario, retorna un mensaje de error `"This product already exists in the inventory"`.
+We define the function `add_record`, which will help us add a record to the records dictionary using the product code, in case it is not already in the dictionary. If the product is already in the dictionary, it returns an error message: `"This product already exists in the inventory"`.
 
 ```python
     def add_record(self, record):
@@ -340,7 +344,7 @@ Definimos la función `add_record`, la cual nos servira para añadir un registro
             print("This product already exists in the inventory.")
 ```
 
-Se definió la función `remove_record` para, como lo dice su nombre, poder remover el registro de código de un producto por medio de la instrucción `del`. La función va a buscar el código de la biblioteca de registros. Si se encuentra el código, se procede con la función correctamente y se elimina el registro de la biblioteca. Si el código no se encuentra, el sistema arroja el mensaje “*No record found with this code*”.
+The function `remove_record` was defined to, as its name suggests, remove a product’s record by code using the `del` statement. The function will look for the code in the records library. If the code is found, the function proceeds correctly and deletes the record from the library. If the code is not found, the system throws the message "*No record found with this code*".
 
 ```python
     def remove_record(self, code):
@@ -350,7 +354,7 @@ Se definió la función `remove_record` para, como lo dice su nombre, poder remo
             print("No record found with this code.")
 ```
 
-Se define el metodo `update_stock_limits`, con el que vamos a actualizar los limites minimos y maximos de stock de un producto permitidos. En caso de que el codigo de producto no se encuentre en el diccionario de registros, retornara el mensaje de error `"Product not found in inventory records"`.
+The `update_stock_limits` method is defined, which will update the allowed minimum and maximum stock limits for a product. If the product code is not found in the records dictionary, it will return the error message `"Product not found in inventory records"`.
 
 ```python
     def update_stock_limits(self, product_code:str, new_min:int, new_max:int):
@@ -359,7 +363,7 @@ Se define el metodo `update_stock_limits`, con el que vamos a actualizar los lim
         self.records[product_code].stock.update_stock_limits(new_min, new_max)
 ```
 
-Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de productos, se almacenará en la lista de movimientos con el comando `self.movements.append(movement)`. Si la actualizacion de stock aplica, entonces esta se guardara en el diccionario de registros con por codigo de producto (`product_code`). `delta` se define como el cambio de cantidad de inventario de los productos, ya sea positivo o negativo. Posteriormente se actualiza el stock mediante el comando `self.records[product_code].stock.update_stock(delta, movement)`, que toma el código del producto y el método `update_stock()` de `stock` es el que se encarga de actualizar el inventario del producto. 
+Each quantity change (defined as `movement`), whether incoming or outgoing, will be stored in the movements list with the command `self.movements.append(movement)`. If the stock update applies, it will then be saved in the records dictionary by product code (`product_code`). `delta` is defined as the inventory quantity change, either positive or negative. Afterwards, the stock is updated with the command `self.records[product_code].stock.update_stock(delta, movement)`, which takes the product code, and the `update_stock()` method of `stock` is responsible for updating the product’s inventory.
 
 ```python
     def add_movement(self, movement, apply_stock: bool = True):
@@ -370,7 +374,7 @@ Cada cambio de cantidad (definido como `movement`), ya sea ingreso o salida de p
             self.records[product_code].stock.update_stock(delta, movement)
 ```
 
-En caso de que se quiera consultar cada movimiento, se definió la función `get_movements_by_code`, que permite hacer la consulta de todos los movimientos en forma de lista de un producto en especifico por medio de su código.
+In case you want to check each movement, the function `get_movements_by_code` was defined, which allows querying all movements in the form of a list for a specific product by its code.
 
 ```python
     def get_movements_by_code(self, code):
@@ -380,7 +384,7 @@ En caso de que se quiera consultar cada movimiento, se definió la función `get
         ]
 ```
 
-El metodo `get_critical_records` lo usamos para que, por cada registro en el diccionario de registros, nos retorne todos los registros de productos cuyo stock actual este por debajo del minimo permitido.
+The `get_critical_records` method is used to return all product records whose current stock is below the minimum allowed, for each record in the records dictionary.
 
 ```python
     def get_critical_records(self):
@@ -390,7 +394,7 @@ El metodo `get_critical_records` lo usamos para que, por cada registro en el dic
         ]
 ```
 
-El método `restock_suggestions` sugiere que productos necesitan ser reabastecidos según el mínimo establecido, es decir que tienen stock por debajo de este. Este toma los productos de la lista del metodo `get_critical_records` y nos retorna los valores de estos productos con las claves `Name`, `Code`, `Current Stock` y `Minimum Required`.
+The `restock_suggestions` method suggests which products need to be restocked according to the established minimum, meaning those with stock below it. It takes the products from the list returned by the `get_critical_records` method and returns their values with the keys `Name`, `Code`, `Current Stock`, and `Minimum Required`.
 
 ```python
     def restock_suggestions(self):
@@ -410,7 +414,7 @@ El método `restock_suggestions` sugiere que productos necesitan ser reabastecid
 
 #### Customer:
 
-En la clase `Customer`, por medio del metodo `__init__` vamos a definir a nuestro cliente, con atributos principales como `name`, `number_id` y `customer_id`.
+In the `Customer` class, through the `__init__` method, we define our customer with main attributes such as `name`, `number_id`, and `customer_id`.
 
 ```python
 import uuid
@@ -422,7 +426,7 @@ class Customer:
         self._id = customer_id if customer_id else str(uuid.uuid4())
 ```
 
-Mediante el constructor `self` referenciamos los atributos que va a tener nuestra clase `Customer`, los cuales son `name`, `number_id` y un `customer_id` con el cual vamos a usar la librería `uuid` para generarle a cada cliente un identificador único universal (UUID), para que por seguridad estos no se repitan, ya que es extremadamente improbable que esto pase. Con la versión de UUID `uuid4` vamos a obtener un identificador completamente aleatorio, lo que aumenta la seguridad exponencialmente; sin embargo, en caso de requerirse, también se puede escribir el identificador de un cliente de forma manual. 
+Using the constructor `self`, we reference the attributes that our `Customer` class will have: `name`, `number_id`, and a `customer_id` for which we use the `uuid` library to generate a universally unique identifier (UUID) for each customer, ensuring these identifiers do not repeat for security reasons, as it is extremely unlikely. With UUID version `uuid4`, we obtain a completely random identifier, which exponentially increases security; however, if needed, the customer's identifier can also be manually assigned.
 
 ```python
     def to_dict(self):
@@ -433,11 +437,11 @@ Mediante el constructor `self` referenciamos los atributos que va a tener nuestr
         }
 ```
  
-Con el método `to_dict` vamos a convertir los objetos de la clase `Customer` en un diccionario de Python con las claves: `name`, `number_id` y `_id`.
+With the `to_dict` method, we convert the objects of the `Customer` class into a Python dictionary with the keys: `name`, `number_id`, and `_id`.
 
 #### Supplier:
 
-En la clase `Supplier`, por medio del metodo `__init__` tambien vamos a definir a nuestro proveedor, con atributos principales como `name`, `contact_number` y `supplier_id`.
+In the `Supplier` class, through the `__init__` method, we also define our supplier with main attributes such as `name`, `contact_number`, and `supplier_id`.
 
 ```python
 import uuid
@@ -449,7 +453,7 @@ class Supplier:
         self._id = supplier_id if supplier_id else str(uuid.uuid4())
 ```
 
-Por medio del constructor `self` vamos a referenciar también los atributos de nuestra clase `Supplier`, los cuales serian similares a los de la clase anterior, pero no los mismos. En este caso los atributos serian `name`, `contact_number` (cambia en relación con la clase `Customer`) y `supplier_id`, que al igual que con la clase anterior, vamos a randomizar por medio de la versión de UUID `uuid4`.
+Using the constructor `self`, we also reference the attributes of our `Supplier` class, which are similar but not the same as those of the previous class. In this case, the attributes are `name`, `contact_number` (which differs from the `Customer` class), and `supplier_id`, which, like in the previous class, we randomize using UUID version `uuid4`.
 
 ```python
     def to_dict(self):
@@ -460,7 +464,7 @@ Por medio del constructor `self` vamos a referenciar también los atributos de n
         }
 ```
 
-Al igual que con la clase anterior, vamos a convertir los objetos de nuestra clase `Supplier` en un diccionario con las claves: `name`, `contact_number` y `_id`.
+As with the previous class, we convert the objects of our `Supplier` class into a dictionary with the keys: `name`, `contact_number`, and `_id`.
 
 -----------
 
@@ -468,7 +472,7 @@ Al igual que con la clase anterior, vamos a convertir los objetos de nuestra cla
 
 #### Movements:
 
-Importamos la biblioteca `datetime`, y de el modulo `Inventory_System.People`, importamos `Customer` y `Supplier`.
+We import the `datetime` library, and from the `Inventory_System.People` module, we import `Customer` and `Supplier`.
 
 ```python
 from datetime import datetime
@@ -476,7 +480,7 @@ from Inventory_System.People.customer import Customer
 from Inventory_System.People.supplier import Supplier
 ```
 
-La clase `Movement` representa un registro individual de movimiento de inventario. Cada movimiento está relacionado con un producto, una cantidad (`amount`), una razón o motivo del movimiento, y un actor (cliente o proveedor) que lo genera. También se registra la fecha y se determina si el movimiento es de entrada o salida.
+The `Movement` class represents an individual inventory movement record. Each movement is related to a product, an amount (`amount`), a reason or motive for the movement, and an actor (customer or supplier) that generates it. The date is also recorded, and it is determined whether the movement is incoming or outgoing.
 
 El constructor `__init__` es un método inicializa un nuevo movimiento con la información proporcionada: el producto involucrado, la cantidad de unidades, el actor (cliente o proveedor) que lo realiza, y la razón del movimiento.
 
