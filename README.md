@@ -150,6 +150,59 @@ In summary, the `State` class allows describing the physical or temporal conditi
 
 <h3 align="center"> Inventory_Management </h3>
 
+```mermaid
+classDiagram
+direction BT
+    class Location {
+    +int aisle
+    +int shelf
+    +to_dict()
+    +@classmethod assign_location()
+    +@classmethod sync_from_inventory()
+    +_category_aisles : dict
+    +_next_aisle_number : int
+    +_shelf_counter_by_category : dict
+    +_product_shelving : dict
+}
+
+class Stock {
+    -int _actual_stock
+    +int minimum_stock
+    +int maximum_stock
+    -list _record
+    +get_actual_stock()
+    +is_valid_update()
+    +update_stock()
+    +update_stock_limits()
+    +to_dict()
+}
+
+class InventoryRecord {
+    +Product product
+    +Stock stock
+    +Location location
+    +to_dict()
+}
+
+class Inventory {
+    +dict records
+    +list movements
+    +add_record()
+    +remove_record()
+    +update_stock_limits()
+    +add_movement()
+    +get_movements_by_code()
+    +get_critical_records()
+    +restock_suggestions()
+}
+
+InventoryRecord --> Product
+InventoryRecord --> Stock
+InventoryRecord --> Location
+Inventory --> InventoryRecord
+Inventory --> Movement
+```
+
 #### Inventory Record:
 
 In the `InventoryRecord` class, the `__init__` method defines the attributes that the inventory record will have, such as `product`, `stock`, and `location`. These will act as objects.
