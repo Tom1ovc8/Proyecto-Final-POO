@@ -1,18 +1,18 @@
-<h1 align="center"> Gestión de Inventarios - Stokapp </h1>
+<h1 align="center"> Inventory Management - Stokapp </h1>
 
-<h2 align="center"> Proyecto Final POO </h2>
+<h2 align="center"> Final OOP Project </h2>
 
-El objetivo principal de este proyecto es hacer una aplicación que emula un sistema de gestión de inventario para una bodega por medio de una interfaz gráfica de usuario (GUI).
-El programa tiene operaciones que podemos realizar como:
-  - Crear objeto a almacenar  
-  - Operaciones de registro de entrada y salida
-  - Método para obtener listado de inventario actual
-  - Manejo de fechas en los registros
+The main goal of this project is to build an application that simulates an inventory management system for a warehouse using a graphical user interface (GUI). 
+The program includes operations such as:
+  - Creating objects to be stored  
+  - Registering incoming and outgoing inventory
+  - Retrieving a list of current inventory
+  - Handling dates in inventory records
 
-Y adicional a eso, tenemos características extras como:
-  + Carga masiva de registros
-  + Manejo de archivos para persistencia de datos
-  + Generación de reportes en forma de documentos
+In addition, it offers extra features like:
+  + Bulk record upload
+  + File handling for data persistence
+  + Report generation in document format
 
 <h2 align="center"> Índice </h2>
 
