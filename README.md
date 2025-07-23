@@ -2666,7 +2666,300 @@ Para cada columna en `columns`, se asignara el nombre de cada una como titulo de
         tree.pack(pady=8)
 ```
 
-Definimos la funcion `add_manual_item` 
+Definimos la funcion `add_manual_item` para añadir a la factura los items que esta va a tener de forma manual. En los objetos `code` y `qty` guardaremos los datos tomados en `code_entry` y `qty_entry` respectivamente. Si alguno de estos no ha sido diligenciado previamente, se generara un messagebox con el mensaje `"Error", "Complete all the fields"`. Si el codigo del producto `code` no se encuentra previamente registrado en el diccionario de registros del sistema, el messagebox generado tendra el mensaje `"Error", "Product x has not found in inventory"` especificando el codigo del producto que no se encuentra. Finalmente se verifica que la cantidad especificada del producto `qty` sea un numero entero, y en caso de que no, el messagebox tendra el mensaje `"Error", "Amount must be numeric"`.
+
+```python
+        def add_manual_item():
+            code = code_entry.get().strip()
+            qty = qty_entry.get().strip()
+            if not code or not qty:
+                messagebox.showerror("Error", "Complete all the fields.")
+                return
+            if code not in self.system.records:
+                messagebox.showerror(
+                    "Error", f"Product {code} has not found in inventory."
+                )
+                return
+            try:
+                qty = int(qty)
+            except ValueError:
+                messagebox.showerror("Error", "Amount must be numeric.")
+                return
+
+            product = self.system.records[code].product
+            price = product._price
+            items.append((product, qty))
+            tree.insert("", "end", values=(product.name, qty, price))
+            code_entry.delete(0, tk.END)
+            qty_entry.delete(0, tk.END)
+```
+
+Al final de estos campos habra un boton llamado `Add`, el cual hara que la funcion `add_manual_item` se realice siempre y cuando todos los parametros hayan sido diligenciados correctamente.
+
+```python
+        ttk.Button(
+            manual_frame, text="Add", command=add_manual_item
+        ).grid(row=0, column=6, padx=5)
+```
+
+Abajo del Treeview habra un campo llamado `Pending Movements`, en el cual veremos los movimientos ya registrados en el sistema que estan pendientes por ser pagados. Este campo generara una Listbox en donde apareceran todos y cada uno de los pagos pendientes. Se crea una lista vacia llamada `pending_movements`.
+
+```python
+        ttk.Label(main_frame, text="Pending Movements:").pack(pady=5)
+        pending_listbox = tk.Listbox(
+            main_frame, selectmode=tk.EXTENDED, width=70, height=4
+        )
+        pending_listbox.pack()
+
+        pending_movements = []
+```
+
+Definimos la funcion `update_pending_movements` para que, dependiendo del actor seleccionado ya sea cliente o proveedor, se muestren todos los movimientos pendientes que tienen estos, y se muestren en la listbox uno por uno.
+
+```python
+        def update_pending_movements():
+            nonlocal pending_movements
+            pending_listbox.delete(0, tk.END)
+
+            actors_dict = (
+                self.system.customers 
+                if actor_type.get() == "customer" else self.system.suppliers
+            )
+
+            actor_obj = next((a for a in actors_dict.values() 
+                            if a.name == actor_var.get()), None)
+
+            if actor_obj:
+                pending_movements = [
+                    m for m in self.system.movements
+                    if m.actor == actor_obj and 
+                    getattr(m, "bill_id", None) is None
+                ]
+                for idx, mov in enumerate(pending_movements):
+                    text = (
+                        f"{idx+1}. {mov.product.name} x{mov.amount} — "
+                        f"{mov.date.strftime('%Y-%m-%d')}"
+                    )
+                    pending_listbox.insert(tk.END, text)
+            else:
+                pending_movements = []
+
+        actor_var.trace_add("write", lambda *args: update_pending_movements())
+        update_pending_movements()
+```
+
+Abajo de esto, se generara otro campo llamado `Payment Method` del que derivaran dos botones llamados `Cash` y `Card`, en el cual especificaremos el metodo de pago que vamos a añadir a la factura, ya sea dinero en efectivo, o por tarjeta respectivamente. Por defecto, las entradas de ambos metodos de pago se definen como `None` hasta que se agregue alguno luego.
+
+```python
+        ttk.Label(main_frame, text="Payment Method:").pack(pady=5)
+        payment_method = tk.StringVar(value="cash")
+        ttk.Radiobutton(
+            main_frame, text="Cash", variable=payment_method, value="cash"
+        ).pack()
+        ttk.Radiobutton(
+            main_frame, text="Card", variable=payment_method, value="card"
+        ).pack()
+
+        payment_frame = ttk.Frame(main_frame)
+        payment_frame.pack(pady=5)
+
+        payment_frame.cash_entry_ = None
+        payment_frame.card_entry_ = None
+```
+
+Definimos la funcion `update_payment_fields` para que, en caso de que hayamos escogido dinero en efectivo como metodo de pago, se genere un campo llamado `Amount delivered`, en el cual va a haber un cuadro de texto donde debemos colocar la cantidad de dinero dada por el comprador para cancelar la cuenta de la factura. Este se almacenara en la entrada de `cash_entry`.
+
+```python
+        def update_payment_fields():
+            for widget in payment_frame.winfo_children():
+                widget.destroy()
+            if payment_method.get() == "cash":
+                ttk.Label(
+                    payment_frame, text="Amount delivered:"
+                ).pack(side="left")
+                cash_entry = ttk.Entry(payment_frame)
+                cash_entry.pack(side="left")
+                payment_frame.cash_entry_ = cash_entry
+                payment_frame.card_entry_ = None
+```
+
+En caso de que se haya escogido tarjeta como medio de pago, se generara entonces un campo llamado `Card Number (4 last numbers)` con un cuadro de texto en el cual debemos ingresar los ultimos cuatro digitos de la tarjeta designada como metodo de pago. Este se almacenara en la entrada de `card_entry`. Finalmente, sea cual haya sido el metodo de pago elegido, se ejecutara la funcion `update_payment_fields`.
+
+```python
+            else:
+                ttk.Label(
+                    payment_frame, text="Card Number (4 last numbers):"
+                ).pack(side="left")
+                card_entry = ttk.Entry(payment_frame)               
+                card_entry.pack(side="left")
+                payment_frame.card_entry_ = card_entry
+                payment_frame.cash_entry_ = None
+
+        payment_method.trace_add(
+            "write", lambda *args: update_payment_fields()
+        )
+        update_payment_fields()
+```
+
+Definimos la funcion `submit`, con la cual vamos a crear nuestra factura en formato .PDF con todos los datos diligenciados previamente. Primeramente se debe verificar que, sea cual haya sido el actor de la factura, si se escogio un actor existente, este sea un actor valido y este en el sistema.
+
+```python
+        def submit():
+            try:
+                if actor_mode.get() == "existent":
+                    if (
+                        actor_var.get() and 
+                        actor_var.get() != "It's not actors available"
+                    ):
+                        actors_dict = (
+                            self.system.customers 
+                            if actor_type.get() == "customer" 
+                            else self.system.suppliers
+                        )
+                        actor = next(
+                            (
+                                a for a in actors_dict.values() 
+                                if a.name == actor_var.get()
+                             ), None
+                        )
+                    else:
+                        raise ValueError("You must select a valid actor.")
+```
+
+Si se escogio crear un actor nuevo, entonces se debe verificar que todos los campos hayan sido diligenciados correctamente. En caso de que falte diligenciar algun campo de estos, retornara el mensaje `Enter the new actor's information`. Si todo esta diligenciado correctamente entonces se guardara la informacion diligenciada en un objeto `customer` o `supplier` dependiendo el caso.
+
+```python
+                else:
+                    actor_name = new_actor_name.get().strip()
+                    actor_contact = new_actor_contact.get().strip()
+                    if not actor_name or not actor_contact:
+                        raise ValueError(
+                            "Enter the new actor's information."
+                        )
+                    actor = (
+                        Customer(actor_name, actor_contact) 
+                        if actor_type.get() == "customer" 
+                        else Supplier(actor_name, actor_contact)
+                        )
+```
+
+Se crea una lista vacia llamada `manual_movements`, en donde se guardaran todos los movimientos manuales que realicemos. Para cada producto y cantidad guardada en la lista de `items`, entonces crea un objeto `Movement` con los parametros de codigo, cantidad, actor y el texto `"Manual sell"`.
+
+```python
+                manual_movements = []
+                for product, qty in items:
+                    manual_movements.append(
+                        Movement(product, qty, actor, "Manual sell")
+                    )
+```
+
+En caso de haber movimientos pendientes en la listbox de pendientes, estara la opcion de seleccionar cuales se quieren pagar, sin importar si es una, dos, todas, la primera, la ultima, o las que sean. Sin embargo, en caso de que no se hayan agregado productos para pagar, y que tampoco se hayan seleccionado movimientos pendientes o directamente no hayan movimientos pendientes, entonces el sistema retornara el mensaje `At least one movement is required for billing`.
+
+```python
+                selected_indexes = pending_listbox.curselection()
+                selected_pending = [
+                    pending_movements[i] for i in selected_indexes
+                ]
+
+                all_movements = manual_movements + selected_pending
+                if not all_movements:
+                    raise ValueError(
+                        "At least one movement is required for billing."
+                    )
+```
+
+Se crea una variable `total` que consta de la suma del precio total de todos los productos agregados y movimientos a pagar.
+
+```python
+                total = sum(
+                    m.product._price * m.amount for m in all_movements
+                )
+```
+
+Si el metodo de pago seleccionado es de `cash`, entonces se debe verificar que se haya ingresado un monto del dinero entregado, o retornara el error `"Cash entry not found"`. En caso de que si se haya ingresado, se debe verificar que el dato ingresado sea un valor flotante. Si la entrada es valida, entonces a la variable `payment` se le asigna `cash_entry` como un flotante.
+
+```python
+                if payment_method.get() == "cash":
+                    cash_entry = payment_frame.cash_entry_
+                    if not cash_entry:
+                        raise ValueError("Cash entry not found.")
+                    payment = Cash(float(cash_entry.get().strip()))
+```
+
+Si el metodo de pago seleccionado es de `card`, entonces se debe verificar que el campo se haya diligenciado, y en caso de que no, retornara el mensaje `"Card entry not found"`. Si el campo si fue diligenciado, entonces se revisa la entrada, y si esta no es un digito, o tiene una longitud diferente a 4 digitos, entonces retornara el error `"Card number must be 4 digits"`. Si la entrada es valida, entonces a la variable `payment` se le asigna la entrada de `card_entry` junto con `***` simulando el CVV de la tarjeta.
+
+```python
+                else:
+                    card_entry = payment_frame.card_entry_
+                    if not card_entry:
+                        raise ValueError("Card entry not found.")
+                    num = card_entry.get().strip()
+                    if not num.isdigit() or len(num) != 4:
+                        raise ValueError("Card number must be 4 digits.")
+                    payment = Card(num, "***")
+```
+
+En caso de que la cantidad de pago sea insuficiente, entonces el sistema retorna el mensaje `"Insufficient payment"`.
+
+```python
+                if not payment.pay(total):
+                    raise ValueError("Insufficient payment.")
+```
+
+Si se selecciono el modo de actor `new`, entonces, si se selecciono al cliente `customer`, el actor se guarda en `system.add_customer`, pero si se seleciono `supplier`, entonces el actor se guarda en `system. add_supplier`.
+
+```python
+                if actor_mode.get() == "new":
+                    if actor_type.get() == "customer":
+                        self.system.add_customer(actor)
+                    else:
+                        self.system.add_supplier(actor)
+```
+
+Cada movimiento en la lista `manual_movements` se guarda en `system.add_movement`.
+
+```python
+                for movement in manual_movements:
+                    self.system.add_movement(movement)
+```
+
+El objeto `bill` se guarda en `system.create_bill` y se le asignan los atributos `actor`, `all_movements` y `payment`. En caso de que ocurra un error, se retornara el mensaje `"Failed to create bill"`.
+
+```python
+                bill = self.system.create_bill(actor, all_movements, payment)
+                if bill is None:
+                    raise RuntimeError("Failed to create bill")
+```
+
+Si todo el proceso de la creacion de la factura se ejecuta correctamente, entonces se exportara la factura en formato .PDF con la funcion `export_bill_pdf` con el nombre de `Bill_{bill.entity.name}.pdf`. Se mostrara el mensaje `"Success", "Bill created with ID:"` y especifica el ID de la factura. Finalmente se cierra la ventana.
+
+```python
+                self.system.export_bill_pdf(
+                    bill._bill_id, f"Bill_{bill.entity.name}.pdf"
+                )
+
+                messagebox.showinfo(
+                    "Success", f"Bill created with ID: {bill._bill_id}"
+                )
+                dialog.destroy()
+```
+
+En caso de que ocurra algun error, se genera un messagebox con el mensaje `"Error", "Couldn't create the bill"`.
+
+```python
+            except Exception as e:
+                messagebox.showerror(
+                    "Error", f"Couldn't create the bill:\n{str(e)}"
+                )
+```
+
+Al final de la ventana, se encuentra el boton llamado `Create bill` con el cual ejecutaremos el comando `submit`.
+
+```python
+        ttk.Button(
+            main_frame, text="Create bill", command=submit
+        ).pack(pady=10)
+```
 
 Definimos la función `export_movements_report`
 
