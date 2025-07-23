@@ -481,6 +481,24 @@ The `restock_suggestions` method suggests which products need to be restocked ac
 
 <h3 align="center"> People </h3>
 
+```mermaid
+classDiagram
+direction BT
+    class Customer {
+    +str name
+    +int number_id
+    +str _id
+    +to_dict()
+}
+
+class Supplier {
+    +str name
+    +int contact_number
+    +str _id
+    +to_dict()
+}
+```
+
 #### Customer:
 
 In the `Customer` class, through the `__init__` method, we define our customer with main attributes such as `name`, `number_id`, and `customer_id`.
@@ -538,6 +556,78 @@ As with the previous class, we convert the objects of our `Supplier` class into 
 -----------
 
 <h3 align="center"> Transactions </h3>
+
+```mermaid
+classDiagram
+direction BT
+    class Movement {
+    +Product product
+    +int amount
+    +datetime date
+    +Customer|Supplier actor
+    -int _actor_id
+    +str actor_type
+    +str type
+    +str reason
+    -str _bill_id
+    +float final_price
+    +get_delta()
+    +bill_id
+    +to_dict()
+}
+
+class Payment {
+    +pay()
+    +to_dict()
+}
+
+class Card {
+    -str _number
+    -str _cvv
+    +pay()
+    +to_dict()
+    +__str__()
+}
+
+class Cash {
+    +float cash_given
+    +pay()
+    +to_dict()
+    +__str__()
+}
+
+class BillItem {
+    +Product product
+    +int quantity
+    +float price
+    +get_total_price()
+    +to_dict()
+}
+
+class Bill {
+    -str _bill_id
+    +datetime date
+    +Customer|Supplier entity
+    +str entity_type
+    +Payment payment_method
+    +list items
+    +add_item()
+    +calculate_total()
+    +to_dict()
+}
+
+Payment <|-- Cash
+Payment <|-- Card
+
+Movement --> Product
+Movement --> Customer
+Movement --> Supplier
+Bill --> BillItem
+Bill --> Payment
+Bill --> Customer
+Bill --> Supplier
+BillItem --> Product
+```
 
 #### Movements:
 
@@ -776,6 +866,136 @@ Finally, `to_dict` converts all the invoice information into a structured dictio
 -----------
 
 <h3 align="center"> Operations_Center </h3>
+
+```mermaid
+classDiagram
+direction BT
+    class System {
+    +dict bills
+    +dict customers
+    +dict suppliers
+    +entry_record()
+    +make_sale()
+    +add_customer()
+    +add_supplier()
+    +create_bill()
+    +generate_customer_history()
+    +generate_supplier_history()
+    +export_full_system()
+    +load_full_backup()
+    +export_inventory_pdf()
+    +export_movements_pdf()
+    +export_bill_pdf()
+    +export_critical_stock_pdf()
+    +export_actor_history_pdf()
+    +export_sales_summary_pdf()
+}
+
+class Extracts {
+    <<static>>
+    +get_movements()
+    +get_bills()
+    +get_records()
+    +get_customers()
+    +get_suppliers()
+    +export_movements()
+    +export_records()
+    +export_customers()
+    +export_suppliers()
+    +export_bills()
+    +export_full_system()
+    +import_all_products()
+    +dict_to_product()
+    +dict_to_stock()
+    +dict_to_location()
+    +dict_to_customer()
+    +dict_to_supplier()
+    +dict_to_movement()
+    +dict_to_inventory_record()
+    +dict_to_bill()
+    +load_inventory_records()
+    +load_full_backup()
+}
+
+class PDF {
+    -title: str
+    +__init__(title)
+    +header()
+    +footer()
+    +setup_page()
+    +generate_table()
+}
+
+class InventoryReportPDF {
+    +__init__()
+    +generate()
+}
+
+class MovementsReportPDF {
+    +__init__()
+    +generate()
+}
+
+class BillPDF {
+    +generate()
+}
+
+class CriticalStockPDF {
+    +__init__()
+    +generate()
+}
+
+class ActorHistoryPDF {
+    +__init__()
+    +generate()
+}
+
+class SalesSummaryPDF {
+    +__init__()
+    +generate()
+}
+
+class InventoryApp {
+    -root
+    -system: System
+    +__init__(root, system)
+    +load_json()
+    +export_to_json()
+    +add_product_method()
+    +generate_inventory_pdf()
+    +add_movement_method()
+    +create_bill_method()
+    +export_movements_report()
+    +export_bill()
+    +generate_sales_summary()
+    +show_restock_suggestions()
+}
+
+PDF <|-- InventoryReportPDF
+PDF <|-- MovementsReportPDF
+PDF <|-- BillPDF
+PDF <|-- CriticalStockPDF
+PDF <|-- ActorHistoryPDF
+PDF <|-- SalesSummaryPDF
+
+System --> Bill
+System --> Customer
+System --> Supplier
+System --> Movement
+System --> InventoryRecord
+Extracts ..> Product
+Extracts ..> State
+Extracts ..> Stock
+Extracts ..> Location
+Extracts ..> Movement
+Extracts ..> InventoryRecord
+Extracts ..> Customer
+Extracts ..> Supplier
+Extracts ..> Bill
+Extracts ..> Cash
+Extracts ..> Card
+InventoryApp --> System : uses
+```
 
 <h3 align="left"> Extracts </h3>
 
