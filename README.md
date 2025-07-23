@@ -2961,15 +2961,248 @@ Al final de la ventana, se encuentra el boton llamado `Create bill` con el cual 
         ).pack(pady=10)
 ```
 
-Definimos la función `export_movements_report`
+Definimos la función `export_movements_report` para poder exportar el reporte de movimientos en formato .PDF. Si la exportacion es exitosa, entonces se genera un messageboz con el mensaje `"Success", "Moevments report saved as 'movement_report.pdf'"`. Si hubo algun error en la exportacion, el messagebox tendra el mensaje `"Error"` y especificara el error ocurrido.
 
-Definimos la función `export_bill`
+```python
+    def export_movements_report(self):
+        try:
+            self.system.export_movements_pdf()
+            messagebox.showinfo(
+                "Success", "Movements report saved as 'movement_report.pdf'."
+            )
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+```
 
-Definimos la función `generate_sales_summary`
+Definimos la función `export_bill` para exportar la factura en formato .PDF. Se genera una ventana emergente de tipo `simple_input_dialog` donde debemos ingresar el ID de la factura que queremos exportar. Si esta factura no se encuentra registrada en el diccionario de facturas `system.bills`, entonces sale un messagebox con el mensaje `"Error", "No bill exists with ID:"` y el ID escrito.
 
-Definimos la función `show_restock_suggestions`
+```python
+    def export_bill(self):
+        bill_id = simple_input_dialog("Enter the ID of the bill:")
+        if bill_id not in self.system.bills:
+            messagebox.showerror(
+                "Error", f"No bill exists with ID: {bill_id}"
+            )
+            return
+```
 
-Definimos la función `simple_input_dialog`
+Si el ID se encuentra vinculado a una factura, entonces se abre el explorador de archivos donde podremos escribir con que nombre queremos llamar la factura, siempre y cuando sea en formato .PDF (que se pondra como formato por defecto), pero si no se pone nada en el nombre igual exporta la factura, y se genera un messagebox con el mensaje `"Success", "Bill exported as"` y especifica el nombre del documento. En caso de que ocurra algun error, se genera un messagebox con el mensaje `"Error", "Couldn't export the bill"`.
+
+```python
+        try:
+            filename = filedialog.asksaveasfilename(
+                defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")]
+            )
+            if not filename:
+                return
+            self.system.export_bill_pdf(bill_id, filename)
+            messagebox.showinfo("Success", f"Bill exported as:\n{filename}")
+        except Exception as e:
+            messagebox.showerror(
+                "Error", f"Couldn't export the bill:\n{str(e)}"
+            )
+```
+
+Definimos la función `generate_sales_summary` para generar el resumen de ventas. Se genera una ventana emergente llamada `Sales Summary` donde hay un campo donde nos preguntan `Do you want to generate for a specific product?`. En este campo deberiamos ingresar el producto al cual queramos generarle el resumen de ventas, y en caso de que este se encuentre guardado, se mostrara el texto `"Let it blank to generate the general report"`.
+
+```python
+    def generate_sales_summary(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Sales Summary")
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=12)
+        main_frame.pack(fill="both", expand=True)
+
+        ttk.Label(
+            main_frame, text="Do you want to generate for a specific product?"
+        ).pack(padx=10, pady=5)
+
+        product_code_var = tk.StringVar()
+        ttk.Entry(
+            main_frame, textvariable=product_code_var
+        ).pack(padx=10, pady=5)
+        ttk.Label(
+            main_frame, text="(Let it blank to generate the general report)"
+        ).pack(pady=5)
+```
+
+Aqui definimos la funcion `submit` que sera la encargada de enviar al sistema el codigo que ingresamos previamente para verificar si dicho producto se encuentra en la biblioteca `system.records`. En caso de que no hayan productos, se genera un messagebox con el mensaje `"Error", "There're no registered products in the system"`.
+
+```python
+        def submit():
+            product_code = product_code_var.get().strip() or None
+            if not self.system.records:
+                messagebox.showerror(
+                    "Error", "There're no registered products in the system."
+                )
+                return
+```
+
+El codigo del producto que ingresamos, la funcion la buscara en la biblioteca `system.movements`. En caso de que el codigo no se encuentre en la biblioteca, se generara un messagebox con el mensaje `"Error", "The product code doesn't exist"`.
+
+```python
+            if product_code:
+                codes = {m.product._code for m in self.system.movements}
+                if product_code not in codes:
+                    messagebox.showerror(
+                        "Error", 
+                        f"The product code '{product_code}' doesn't exist."
+                    )
+                    return
+```
+
+Si el codigp ingresado si se encuentra registrado, entonces se creara el archivo llamado `Sales_summary.pdf` con el codigo del producto. Se generara un messagebox con el mensaje `"Success", "Summary generated in 'sales_summary.pdf'"` y se cerrara la ventana. En caso de que ocurra algun error, el messagebox tendra el mensaje `"Error", "Couldn't generate the summary"`. Al final de la ventana se encuentra el boton `Generate` el cual accionara la funcion `generate_sales_summary`.
+
+```python
+            try:
+                self.system.export_sales_summary_pdf(
+                    filename="sales_summary.pdf", product_code=product_code
+                )
+                messagebox.showinfo(
+                    "Success", "Summary generated in 'sales_summary.pdf'"
+                )
+                dialog.destroy()
+            except Exception as e:
+                messagebox.showerror(
+                    "Error", f"Couldn't generate the summary:\n{e}"
+                )
+
+        ttk.Button(main_frame, text="Generate", command=submit).pack(pady=10)
+```
+
+Definimos la función `show_restock_suggestions` para mostrar todas las sugerencias de restock que debemos hacer a nuestro inventario. Estas sugerencias las tomaremos del diccionario de sugerencias `system.restock_suggestions`. Si no hay sugerencias de restock de inventario registradas en dicho diccionario, entonces se generara un messagebox con el mensaje `"Info", "There are no restock suggestions"`.
+
+```python
+    def show_restock_suggestions(self):
+        suggestions = self.system.restock_suggestions()
+
+        if not suggestions:
+            messagebox.showinfo("Info", "There are no restock suggestions.")
+            return
+```
+
+En caso de que si hayan sugerencias reportadas, se genera una nueva ventana emergente llamada `Restock Suggestions`, en donde vamos a encontrar un frame llamado `Low-Stock Products` y definiremos el objeto `cols` con los valores `Code`, `Product`, `Current` y `Minimum`. Con estos valores de `cols` generaremos un Treeview donde cada columna toma como nombre estos valores.
+
+```python
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Restock Suggestions")
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=15)
+        main_frame.pack(fill="both", expand=True)
+
+        ttk.Label(
+            main_frame, text="Low-Stock Products"
+        ).grid(row=0, column=0, columnspan=2, pady=(0,15))
+
+        cols = ("Code", "Product", "Current", "Minimum")
+        tree = ttk.Treeview(
+            main_frame, columns=cols, show="headings", style="Treeview"
+        )
+```
+
+A cada columna le asignaremos su respectivo titulo, y al Treeview le daremos una Scrollbar, esto para hacer la interfaz mas amigable con el usuario.
+
+```python
+        for c in cols:
+            tree.heading(c, text=c)
+            tree.column(c, anchor="center")
+        tree.grid(row=1, column=0, sticky="nsew")
+
+        sb = ttk.Scrollbar(main_frame, orient="vertical", command=tree.yview)
+        tree.configure(yscroll=sb.set)
+        sb.grid(row=1, column=1, sticky="ns")
+
+        main_frame.rowconfigure(1, weight=1)
+        main_frame.columnconfigure(0, weight=1)
+```
+
+De cada item contenido en `suggestions`, traeremos sus valores de codigo, nombre, stock actual, y minimo requerido, y estos valores los colocaremos en el Treeview en su respectivo orden para crear una lista de sugerencias con todas las contenidas en su diccionario.
+
+```python
+        for item in suggestions:
+            tree.insert("", "end", values=(
+                item["Code"],
+                item["Name"],
+                item["Current Stock"],
+                item["Minimum Required"]
+            ))
+
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=2, column=0, columnspan=2, pady=10)
+```
+
+Definimos la funcion `export_pfd` para generar este documento con todas las sugerencias de restock, y exportarlo en formato .PDF. Se abrira el explorador donde le podemos colocar nombre a nuestro archivo, y se guardara en formato .PDF por defecto. Si el usuario no selecciono una ruta de guardado, se generea un messagebox con el mensaje `"Success", "PDF generated in"` y especifica la ruta seleccionada por defecto.
+
+```python
+        def export_pdf():
+            path = filedialog.asksaveasfilename(
+                defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")]
+            )
+            if not path:
+                return
+            ok = self.system.export_critical_stock_pdf(path)
+            if ok:
+                messagebox.showinfo("Success", f"PDF generated in:\n{path}")
+```
+
+Si no hay sugerencias de restock entonces el messagebox tendra el mensaje `"Info", "There're not critical stocks to generate a PDF"`. Al final se encuentra el boton llamado `Export PDF` con el cual se inicializa el comando `export_pdf`, y otro boton llamado `Close` para poder cerrar la ventana.
+
+```python
+            else:
+                messagebox.showinfo(
+                    "Info", "There're not critical stocks to generate a PDF."
+                )
+
+        ttk.Button(
+            button_frame, text="Export PDF", command=export_pdf
+        ).grid(row=0, column=0, padx=5)
+        ttk.Button(
+            button_frame, text="Close", command=dialog.destroy
+        ).grid(row=0, column=1, padx=5)
+```
+
+Definimos la función `simple_input_dialog` como una ventana emergente llamada `Input` en la cual vamos a poder ingresar cualquier value que se requiera dependiendo de la seccion de donde se ejecute el comando.
+
+```python
+def simple_input_dialog(prompt):
+    dialog = tk.Toplevel()
+    dialog.title("Input")
+    dialog.resizable(False, False)
+    dialog.grab_set()
+
+    dialog.update_idletasks()
+    width = 300
+    height = 130
+    x = (dialog.winfo_screenwidth() // 2) - (width // 2)
+    y = (dialog.winfo_screenheight() // 2) - (height // 2)
+    dialog.geometry(f"{width}x{height}+{x}+{y}")
+
+    frame = ttk.Frame(dialog, padding=15)
+    frame.pack(fill="both", expand=True)
+
+    label = ttk.Label(frame, text=prompt)
+    label.pack(padx=10, pady=(0, 10))
+    entry = ttk.Entry(frame, width=30)
+    entry.pack()
+    entry.focus_set()
+```
+
+Definimos la funcion `submit` con la cual, el valor que hayamos colocado en esta pestaña lo mandaremos a la ventana de donde es solicitada, y cerrara la ventana. En la ventana hay un boton llamado `OK`, el cual tiene el comando `submit`.
+
+```python
+    def submit():
+        dialog.result = entry.get()
+        dialog.destroy()
+
+    button = ttk.Button(frame, text="OK", command=submit)
+    button.pack(pady=(10, 5))
+
+    dialog.bind("<Return>", lambda event: submit())
+    dialog.wait_window()
+    return getattr(dialog, 'result', None)
+```
 
 ---------
 
