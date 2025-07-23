@@ -329,17 +329,6 @@ class Inventory:
         self.movements = []
 ```
 
-El método `add_record` recibe la instancia `record`, del cual tomaremos el codigo del producto como la variable `code`. La función `add_record` se encargara de revisar si el código de dicho producto ya esta o no esta en el diccionario de registros `records`. Si el código no está, se realizara el registro correctamente, pero si el código ya esta previamente en el diccionario de registros, el sistema arroja el mensaje *”This product already exists in the inventory”*.
-
-```python
-    def add_record(self, record):
-        code = record.product.code
-        if code not in self.records:
-            self.records[code] = record
-        else:
-            print("This product already exists in the inventory.")
-```
-
 Definimos la función `add_record`, la cual nos servira para añadir un registro al diccionario de registros con el codigo del producto, esto en caso de que este no se encuentre en el diccionario. SI el producto ya se encuentra en el diccionario, retorna un mensaje de error `"This product already exists in the inventory"`.
 
 ```python
