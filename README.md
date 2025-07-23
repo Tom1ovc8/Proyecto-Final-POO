@@ -1,4 +1,4 @@
-  <h1 align="center"> Gestión de Inventarios - Stokapp </h1>
+<h1 align="center"> Gestión de Inventarios - Stokapp </h1>
 
 <h2 align="center"> Proyecto Final POO </h2>
 
@@ -2511,7 +2511,162 @@ Definimos la función `créate_bill_method`, la cual nos va a servir para crear 
             return
 ```
 
+Se generara una ventana emergente titulada `Create a bill`, en donde el primer campo generado es `Select the actor type`, en el cual habran dos botones de seleccion para poder escoger el actor que se va a registrar en la factura entre cliente `Customer` o proveedor `Supplier`. Solo se podra escoger uno u otro.
 
+```python
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Create a bill")
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=12)
+        main_frame.pack(fill="both", expand=True)
+
+        ttk.Label(main_frame, text="Select the actor type:").pack(pady=5)
+        actor_type = tk.StringVar(value="customer")
+        ttk.Radiobutton(
+            main_frame, text="Customer", variable=actor_type, 
+            value="customer", command=lambda: update_actor_fields()
+        ).pack()
+        ttk.Radiobutton(
+            main_frame, text="Supplier", variable=actor_type, 
+            value="supplier", command=lambda: update_actor_fields()
+        ).pack()
+```
+
+Luego de escoger el actor, se generan otro campo llamado `Choose actor: existing or new` donde vamos a escoger si vamos a usar un actor ya existente o vamos a registrar uno nuevo, esto por medio de los botones `Existent` y `New` respectivamente.
+
+```python
+        actor_mode = tk.StringVar(value="existent")
+        ttk.Label(
+            main_frame, text="Choose actor: existing or new?"
+        ).pack(pady=5)
+        ttk.Radiobutton(
+            main_frame, text="Existent", variable=actor_mode, 
+            value="existent", command=lambda: update_actor_fields()
+        ).pack()
+        ttk.Radiobutton(
+            main_frame, text="New", variable=actor_mode, value="new", 
+            command=lambda: update_actor_fields()
+        ).pack()
+
+        actor_frame = ttk.Frame(main_frame)
+        actor_frame.pack(pady=10, fill="x")
+        existing_actor_frame = ttk.Frame(actor_frame)
+        new_actor_frame = ttk.Frame(actor_frame)
+
+        actor_var = tk.StringVar()
+        new_actor_name = None
+        new_actor_contact = None
+```
+
+Definimos la funcion `update_actor_fields` para que, si vamos a escoger un actor existente, se oculten los apartados para registrar uno nuevo desde 0, y viceversa.
+
+```python
+        def update_actor_fields():
+            for widget in existing_actor_frame.winfo_children():
+                widget.destroy()
+            for widget in new_actor_frame.winfo_children():
+                widget.destroy()
+
+            existing_actor_frame.pack_forget()
+            new_actor_frame.pack_forget()
+```
+
+Se crea un objeto llamado `actors_dict`, al cual le vamos a asignar los datos del diccionario de los clientes, en caso de que se haya escogido al cliente como actor, o del diccionario de los proveedores, en caso de que se haya escogido al proveedor como actor.
+
+```python
+            actors_dict = (
+                self.system.customers 
+                if actor_type.get() == "customer" else self.system.suppliers
+            )
+```
+
+Si se escogio la opcion de usar un actor existente, entonces se generara un campo llamado `Select an existent actor`, en donde se tomara el objeto creado `actors_dict`, y por cada uno de los valores contenidos en este, retornara un objeto `a` que posteriormente aparecera en un OptionMenu en donde vamos a poder escoger solo uno de estos.
+
+```python
+            if actor_mode.get() == "existent":
+                existing_actor_frame.pack()
+                ttk.Label(
+                    existing_actor_frame, text="Select an existent actor:"
+                ).pack()
+                if actors_dict:
+                    actor_names = [a.name for a in actors_dict.values()]
+                    actor_var.set(actor_names[0])
+                    actor_menu = ttk.OptionMenu(
+                        existing_actor_frame, actor_var, 
+                        actor_names[0], *actor_names
+                    )
+```
+
+En caso de que los diccionarios tanto de clientes como de proveedores en el sistema se encuentren vacios, entonces el menu de OptionMenu aparecera vacio, tendra el mensaje `"No actors available"`, y este sera desactivado hasta que haya al menos un actor para seleccionar.
+
+```python
+                else:
+                    actor_var.set("No actors available")
+                    actor_menu = ttk.OptionMenu(
+                        existing_actor_frame, actor_var, "No actors available"
+                    )
+                    actor_menu.state(["disabled"])
+                actor_menu.pack()
+```
+
+Si se escogio añadir un nuevo actor desde 0, entonces el campo generado tendra dos cuadros de texto llamados `New actor name` y `New actor contact/id`, en donde colocaremos los datos de nombre y numero de contacto o numero de id del actor a registrar segun corresponda respectivamente. Finalmente, sea cual haya sido la eleccion, se ejecutara la funcion.
+
+```python
+            else:
+                new_actor_frame.pack()
+                ttk.Label(new_actor_frame, text="New actor name:").pack()
+                nonlocal_new_name = ttk.Entry(new_actor_frame)
+                nonlocal_new_name.pack(fill="x")
+                ttk.Label(
+                    new_actor_frame, text="New actor contact/id:"
+                ).pack()
+                nonlocal_new_contact = ttk.Entry(new_actor_frame)
+                nonlocal_new_contact.pack(fill="x")
+
+                nonlocal new_actor_name, new_actor_contact
+                new_actor_name = nonlocal_new_name
+                new_actor_contact = nonlocal_new_contact
+
+        update_actor_fields()
+```
+
+Luego de esto, se generara un campo llamado `Add products` del que derivan dos campos llamados `Code` y `Amount`, en donde tendremos que ingresar el codigo del producto deseado y la cantidad que se va a poner en la factura respectivamente. Estos dos datos los guardaremos en objetos llamados `code_entry` y `qty_entry`. Tambien crearemos una lista vacia llamada `items`.
+
+```python
+        ttk.Label(main_frame, text="Add products:").pack(pady=4)
+        manual_frame = ttk.Frame(main_frame)
+        manual_frame.pack(pady=4)
+
+        ttk.Label(manual_frame, text="Code:").grid(row=0, column=0)
+        code_entry = ttk.Entry(manual_frame)
+        code_entry.grid(row=0, column=1)
+
+        ttk.Label(manual_frame, text="Amount:").grid(row=0, column=2)
+        qty_entry = ttk.Entry(manual_frame)
+        qty_entry.grid(row=0, column=3)
+
+        items = []
+```
+
+Al objeto `columns` le asignaremos `Product`, `Amount` y `Price`, y definiremos el objeto `tree`, que sera un formato Treeview, definido por las columnas en `columns`.
+
+```python
+        columns = ("Product", "Amount", "Price")
+        tree = ttk.Treeview(
+            main_frame, columns=columns, show="headings", height=7
+        )
+```
+
+Para cada columna en `columns`, se asignara el nombre de cada una como titulo de dicha columna en el Treeview. Es decir que en el Treeview habran tres columnas llamadas `Product`, `Amount` y `Price`.
+
+```python
+        for col in columns:
+            tree.heading(col, text=col)
+        tree.pack(pady=8)
+```
+
+Definimos la funcion `add_manual_item` 
 
 Definimos la función `export_movements_report`
 
