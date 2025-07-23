@@ -42,8 +42,6 @@ In addition, it offers extra features like:
 <h3 align="center"> Products </h3>
 
 ```mermaid
-Products:
----
 config:
   layout: elk
   theme: dark
