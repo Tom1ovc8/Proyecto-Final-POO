@@ -2278,7 +2278,139 @@ Se generará tambien un campo llamado `Select product:` donde vamos a poder esco
         product_menu.pack(pady=5, fill="x")
 ```
 
-Otro de los campos que se habilitarán en esta ventana, es ``
+Otro de los campos que se habilitarán en esta ventana, es `Amount`, donde vamos a escribir en un cuadro de texto generado, la cantidad de unidades que vamos a añadir al movimiento.
+
+```python
+        ttk.Label(main_frame, text="Amount:").pack(pady=5, anchor="w")
+        quantity_entry = ttk.Entry(main_frame)
+        quantity_entry.pack(pady=5, fill="x")
+```
+
+El proximo campo generado en la pestaña es el de `Reason of the movement`, en el cual vamos a especificar en un cuadro de texto la descripcion del movimiento a generar.
+
+```python
+        ttk.Label(
+            main_frame, text="Reason of the movement:"
+        ).pack(pady=5, anchor="w")
+        reason_entry = ttk.Entry(main_frame)
+        reason_entry.pack(pady=5, fill="x")
+```
+
+Otro campo generado es `Type actor`, donde vamos a tener que escoger por medio de dos botones `Existent` y `New` si el movimiento es por medio de un actor ya existente o si queremos añadir uno nuevo al sistema respectivamente.
+
+```python
+        ttk.Label(main_frame, text="Type actor:").pack(pady=5, anchor="w")
+        actor_option = tk.StringVar(value="existent")
+        ttk.Radiobutton(
+            main_frame, text="Existent", variable=actor_option, value="existent", 
+            command=lambda: toggle_actor_fields()
+        ).pack(anchor="w")
+        ttk.Radiobutton(
+            main_frame, text="New", variable=actor_option, value="new", 
+            command=lambda: toggle_actor_fields()
+        ).pack(anchor="w")
+
+        actor_container = ttk.Frame(main_frame)
+        actor_container.pack(pady=5, fill="x")
+```
+
+En el apartado de seleccionar un actor existente, se generara un campo llamado `Select existent actor`, donde, como lo dice el nombre, vamos a poder seleccionar el actor que vamos a registrar en el movimiento, esto por medio de un `OptionMenu` que va a contener todos los actores registrados en el sistema, del cual vamos a poder escoger solo uno.
+
+```python
+        existing_actor_frame = ttk.Frame(actor_container)
+        actor_var = tk.StringVar(existing_actor_frame)
+        actor_label = ttk.Label(
+            existing_actor_frame, text="Select existent actor:"
+        )
+        actor_menu = ttk.OptionMenu(existing_actor_frame, actor_var, "")
+        actor_label.pack(pady=5)
+        actor_menu.pack(pady=5, fill="x")
+```
+
+En el apartado de `New` vamos a poder agregar al sistema el actor que vayamos a registrar en el movimiento. Esto por medio de dos campos generados llamados `New actor name` y `New actor contact/id`, donde podremos ingresar el nombre del actor y el numero de contacto o el numero de identificacion segun corresponda respectivamentre.
+
+```python
+        new_actor_frame = ttk.Frame(actor_container)
+        new_actor_name_label = ttk.Label(
+            new_actor_frame, text="New actor name:"
+        )
+        new_actor_contact_label = ttk.Label(
+            new_actor_frame, text="New actor contact/id:"
+        )
+        new_actor_name_entry = ttk.Entry(new_actor_frame)
+        new_actor_contact_entry = ttk.Entry(new_actor_frame)
+
+        new_actor_name_label.pack(pady=3)
+        new_actor_name_entry.pack(pady=3, fill="x")
+        new_actor_contact_label.pack(pady=3)
+        new_actor_contact_entry.pack(pady=3, fill="x")
+```
+
+Posteriormente definiremos la funcion `toggle_actor_fields` para que al momento de seleccionar tanto si es un actor existente o si vamos a agregar al nuevo actor, se muestren los campos correspondientes a cada eleccion, mientras que se ocultan los de la otra y viceversa.
+
+```python
+        def toggle_actor_fields():
+            existing_actor_frame.pack_forget()
+            new_actor_frame.pack_forget()
+
+            if actor_option.get() == "existent":
+                existing_actor_frame.pack(pady=5, fill="x")
+            else:
+                new_actor_frame.pack(pady=5, fill="x")
+```
+
+Definimos la funcion `update_actor_menu` para que, segun el tipo de movimiento que vamos a registrar, ya sea entrada `in` o salida `out`, se traigan los objetos de las bibliotecas de proveedores o de clientes respectivamente.
+
+```python
+        def update_actor_menu():
+            if movement_type.get() == "in":
+                options = [s.name for s in self.system.suppliers.values()]
+            else:
+                options = [c.name for c in self.system.customers.values()]
+
+            for widget in existing_actor_frame.winfo_children():
+                widget.destroy()
+```
+
+Estos objetos recolectados segun el tipo de movimiento, se mostraran en el menu de `OptionMenu` llamado `Select existent actor` donde vamos a poder escoger solo uno de estos. En caso de que no haya ningun actor registrado en el sistema, el `OptionMenu` generado se llamara `No actors available`, y en vez de desglosar un menu de opciones, dira el mensaje `No actors available`, y el menu estara desactivado. En caso de que todo este correcto, se ejecutara la funcion `update_actor_menu`.
+
+```python
+            ttk.Label(
+                existing_actor_frame, text="Select existent actor:"
+            ).pack(pady=2, anchor="w")
+
+            if options:
+                actor_var.set(options[0])
+                new_menu = ttk.OptionMenu(
+                    existing_actor_frame, actor_var, options[0], *options
+                )
+            else:
+                actor_var.set("No actors available")
+                new_menu = ttk.OptionMenu(
+                    existing_actor_frame, actor_var, "No actors available"
+                )
+                new_menu.state(["disabled"])
+            
+            new_menu.pack(fill="x")
+            toggle_actor_fields()
+
+        update_actor_menu()
+        actor_option.trace_add("write", lambda *args: toggle_actor_fields())
+```
+
+Para registrar el movimiento en el sistema, definimos la opcion `register_movement` que usaremos para registrar el movimiento , y en donde verificaremos que todos los campos, esten correctamente diligenciados. en el campo de `amount` debemos verificar que los valores ingresados sean un monto numerico, y que estos sean numeros positivos. Tambien en el campo de `reason of the movement` debe haberse ingresado alguna razon del movimiento.
+
+```python
+        def register_movement():
+            try:
+                if (
+                    not quantity_entry.get().isdigit() or 
+                    int(quantity_entry.get()) <= 0
+                ):
+                    raise ValueError("The amount must be positive.")
+                if not reason_entry.get().strip():
+                    raise ValueError("You have to enter a reason.")
+```
 
 Definimos la función `créate_bill_method`
 
