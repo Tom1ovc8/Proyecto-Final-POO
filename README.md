@@ -1514,7 +1514,7 @@ from Inventory_System.Operantions_Center.generatepdf import (
     InventoryReportPDF, MovementsReportPDF, SalesSummaryPDF
 )
 ```
-El archivo inicia con una serie de importaciones que traen los módulos y clases necesarias para que el sistema funcione. Estas incluyen la clase base `Inventory`, las clases que modelan productos, ubicaciones, stocks y movimientos, así como los componentes encargados de la generación de facturas, reportes y extractos en PDF.
+The file begins with a series of imports that bring in the necessary modules and classes for the system to function. These include the base class `Inventory`, the classes that model products, locations, stocks, and movements, as well as the components responsible for generating invoices, reports, and PDF extracts.
 
 
 ```python
@@ -1525,7 +1525,7 @@ class System(Inventory):
         self.customers = {}
         self.suppliers = {}
 ```
-Luego se define la clase `System`, que hereda de `Inventory`. En su constructor (`__init__`) se llama al inicializador de la clase base con `super()` y se crean tres diccionarios vacíos: `bills`, `customers` y `suppliers`. Estos almacenarán las facturas, clientes y proveedores registrados respectivamente.
+Then, the `System` class is defined, which inherits from `Inventory`. In its constructor (`__init__`), the base class initializer is called using `super()`, and three empty dictionaries are created: `bills`, `customers`, and `suppliers`. These will store the registered invoices, customers, and suppliers respectively.
 
 ```python
     def entry_record(self, product, amount, supplier, reason):
@@ -1541,7 +1541,7 @@ Luego se define la clase `System`, que hereda de `Inventory`. En su constructor 
         self.add_movement(movement)
         print(f"Product {product.name} added at {location.to_dict()}")
 ```
-El método `entry_record` permite registrar un nuevo producto en el inventario. Primero, verifica si el producto ya existe; si no, le asigna una ubicación automática según su categoría, crea un objeto `Stock`, lo envuelve todo en un `InventoryRecord`, y lo añade al sistema. También se registra el movimiento de entrada con `Movement`.
+The `entry_record` method allows registering a new product in the inventory. It first checks if the product already exists; if not, it assigns an automatic location based on its category, creates a `Stock` object, wraps everything in an `InventoryRecord`, and adds it to the system. The entry movement is also recorded using `Movement`.
 
 
 ```python
@@ -1565,7 +1565,7 @@ El método `entry_record` permite registrar un nuevo producto en el inventario. 
         print(f"Movement for {record.product.name} recorded successfully.")
         return True
 ```
-El método `make_sale` gestiona una venta. Verifica que el producto exista, obtiene el registro del inventario y crea un movimiento de salida. Antes de ejecutarlo, comprueba si hay suficiente stock disponible. Si la validación pasa, se añade el movimiento.
+The `make_sale` method handles a sale. It checks that the product exists, retrieves the inventory record, and creates an output movement. Before executing it, it verifies that there is enough available stock. If the validation passes, the movement is added.
 
 ```python
     def add_customer(self, customer):
@@ -1582,7 +1582,7 @@ El método `make_sale` gestiona una venta. Verifica que el producto exista, obti
             self.suppliers[supplier._id] = supplier
             print(f"Supplier '{supplier.name}' added.")
 ```
-Los métodos `add_customer` y `add_supplier` permiten registrar nuevos actores en el sistema. Verifican si el ID del cliente o proveedor ya existe, y si no, los agregan.
+The `add_customer` and `add_supplier` methods allow registering new actors in the system. They verify whether the customer or supplier ID already exists, and if not, they are added.
 
 ```python
     def generate_customer_history(self, customer_id):
@@ -1606,7 +1606,7 @@ Los métodos `add_customer` y `add_supplier` permiten registrar nuevos actores e
                 )
         ]
 ```
-Los métodos `generate_customer_history` y `generate_supplier_history` permiten obtener una lista de movimientos asociados a un cliente o proveedor. Filtran los movimientos registrados según el ID y tipo de actor.
+The `generate_customer_history` and `generate_supplier_history` methods allow obtaining a list of movements associated with a customer or supplier. They filter the registered movements based on the actor’s ID and type.
 
 ```python
     def create_bill(self, entity, movements, payment_method):
@@ -1634,7 +1634,7 @@ Los métodos `generate_customer_history` y `generate_supplier_history` permiten 
         print(f"Bill {bill._bill_id} created for {entity.name}.")
         return bill
 ```
-El método `create_bill` genera una factura a partir de una lista de movimientos. Verifica que los movimientos pertenezcan al mismo actor, agrega los productos al objeto `Bill` y guarda su referencia. Finalmente, intenta realizar el pago con el método de pago correspondiente.
+The `create_bill` method generates an invoice from a list of movements. It verifies that the movements belong to the same actor, adds the products to the `Bill` object, and stores its reference. Finally, it attempts to process the payment using the corresponding payment method.
 
 ```python
     def export_full_system(self, path="full_backup.json"):
@@ -1643,7 +1643,7 @@ El método `create_bill` genera una factura a partir de una lista de movimientos
     def load_full_backup(self, path="full_backup.json"):
         Extracts.load_full_backup(path, self)
 ```
-Los métodos `export_full_system` y `load_full_backup` permiten exportar o importar un respaldo completo del sistema a un archivo `.json`, utilizando la clase `Extracts`.
+The `export_full_system` and `load_full_backup` methods allow exporting or importing a full system backup to a `.json` file, using the `Extracts` class.
 
 ```python
     def export_inventory_pdf(self, filename="inventory_report.pdf"):
@@ -1673,7 +1673,7 @@ Los métodos `export_full_system` y `load_full_backup` permiten exportar o impor
         except Exception as e:
             print(f"Error generating PDF Bill: {e}")
 ```
-A continuación, se encuentran los métodos para generar diferentes tipos de reportes en formato PDF. Por ejemplo, `export_inventory_pdf` genera un reporte de inventario, `export_movements_pdf` uno de movimientos, y `export_bill_pdf` una factura individual.
+Next are the methods used to generate various types of PDF reports. For example, `export_inventory_pdf` generates an inventory report, `export_movements_pdf` generates a movements report, and `export_bill_pdf` generates an individual invoice.
 
 ```python
     def export_critical_stock_pdf(self, filename="critical_stock.pdf"):
@@ -1685,7 +1685,7 @@ A continuación, se encuentran los métodos para generar diferentes tipos de rep
         pdf.generate(critical, filename)
         return True
 ```
-El método `export_critical_stock_pdf` genera un reporte de los productos que están por debajo de su stock mínimo. Si no hay ningún producto crítico, se imprime un mensaje.
+The `export_critical_stock_pdf` method generates a report of products that are below their minimum stock level. If there are no critical products, a message is printed.
 
 ```python
     def export_actor_history_pdf(self, actor_id: str, filename=None):
@@ -1722,7 +1722,7 @@ El método `export_critical_stock_pdf` genera un reporte de los productos que es
         except Exception as e:
             print(f"Error generating actor history PDF: {e}")
 ```
-El método `export_actor_history_pdf` genera un historial de movimientos para un actor (cliente o proveedor). Detecta su tipo, filtra los movimientos y genera el PDF correspondiente.
+The `export_actor_history_pdf` method generates a movement history for an actor (customer or supplier). It detects the actor's type, filters the movements, and generates the corresponding PDF.
 
 ```python
     def export_sales_summary_pdf(
@@ -1770,7 +1770,7 @@ El método `export_actor_history_pdf` genera un historial de movimientos para un
         except Exception as e:
             print(f"Error generando el resumen: {e}")
 ```
-Finalmente, el método `export_sales_summary_pdf` genera un resumen de ventas y compras, mostrando entradas (compras) y salidas (ventas) por cada producto. Se puede filtrar por código de producto.
+Finally, the `export_sales_summary_pdf` method generates a sales and purchase summary, showing entries (purchases) and outputs (sales) for each product. It can be filtered by product code.
 
 
 
@@ -1782,7 +1782,7 @@ Finalmente, el método `export_sales_summary_pdf` genera un resumen de ventas y 
 
 ---------
 
-Importamos la biblioteca `tkinter` como `tk`, y de esta misma importamos los módulos `filedialog`, `messagebox`, `Toplevel`, `StringVar`, `OptionMenu` y `ttk`
+We import the `tkinter` library as `tk`, and from it we also import the modules `filedialog`, `messagebox`, `Toplevel`, `StringVar`, `OptionMenu`, and `ttk`.
 
 ```python
 import tkinter as tk
