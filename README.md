@@ -14,7 +14,7 @@ In addition, it offers extra features like:
   + File handling for data persistence
   + Report generation in document format
 
-<h2 align="center"> Índice </h2>
+<h2 align="center"> Index </h2>
 
 - [Class Diagram]()
 - [Products]()
