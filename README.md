@@ -1793,7 +1793,7 @@ from tkinter import (
 
 <h3 align="left"> App </h3>
 
-De los distintos módulos de `Inventory_System`, importamos las clases `System`, `Extracts`, `Product`, `State`, `Supplier`, `Customer`, `Bill`, `Card`, `Cash` y `Movement`.
+From the different modules of `Inventory_System`, we import the classes `System`, `Extracts`, `Product`, `State`, `Supplier`, `Customer`, `Bill`, `Card`, `Cash`, and `Movement`.
 
 ```python 
 from Inventory_System.Operantions_Center.system import System
@@ -1807,7 +1807,7 @@ from Inventory_System.Transactions.payment import Card, Cash
 from Inventory_System.Transactions.movements import Movement
 ```
 
-Creamos una clase `InventoryApp`, en la cual vamos a definir absolutamente todo lo que tiene que ver con la interfaz grafica (GUI). Definimos el constructor `__init__` con las instancias `root` y `system`, y le damos el título `Inventory Management System` a nuestra aplicación. También especificamos el estilo a usar y las margenes de la interfaz.
+We create a class `InventoryApp`, in which we will define absolutely everything related to the graphical user interface (GUI). We define the constructor `__init__` with the instances `root` and `system`, and give our application the title `Inventory Management System`. We also specify the style to use and the margins of the interface.
 
 ```python
 class InventoryApp:
@@ -1823,7 +1823,7 @@ class InventoryApp:
         main_frame.pack(fill="both", expand=True)
 ```
 
-Definimos los botones que va a tener la interfaz principal, y que función va a tener cada uno de estos al ser presionado.
+We define the buttons that the main interface will have, and what function each one will execute when pressed.
 
 ```python
         buttons = [
@@ -1842,7 +1842,7 @@ Definimos los botones que va a tener la interfaz principal, y que función va a 
         ]
 ```
 
-Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text` y `command`, es decir, que tamaño va a tener cada botón, que va a decir cada uno, y que función va a tener. Se especifican las márgenes y se hace posible ajustar el texto al expandir la interfaz.
+To create a button, it is necessary to pass the parameters `main_frame`, `text`, and `command`, that is, the size each button will have, what text each will display, and what function it will have. The margins are specified, and it is possible to adjust the text when expanding the interface.
 
 ```python
         for i, (text, command) in enumerate(buttons):
@@ -1851,7 +1851,7 @@ Para crear un botón, es necesario mandarle los parámetros `main_frame`, `text`
             ).pack(pady=6, fill="x")
 ```
 
-Definimos la función `load_json`, la cual vamos a utilizar para cargar el archivo .JSON donde vamos a tener las bibliotecas de datos. Este nos va a permitir abrir el explorador de archivos para añadir nuestro archivo especificamente .JSON. Si la ruta del archivo es correcta, se hara backup correctamente y aparecerá un messagebox con el mensaje `"Success", "JSON archive has been loaded"`. En caso de que salga un error, el mensaje sera `"Error", "Couldn't load the archive"` y nos especificara el tipo de error ocurrido.
+We define the function `load_json`, which we will use to load the `.JSON` file where we will have the data libraries. This will allow us to open the file explorer to specifically add our `.JSON` file. If the file path is correct, the backup will be done correctly and a messagebox will appear with the message `"Success", "JSON archive has been loaded"`. If an error occurs, the message will be `"Error", "Couldn't load the archive"` and will specify the type of error that occurred.
 
 ```python
     def load_json(self):
@@ -1870,7 +1870,7 @@ Definimos la función `load_json`, la cual vamos a utilizar para cargar el archi
                 )
 ```
 
-La función `generate_inventory_pdf` es definida para exportar el reporte de inventario como un archivo .PDF y guardarlo en la carpeta designada. Esto lo hara con el metodo `export_inventory_pdf` que viene del modulo `System`. En caso de que la exportación sea exitosa, aparecerá un messagebox con el mensaje `"Success", "Report has been generated as 'inventory_report.pdf'"`. En caso de que haya ocurrido un error, el mensaje será `"Error", "Couldn't generate the report"`, y especificara el error ocurrido.
+The function `generate_inventory_pdf` is defined to export the inventory report as a `.PDF` file and save it in the designated folder. This will be done using the method `export_inventory_pdf` that comes from the `System` module. If the export is successful, a messagebox will appear with the message `"Success", "Report has been generated as 'inventory_report.pdf'"`. If an error occurred, the message will be `"Error", "Couldn't generate the report"`, and it will specify the error that occurred.
 
 ```python
     def generate_inventory_pdf(self):
@@ -1886,7 +1886,7 @@ La función `generate_inventory_pdf` es definida para exportar el reporte de inv
             )
 ```
 
-Definimos la función `generate_actor_history` para generar y exportar el historial ya sea de los clientes o de los proveedores. Este generará una ventana donde nos pedira ingresar el ID del correspondiente actor. Si el ID ingresado es correcto, entonces aparecerá el mensaje `"Success", "History has been generated"`. En caso de que no sea correcto, no retornará nada. En caso de que ocurra un error, el mensaje será `"Error", "Couldn't generate the history"`, y especificara el error ocurrido.
+We define the function `generate_actor_history` to generate and export the history either for customers or suppliers. It will generate a window asking us to enter the ID of the corresponding actor. If the entered ID is correct, then the message `"Success", "History has been generated"` will appear. If it is not correct, it will return nothing. If an error occurs, the message will be `"Error", "Couldn't generate the history"`, and it will specify the error that occurred.
 
 ```python
     def generate_actor_history(self):
@@ -1904,7 +1904,7 @@ Definimos la función `generate_actor_history` para generar y exportar el histor
             )
 ```
 
-Definimos la función `add_product_method` para poder agregar un producto manualmente al inventario. Este generará una ventana emergente con titulo `Add Product`, de la cual definimos el tamaño de la interfaz, margenes, expansión, etc. Definimos los campos (`Fields`) que va a tener la ventana, que son `Name`, `Category`, `Code`, `Price` y `Initial Amount`.
+We define the function `add_product_method` to manually add a product to the inventory. This will generate a pop-up window titled `Add Product`, for which we define the interface size, margins, expansion, etc. We define the fields (`Fields`) that the window will have, which are `Name`, `Category`, `Code`, `Price`, and `Initial Amount`.
 
 ```python
     def add_product_method(self):
@@ -1919,7 +1919,7 @@ Definimos la función `add_product_method` para poder agregar un producto manual
         entries = {}
 ```
 
-Para cada campo definido, se va a generar un cuadro de texto (`Label`) donde el usuario va a poder ingresar los valores correspondientes a su campo (`entries`), y lo que se ingrese en estos campos se va a guardar como una entrada (`entry`).
+For each defined field, a text box (`Label`) will be generated where the user can enter the corresponding values for that field (`entries`), and whatever is entered in these fields will be saved as an entry (`entry`).
 
 ```python
         for field in fields:
@@ -1931,7 +1931,7 @@ Para cada campo definido, se va a generar un cuadro de texto (`Label`) donde el 
             entries[field] = entry
 ```
 
-Se generará tambien otro campo llamado `"Select State type:"` en donde se crearán dos botones llamados `State` y `Expiration Date`. De estos solo se podra elegir uno a la vez, y nos permitirán ingresar el estado del producto al momento de ser ingresado al inventario, ya sea su estado fisico, o su fecha de vencimiento según corresponda. Estos valores se almacenaran con las claves `condition` y `date` respectivamente.
+There will also be another field called `"Select State type:"` where two buttons named `State` and `Expiration Date` will be created. Only one of these can be selected at a time, and they will allow us to enter the state of the product at the moment it is entered into the inventory, either its physical condition or its expiration date, as appropriate. These values will be stored with the keys `condition` and `date` respectively.
 
 ```python
         ttk.Label(
@@ -1947,7 +1947,7 @@ Se generará tambien otro campo llamado `"Select State type:"` en donde se crear
         ).pack(anchor="w")
 ```
 
-Según el estado seleccionado, se generaran espacios para ingresar los datos de condición del producto. En caso de que el estado a ingresar sea la condición actual, se generará un cuadro de texto donde podremos ingresar el estado del producto.
+Depending on the selected state, fields will be generated to enter the product’s condition data. If the state to enter is the current condition, a text box will be generated where we can enter the product’s condition.
 
 ```python
         state_container = ttk.Frame(main_frame)
@@ -1959,7 +1959,7 @@ Según el estado seleccionado, se generaran espacios para ingresar los datos de 
         condition_entry.pack(pady=2, fill="x")
 ```
 
-Si el estado a ingresar es la fecha de expiración del producto, se generarán tres espacios de texto llamados `Exp. Year`, `Exp. Month` y `Exp. Day`, donde ingresaremos el año, mes y dia de expiracion del producto respectivamente.
+If the state to enter is the product’s expiration date, three text fields named `Exp. Year`, `Exp. Month`, and `Exp. Day` will be generated, where we will enter the year, month, and day of the product’s expiration date respectively.
 
 ```python
         expiration_frame = ttk.Frame(state_container)
@@ -1973,7 +1973,7 @@ Si el estado a ingresar es la fecha de expiración del producto, se generarán t
         )
 ```
 
-Se define la función `update_state_fields()` para que, en caso de que elijamos ingresar la condición del producto, el menú de fechas de vencimiento se oculte, y viceversa.
+The function `update_state_fields()` is defined so that if we choose to enter the product’s condition, the expiration date fields will be hidden, and vice versa.
 
 ```python
         def update_state_fields():
@@ -1988,7 +1988,7 @@ Se define la función `update_state_fields()` para que, en caso de que elijamos 
         state_type.trace_add("write", lambda *args: update_state_fields())
 ```
 
-Se generará tambien un campo llamado `Select Supplier type:`, donde, por medio de dos botones (donde solo se puede elegir uno) vamos a elegir entre dos opciones: Existente `Existent` (`existent`) y nuevo `New` (`new`), para buscar proveedores ya existentes o para ingresar los datos de un nuevo proveedor respectivamente.
+There will also be a field called `Select Supplier type:`, where, through two buttons (only one can be selected), we will choose between two options: Existing `Existent` (`existent`) and new `New` (`new`), to either search for already existing suppliers or to enter data for a new supplier respectively.
 
 ```python
         ttk.Label(
@@ -2007,7 +2007,7 @@ Se generará tambien un campo llamado `Select Supplier type:`, donde, por medio 
         supplier_container.pack(fill="x")
 ```
 
-En caso de que se elija la opción de elegir un proveedor existente, aparecerá un campo llamado `Select existent supplier:` y se generará con `ttk.OptionMenu` un widget donde nos aparecerán todos los proveedores existentes. Estos se tomarán del diccionario de proveedores  de `system.suppliers.values` y aparecerán uno por uno donde vamos a poder elegir a uno de ellos.
+If the option to select an existing supplier is chosen, a field called `Select existent supplier:` will appear, and a widget will be created using `ttk.OptionMenu` where all existing suppliers will be shown. These will be taken from the suppliers dictionary `system.suppliers.values` and will appear one by one, allowing us to select one of them.
 
 ```python
         existing_supplier_frame = ttk.Frame(supplier_container)
@@ -2025,7 +2025,7 @@ En caso de que se elija la opción de elegir un proveedor existente, aparecerá 
             )
 ```
 
-En caso tal de que aún no hayan proveedores registrados, aparecerá el mensaje `There's not suppliers`, y el menu de opciones se inhabilitará hasta que se registre uno.
+If there are no suppliers registered yet, the message `There's not suppliers` will appear, and the options menu will be disabled until one is registered.
 
 ```python
         else:
@@ -2039,7 +2039,7 @@ En caso tal de que aún no hayan proveedores registrados, aparecerá el mensaje 
         existing_supplier_frame.pack(pady=5, fill="x")
 ```
 
-Si se eligio la opción de añadir un nuevo proveedor, entonces se generarán dos campos llamados `New supplier name:` y `New supplier contact:`. Estos tendran espacios de texto donde se colocarán el nombre y el numero de contacto del nuevo proveedor respectivamente.
+If the option to add a new supplier is selected, two fields called `New supplier name:` and `New supplier contact:` will be generated. These will have text input fields where the name and contact number of the new supplier will be entered, respectively.
 
 ```python
         new_supplier_frame = ttk.Frame(supplier_container)
@@ -2051,7 +2051,7 @@ Si se eligio la opción de añadir un nuevo proveedor, entonces se generarán do
         )
 ```
 
-Se define la función `toggle_supplier_frames()` para que, si se eligio escoger un proveedor existente, se oculte el menu de agregar un nuevo proveedor y viceversa.
+The function `toggle_supplier_frames()` is defined so that if the option to select an existing supplier was chosen, the new supplier input fields will be hidden, and vice versa.
 
 ```python
         def toggle_supplier_frames():
@@ -2067,7 +2067,7 @@ Se define la función `toggle_supplier_frames()` para que, si se eligio escoger 
         )
 ```
 
-La función `submit` la usaremos para guardar el producto con todos los parametros dados en el diccionario de registros de `System`. Esta función primeramente verifica que cada uno de los campos de ingreso de datos no este vacia, es decir que todos los campos tengan algun valor en ellas. En caso de que alguno de los campos `name`, `category`, `code`, `prices_str` o `amount_str` no tenga valor alguno, va a retornar el mensaje de error `"All fields must be filled"`.
+The function `submit` will be used to save the product with all the given parameters into the `System` records dictionary. This function first checks that each data entry field is not empty, meaning all fields must have some value. If any of the fields `name`, `category`, `code`, `prices_str`, or `amount_str` is empty, it will return the error message `"All fields must be filled"`.
 
 ```python
         def submit():
@@ -2085,8 +2085,7 @@ La función `submit` la usaremos para guardar el producto con todos los parametr
                     raise ValueError("All fields must be filled")
 ```
 
-Si todos los campos de texto tienen algun valor, entonces la función comienza a evaluar los campos uno por uno para manejar las diferentes excepciones que puedan tener estas por separado. Comienza con los campos `price` y `amount`, que se guardarán como variables `float` e `int` respectivamente. Si el precio o el monto son iguales o menores a 0, va a retornar el error `"Price and Amount must be bigger than zero"`. En caso de que en estos campos no se hayan ingresado valores numericos, va a retornar el error `"Price and Amount must be numeric"`.
-
+If all text fields have values, the function then starts validating the fields one by one to handle the different exceptions they may have separately. It begins with the fields `price` and `amount`, which will be stored as variables `float` and `int` respectively. If the price or the amount are less than or equal to 0, it will return the error `"Price and Amount must be bigger than zero"`. If non-numeric values were entered in these fields, it will return the error `"Price and Amount must be numeric"`.
 ```python
                 try:
                     price = float(price_str)
@@ -2099,7 +2098,7 @@ Si todos los campos de texto tienen algun valor, entonces la función comienza a
                     raise ValueError("Price and Amount must be numeric.")
 ```
 
-Luego, se evalua el campo `state_type`, donde si se escogio `"condition"`, se verifica que se haya llenado el campo, o si no retorna el error `"You must fill the condition"`.
+Then, the `state_type` field is evaluated, where if `"condition"` was chosen, it checks that the field has been filled, otherwise it returns the error `"You must fill the condition"`.
 
 ```python
                 if state_type.get() == "condition":
@@ -2111,7 +2110,7 @@ Luego, se evalua el campo `state_type`, donde si se escogio `"condition"`, se ve
                     state = State(condition=condition_entry.get().strip())
 ```
 
-En caso de que se haya escogido `expiration date`, tambien se verifica que todos los campos de la fecha hayan sido diligenciados, o retornara el error `"You must fill the entire date"`. Cuando se llenen todos los campos, se tomarán las entradas de los campos y se hará una tupla con ellos llamada `state`, donde se verificará que esten bien diligenciadas las fechas, pues, en caso de que no, retornara el ValueError `"Date fields must be valid numbers"`.
+If `expiration date` was chosen, it also verifies that all the date fields have been completed, or it will return the error `"You must fill the entire date"`. Once all fields are filled, the inputs are taken and grouped into a tuple called `state`, where it checks that the dates are properly entered; if not, it will return a `ValueError` with the message `"Date fields must be valid numbers"`.
 
 ```python
                 else:
@@ -2130,7 +2129,7 @@ En caso de que se haya escogido `expiration date`, tambien se verifica que todos
                         )
 ```
 
-Continuando con el campo de proveedores, en caso de que se haya elegido `existent`, se toman los proveedores del diccionario uno por uno y el objeto se guarda en la variable `supplier`. En caso de que se haya elegido `new`, se verifica que los campos `supplier_name` y `supplier contact` hayan sido diligenciados, en caso de que no, retorna el error `"You must enter the supplier name and contact"`. Se verifica tambien que el `supplier_contact` sea un valor numerico, y en caso de que no, retorna el mensaje `"The contact number must be numeric only"`.
+Continuing with the supplier field, if `existent` was chosen, the suppliers from the dictionary are taken one by one and the object is stored in the variable `supplier`. If `new` was selected, it verifies that the fields `supplier_name` and `supplier_contact` have been completed; if not, it returns the error `"You must enter the supplier name and contact"`. It also checks that `supplier_contact` is numeric, and if not, returns the message `"The contact number must be numeric only"`.
 
 ```python
                 if (
@@ -2156,7 +2155,7 @@ Continuando con el campo de proveedores, en caso de que se haya elegido `existen
                         )
 ```
 
-Si el proveedor es existente, se agrega a la variable `supplier`. Si no, a la variable `supplier` se le asignan los valores de `Supplier(supplier_name, supplier_contact)` y se añade a la biblioteca de proveedores por medio del metodo `system.add_supplier`.
+If the supplier is existing, it is assigned to the variable `supplier`. Otherwise, `supplier` is assigned the values from `Supplier(supplier_name, supplier_contact)` and added to the suppliers library through the method `system.add_supplier`.
 
 ```python
                     existing = [
@@ -2173,7 +2172,7 @@ Si el proveedor es existente, se agrega a la variable `supplier`. Si no, a la va
                         self.system.add_supplier(supplier)
 ```
 
-A la variable `product` se le asignan los valores de `Product(name, category, code, price, state)` y se añaden a la biblioteca de registros junto con los datos de `product`, `amount`, `supplier` y `reason` que sera `"New add"`. Si el registro se realiza correctamente, se generará un messagebox con el mensaje `"Success", "Product added"` especificando el producto. En caso de que ocurra un error, se generará un messagebox con el mensaje `"Error", "Couldn't add the product"` y especificando el error ocurrido.
+The variable `product` is assigned the values from `Product(name, category, code, price, state)` and added to the records library along with the data `product`, `amount`, `supplier`, and `reason` which will be `"New add"`. If the record is successfully created, a messagebox with the message `"Success", "Product added"` will be shown, specifying the product. If an error occurs, a messagebox with `"Error", "Couldn't add the product"` will appear, specifying the error.
 
 ```python
                 product = Product(name, category, code, price, state)
@@ -2191,7 +2190,7 @@ A la variable `product` se le asignan los valores de `Product(name, category, co
                 )
 ```
 
-Finalmente, se genera un botón llamado `Add Product` con el comando `submit`, que va a enviar los datos a los diccionarios correspondientes y cerrará la ventana.
+Finally, a button called `Add Product` is created with the command `submit`, which will send the data to the corresponding dictionaries and close the window.
 
 ```python
         ttk.Button(
@@ -2199,7 +2198,7 @@ Finalmente, se genera un botón llamado `Add Product` con el comando `submit`, q
         ).pack(pady=10)
 ```
 
-Definimos la función `export_to_json` para guardar el archivo .JSON con el nombre `"Save Backup"`. Si la ruta seleccionada por el usuario es correcta, se genera un messagebox con el mensaje `"Success", "Backup saved in:"` y especifica la ruta seleccionada. En caso de que ocurra algún error, se genera un messagebox con el mensaje `"Error", "Couldn't export"` y especificando el error ocurrido.
+We define the function `export_to_json` to save the .JSON file with the name `"Save Backup"`. If the path selected by the user is correct, a messagebox appears with the message `"Success", "Backup saved in:"` and specifies the chosen path. If an error occurs, a messagebox with the message `"Error", "Couldn't export"` is generated, specifying the error.
 
 ```python
     def export_to_json(self):
@@ -2218,7 +2217,7 @@ Definimos la función `export_to_json` para guardar el archivo .JSON con el nomb
                 messagebox.showerror("Error", f"Couldn't export:\n{e}")
 ```
 
-Definimos la función `add_movement_method` para añadir un movimiento a la biblioteca de movimientos. Si no hay productos existentes, el metodo generará un messagebox con el mensaje de error `"No products available", "Unable to register movements, no products availables"`.
+We define the function `add_movement_method` to add a movement to the movements library. If there are no existing products, the method will generate a messagebox with the error message `"No products available", "Unable to register movements, no products available"`.
 
 ```python
     def add_movement_method(self):
@@ -2230,7 +2229,7 @@ Definimos la función `add_movement_method` para añadir un movimiento a la bibl
             return
 ```
 
-En caso de que si hayan productos, se procede a generar una ventana emergente llamada `Register Movement` donde se ingresarán todos los datos del movimiento. En dicha ventana habrá un campo llamado `Select Movement type:`, en el cual se generarán dos botones llamados `In` y `Out`, donde vamos a especificar si el movimiento que vamos a registrar es una entrada o una salida de productos respectivamente, y solo vamos a poder escoger uno u otro.
+If products do exist, a popup window named `Register Movement` is generated where all movement data will be entered. In this window, there will be a field called `Select Movement type:`, in which two buttons named `In` and `Out` are generated. These will specify whether the movement being registered is an incoming or outgoing product movement respectively, and only one of them can be selected.
 
 ```python
         dialog = tk.Toplevel()
@@ -2254,7 +2253,7 @@ En caso de que si hayan productos, se procede a generar una ventana emergente ll
         ).pack(anchor="w")
 ```
 
-Se generará tambien un campo llamado `Select product:` donde vamos a poder escoger uno de los productos que se encuentran en la biblioteca de productos `system.records.values` (se tomaran los nombres de los productos (`product.name`)). En este campo habrá un menu de opciones donde va a aparecer toda la lista de nombres de los productos uno por uno, donde vamos a poder escoger solo uno.
+There will also be a field called `Select product:` where we can choose one of the products found in the product library `system.records.values` (using the product names (`product.name`)). This field will have an options menu listing all product names one by one, allowing selection of only one.
 
 ```python
         ttk.Label(main_frame, text="Select product:").pack(pady=5, anchor="w")
@@ -2270,7 +2269,7 @@ Se generará tambien un campo llamado `Select product:` donde vamos a poder esco
         product_menu.pack(pady=5, fill="x")
 ```
 
-Otro de los campos que se habilitarán en esta ventana, es `Amount`, donde vamos a escribir en un cuadro de texto generado, la cantidad de unidades que vamos a añadir al movimiento.
+Another field enabled in this window is `Amount`, where we will write, in a generated text box, the quantity of units to add to the movement.
 
 ```python
         ttk.Label(main_frame, text="Amount:").pack(pady=5, anchor="w")
@@ -2278,7 +2277,7 @@ Otro de los campos que se habilitarán en esta ventana, es `Amount`, donde vamos
         quantity_entry.pack(pady=5, fill="x")
 ```
 
-El proximo campo generado en la pestaña es el de `Reason of the movement`, en el cual vamos a especificar en un cuadro de texto la descripcion del movimiento a generar.
+The next field generated in the tab is `Reason of the movement`, in which we will specify the description of the movement to be generated in a text box.
 
 ```python
         ttk.Label(
@@ -2288,7 +2287,7 @@ El proximo campo generado en la pestaña es el de `Reason of the movement`, en e
         reason_entry.pack(pady=5, fill="x")
 ```
 
-Otro campo generado es `Type actor`, donde vamos a tener que escoger por medio de dos botones `Existent` y `New` si el movimiento es por medio de un actor ya existente o si queremos añadir uno nuevo al sistema respectivamente.
+Another generated field is `Type actor`, where we must choose via two buttons `Existent` and `New` whether the movement is through an already existing actor or if we want to add a new one to the system respectively.
 
 ```python
         ttk.Label(main_frame, text="Type actor:").pack(pady=5, anchor="w")
@@ -2306,7 +2305,7 @@ Otro campo generado es `Type actor`, donde vamos a tener que escoger por medio d
         actor_container.pack(pady=5, fill="x")
 ```
 
-En el apartado de seleccionar un actor existente, se generara un campo llamado `Select existent actor`, donde, como lo dice el nombre, vamos a poder seleccionar el actor que vamos a registrar en el movimiento, esto por medio de un `OptionMenu` que va a contener todos los actores registrados en el sistema, del cual vamos a poder escoger solo uno.
+In the section to select an existing actor, a field called `Select existent actor` will be generated, where, as the name indicates, we can select the actor to register in the movement by means of an `OptionMenu` containing all actors registered in the system, from which we can select only one.
 
 ```python
         existing_actor_frame = ttk.Frame(actor_container)
@@ -2319,7 +2318,7 @@ En el apartado de seleccionar un actor existente, se generara un campo llamado `
         actor_menu.pack(pady=5, fill="x")
 ```
 
-En el apartado de `New` vamos a poder agregar al sistema el actor que vayamos a registrar en el movimiento. Esto por medio de dos campos generados llamados `New actor name` y `New actor contact/id`, donde podremos ingresar el nombre del actor y el numero de contacto o el numero de identificacion segun corresponda respectivamentre.
+In the `New` section, we will be able to add to the system the actor we want to register in the movement. This is done through two generated fields called `New actor name` and `New actor contact/id`, where we can enter the actor's name and the contact number or identification number as applicable, respectively.
 
 ```python
         new_actor_frame = ttk.Frame(actor_container)
@@ -2338,7 +2337,7 @@ En el apartado de `New` vamos a poder agregar al sistema el actor que vayamos a 
         new_actor_contact_entry.pack(pady=3, fill="x")
 ```
 
-Posteriormente definiremos la funcion `toggle_actor_fields` para que al momento de seleccionar tanto si es un actor existente o si vamos a agregar al nuevo actor, se muestren los campos correspondientes a cada eleccion, mientras que se ocultan los de la otra y viceversa.
+Then, we define the function `toggle_actor_fields` so that when selecting whether the actor is existing or a new one to be added, the corresponding fields for each choice are shown, while the others are hidden, and vice versa.
 
 ```python
         def toggle_actor_fields():
@@ -2351,7 +2350,7 @@ Posteriormente definiremos la funcion `toggle_actor_fields` para que al momento 
                 new_actor_frame.pack(pady=5, fill="x")
 ```
 
-Definimos la funcion `update_actor_menu` para que, segun el tipo de movimiento que vamos a registrar, ya sea entrada `in` o salida `out`, se traigan los objetos de las bibliotecas de proveedores o de clientes respectivamente.
+We define the function `update_actor_menu` so that, depending on the type of movement to register, either entry `in` or exit `out`, the objects from the suppliers or customers libraries are fetched respectively.
 
 ```python
         def update_actor_menu():
@@ -2364,7 +2363,7 @@ Definimos la funcion `update_actor_menu` para que, segun el tipo de movimiento q
                 widget.destroy()
 ```
 
-Estos objetos recolectados segun el tipo de movimiento, se mostraran en el menu de `OptionMenu` llamado `Select existent actor` donde vamos a poder escoger solo uno de estos. En caso de que no haya ningun actor registrado en el sistema, el `OptionMenu` generado se llamara `No actors available`, y en vez de desglosar un menu de opciones, dira el mensaje `No actors available`, y el menu estara desactivado. En caso de que todo este correcto, se ejecutara la funcion `update_actor_menu`.
+These collected objects based on the movement type will be displayed in the `OptionMenu` called `Select existent actor`, where we can choose only one. If no actor is registered in the system, the generated `OptionMenu` will be named `No actors available`, and instead of showing a dropdown menu, it will display the message `No actors available` and the menu will be disabled. If all is correct, the function `update_actor_menu` will execute.
 
 ```python
             ttk.Label(
@@ -2390,7 +2389,7 @@ Estos objetos recolectados segun el tipo de movimiento, se mostraran en el menu 
         actor_option.trace_add("write", lambda *args: toggle_actor_fields())
 ```
 
-Para registrar el movimiento en el sistema, definimos la opcion `register_movement` que usaremos para registrar el movimiento , y en donde verificaremos que todos los campos, esten correctamente diligenciados. en el campo de `amount` debemos verificar que los valores ingresados sean un monto numerico, y que estos sean numeros positivos. Tambien en el campo de `reason of the movement` debe haberse ingresado alguna razon del movimiento.
+To register the movement in the system, we define the option `register_movement` which we will use to register the movement, verifying that all fields are correctly filled. In the `amount` field, we must verify that the entered values are numeric amounts and that they are positive numbers. Also, the `reason of the movement` field must have a reason entered.
 
 ```python
         def register_movement():
@@ -2404,7 +2403,7 @@ Para registrar el movimiento en el sistema, definimos la opcion `register_moveme
                     raise ValueError("You have to enter a reason.")
 ```
 
-Para cada producto del diccionario `system.records.values`, nos retorna un objeto `r`, y si el nombre (`r.product.name`) es igual al `product_name` que ingresamos, entonces se verifica que la cantidad del producto ingresada sea un valor entero positivo, y que el campo `reason` sea diligenciado.
+For each product in the dictionary `system.records.values`, it returns an object `r`, and if the name (`r.product.name`) matches the entered `product_name`, then it verifies that the entered product quantity is a positive integer and that the `reason` field is filled.
 
 ```python
                 product_name = product_var.get()
@@ -2416,7 +2415,7 @@ Para cada producto del diccionario `system.records.values`, nos retorna un objet
                 reason = reason_entry.get().strip()
 ```
 
-En caso de que en el tipo de movimiento hayamos especificado que es un ingreso de productos (`in`), entonces se verifica que, en caso tal de que hayamos escogido la opcion de un actor existente, este se encuentre registrado en el sistema. En caso de que no se encuentre el actor, retornara el mensaje de error `"The supplier selected is invalid"`.
+If the movement type specified is an incoming product (`in`), then it checks that if the option for an existing actor was chosen, that actor is registered in the system. If the actor is not found, it will return the error message `"The supplier selected is invalid"`.
 
 ```python
                 if movement_type.get() == "in":
@@ -2433,7 +2432,7 @@ En caso de que en el tipo de movimiento hayamos especificado que es un ingreso d
                             )
 ```
 
-Si escogimos que queremos añadir un nuevo actor al sistema, entonces se verificara que las entradas que hayamos colocado en los campos `name`, y `contact` hayan sido diligenciados. En caso de que no lo hayan sido, retornara el mensaje `"Enter the new supplier name and contact"`. Si todo esta diligenciado correctamente, se guardaran las entradas `name` y `contact` en un objeto llamado `actor`, el cual se mandara a los diccionarios del sistema.
+If we chose to add a new actor to the system, it will verify that the entries in the `name` and `contact` fields have been filled. If not, it will return the message `"Enter the new supplier name and contact"`. If everything is filled correctly, the `name` and `contact` entries will be saved in an object called `actor`, which will be sent to the system's dictionaries.
 
 ```python
                     else:
@@ -2451,7 +2450,7 @@ Si escogimos que queremos añadir un nuevo actor al sistema, entonces se verific
                     )
 ```
 
-Ahora, en caso de que en el apartado de tipo de movimiento, hayamos escogido movimiento de tipo salida (`out`) y hayamos sleccionado la opcion `existent`, automaticamente se creara el objeto `actor`, en el cual vamos a traer cada uno de los objetos `c` en el diccionario de clientes del sistema `system.customers.values`. Cada uno de estos objetos se comparan con el nombre escogido, y si estos no concuerdan, retornara el mensaje `"The customer selected is invalid"`.
+Now, if in the movement type section we chose an outgoing movement (`out`) and selected the `existent` option, the object `actor` will be created automatically, where each of the objects `c` in the system's customer dictionary `system.customers.values` will be fetched. Each of these objects is compared with the selected name, and if they do not match, it will return the message `"The customer selected is invalid"`.
 
 ```python
                 else:
@@ -2468,7 +2467,7 @@ Ahora, en caso de que en el apartado de tipo de movimiento, hayamos escogido mov
                             )
 ```
 
-En caso de que hayamos seleccionado la opcion `new` para registrar un nuevo cliente, entonces se verificara que los campos `name` y `contact` hayan sido diligenciados correctamente. En caso de que no, retornara el error `"Enter the new customer name and id"`. En caso de que esten bien diligenciados esos campos, se creara el objeto `actor`, al cual le asignaremos los atributos `name` y `contact` del objeto `Customer` traido de la biblioteca de clientes del sistema.
+If we selected the `new` option to register a new customer, it will verify that the `name` and `contact` fields are properly filled. If not, it will return the error `"Enter the new customer name and id"`. If those fields are correctly filled, the object `actor` will be created, to which we will assign the attributes `name` and `contact` of the `Customer` object retrieved from the system's customer library.
 
 ```python
                     else:
@@ -2486,7 +2485,7 @@ En caso de que hayamos seleccionado la opcion `new` para registrar un nuevo clie
                     )
 ```
 
-Sea cual haya sido la opcion seleccionada, si esta fue procesada correctamente, entonces el sistema generara un messagebox con el mensaje `"Success", "Movement registered"`, y eliminara esta pestaña. En caso de que ocurra un error desconocido, generara un messagebox con el mensaje `"Error", "Couldn't register the movement"` y especifica el error ocurrido. 
+Whichever option was selected, if it was processed correctly, the system will generate a messagebox with the message `"Success", "Movement registered"`, and close this tab. In case of an unknown error, it will generate a messagebox with the message `"Error", "Couldn't register the movement"` and specify the error occurred.
 
 ```python
                 messagebox.showinfo("Success", "Movement registered.")
@@ -2502,7 +2501,7 @@ Sea cual haya sido la opcion seleccionada, si esta fue procesada correctamente, 
         ).pack(pady=15, fill="x")
 ```
 
-Definimos la función `créate_bill_method`, la cual nos va a servir para crear una factura y exportarla al sistema en formato .PDF. Ya que los datos para crear la factura los traeremos del diccionario `system.records`, en caso de que este archivo no se encuentre o este vacio, se generara un messagebox con el mensaje `"No products available", "No registered products, it's not possible to create a bill"`
+We define the function `create_bill_method`, which will be used to create a bill and export it to the system in .PDF format. Since the data to create the bill will come from the dictionary `system.records`, if this file is missing or empty, a messagebox will be generated with the message `"No products available", "No registered products, it's not possible to create a bill"`.
 
 ```python
     def create_bill_method(self):
@@ -2514,7 +2513,7 @@ Definimos la función `créate_bill_method`, la cual nos va a servir para crear 
             return
 ```
 
-Se generara una ventana emergente titulada `Create a bill`, en donde el primer campo generado es `Select the actor type`, en el cual habran dos botones de seleccion para poder escoger el actor que se va a registrar en la factura entre cliente `Customer` o proveedor `Supplier`. Solo se podra escoger uno u otro.
+A pop-up window titled `Create a bill` will be generated, where the first field created is `Select the actor type`, in which there will be two selection buttons to choose the actor to be registered on the bill between customer `Customer` or supplier `Supplier`. Only one can be selected.
 
 ```python
         dialog = tk.Toplevel(self.root)
@@ -2536,7 +2535,7 @@ Se generara una ventana emergente titulada `Create a bill`, en donde el primer c
         ).pack()
 ```
 
-Luego de escoger el actor, se generan otro campo llamado `Choose actor: existing or new` donde vamos a escoger si vamos a usar un actor ya existente o vamos a registrar uno nuevo, esto por medio de los botones `Existent` y `New` respectivamente.
+After choosing the actor, another field called `Choose actor: existing or new` is generated where we will choose whether to use an existing actor or register a new one, through the buttons `Existent` and `New` respectively.
 
 ```python
         actor_mode = tk.StringVar(value="existent")
@@ -2562,7 +2561,7 @@ Luego de escoger el actor, se generan otro campo llamado `Choose actor: existing
         new_actor_contact = None
 ```
 
-Definimos la funcion `update_actor_fields` para que, si vamos a escoger un actor existente, se oculten los apartados para registrar uno nuevo desde 0, y viceversa.
+We define the function `update_actor_fields` so that if we are going to choose an existing actor, the sections to register a new one from scratch are hidden, and vice versa.
 
 ```python
         def update_actor_fields():
@@ -2575,7 +2574,7 @@ Definimos la funcion `update_actor_fields` para que, si vamos a escoger un actor
             new_actor_frame.pack_forget()
 ```
 
-Se crea un objeto llamado `actors_dict`, al cual le vamos a asignar los datos del diccionario de los clientes, en caso de que se haya escogido al cliente como actor, o del diccionario de los proveedores, en caso de que se haya escogido al proveedor como actor.
+An object called `actors_dict` is created, to which we will assign the data from the customers dictionary if the customer was chosen as the actor, or from the suppliers dictionary if the supplier was chosen as the actor.
 
 ```python
             actors_dict = (
@@ -2584,7 +2583,7 @@ Se crea un objeto llamado `actors_dict`, al cual le vamos a asignar los datos de
             )
 ```
 
-Si se escogio la opcion de usar un actor existente, entonces se generara un campo llamado `Select an existent actor`, en donde se tomara el objeto creado `actors_dict`, y por cada uno de los valores contenidos en este, retornara un objeto `a` que posteriormente aparecera en un OptionMenu en donde vamos a poder escoger solo uno de estos.
+If the option to use an existing actor was chosen, then a field called `Select an existent actor` will be generated, where the created object `actors_dict` will be used, and for each value contained in it, it will return an object `a` that will later appear in an OptionMenu where we will be able to choose only one of them.
 
 ```python
             if actor_mode.get() == "existent":
@@ -2601,7 +2600,7 @@ Si se escogio la opcion de usar un actor existente, entonces se generara un camp
                     )
 ```
 
-En caso de que los diccionarios tanto de clientes como de proveedores en el sistema se encuentren vacios, entonces el menu de OptionMenu aparecera vacio, tendra el mensaje `"No actors available"`, y este sera desactivado hasta que haya al menos un actor para seleccionar.
+If the dictionaries of both customers and suppliers in the system are empty, then the OptionMenu will appear empty, showing the message `"No actors available"`, and it will be disabled until there is at least one actor to select.
 
 ```python
                 else:
@@ -2613,7 +2612,7 @@ En caso de que los diccionarios tanto de clientes como de proveedores en el sist
                 actor_menu.pack()
 ```
 
-Si se escogio añadir un nuevo actor desde 0, entonces el campo generado tendra dos cuadros de texto llamados `New actor name` y `New actor contact/id`, en donde colocaremos los datos de nombre y numero de contacto o numero de id del actor a registrar segun corresponda respectivamente. Finalmente, sea cual haya sido la eleccion, se ejecutara la funcion.
+If the option to add a new actor from scratch was chosen, then the generated field will have two text boxes called `New actor name` and `New actor contact/id`, where we will enter the name and contact number or ID number of the actor to register, as appropriate. Finally, whatever the choice was, the function will be executed.
 
 ```python
             else:
@@ -2634,7 +2633,7 @@ Si se escogio añadir un nuevo actor desde 0, entonces el campo generado tendra 
         update_actor_fields()
 ```
 
-Luego de esto, se generara un campo llamado `Add products` del que derivan dos campos llamados `Code` y `Amount`, en donde tendremos que ingresar el codigo del producto deseado y la cantidad que se va a poner en la factura respectivamente. Estos dos datos los guardaremos en objetos llamados `code_entry` y `qty_entry`. Tambien crearemos una lista vacia llamada `items`.
+After this, a field called `Add products` will be generated, from which two fields called `Code` and `Amount` derive, where we must enter the code of the desired product and the quantity to be added to the bill, respectively. These two data will be stored in objects called `code_entry` and `qty_entry`. We will also create an empty list called `items`.
 
 ```python
         ttk.Label(main_frame, text="Add products:").pack(pady=4)
@@ -2652,7 +2651,7 @@ Luego de esto, se generara un campo llamado `Add products` del que derivan dos c
         items = []
 ```
 
-Al objeto `columns` le asignaremos `Product`, `Amount` y `Price`, y definiremos el objeto `tree`, que sera un formato Treeview, definido por las columnas en `columns`.
+To the object `columns` we will assign `Product`, `Amount`, and `Price`, and define the object `tree`, which will be a Treeview format, defined by the columns in `columns`.
 
 ```python
         columns = ("Product", "Amount", "Price")
@@ -2661,7 +2660,7 @@ Al objeto `columns` le asignaremos `Product`, `Amount` y `Price`, y definiremos 
         )
 ```
 
-Para cada columna en `columns`, se asignara el nombre de cada una como titulo de dicha columna en el Treeview. Es decir que en el Treeview habran tres columnas llamadas `Product`, `Amount` y `Price`.
+For each column in `columns`, the name of each will be assigned as the title of that column in the Treeview. That is, in the Treeview there will be three columns called `Product`, `Amount`, and `Price`.
 
 ```python
         for col in columns:
@@ -2669,7 +2668,7 @@ Para cada columna en `columns`, se asignara el nombre de cada una como titulo de
         tree.pack(pady=8)
 ```
 
-Definimos la funcion `add_manual_item` para añadir a la factura los items que esta va a tener de forma manual. En los objetos `code` y `qty` guardaremos los datos tomados en `code_entry` y `qty_entry` respectivamente. Si alguno de estos no ha sido diligenciado previamente, se generara un messagebox con el mensaje `"Error", "Complete all the fields"`. Si el codigo del producto `code` no se encuentra previamente registrado en el diccionario de registros del sistema, el messagebox generado tendra el mensaje `"Error", "Product x has not found in inventory"` especificando el codigo del producto que no se encuentra. Finalmente se verifica que la cantidad especificada del producto `qty` sea un numero entero, y en caso de que no, el messagebox tendra el mensaje `"Error", "Amount must be numeric"`.
+We define the function `add_manual_item` to manually add the items that the bill will have. In the objects `code` and `qty` we will store the data taken from `code_entry` and `qty_entry` respectively. If any of these has not been filled in previously, a messagebox will be generated with the message `"Error", "Complete all the fields"`. If the product code `code` is not previously registered in the system's records dictionary, the generated messagebox will have the message `"Error", "Product x has not found in inventory"`, specifying the product code that is not found. Finally, it checks that the specified product quantity `qty` is an integer, and if not, the messagebox will have the message `"Error", "Amount must be numeric"`.
 
 ```python
         def add_manual_item():
@@ -2697,7 +2696,7 @@ Definimos la funcion `add_manual_item` para añadir a la factura los items que e
             qty_entry.delete(0, tk.END)
 ```
 
-Al final de estos campos habra un boton llamado `Add`, el cual hara que la funcion `add_manual_item` se realice siempre y cuando todos los parametros hayan sido diligenciados correctamente.
+At the end of these fields there will be a button called `Add`, which will make the function `add_manual_item` execute as long as all the parameters have been filled in correctly.
 
 ```python
         ttk.Button(
@@ -2705,7 +2704,7 @@ Al final de estos campos habra un boton llamado `Add`, el cual hara que la funci
         ).grid(row=0, column=6, padx=5)
 ```
 
-Abajo del Treeview habra un campo llamado `Pending Movements`, en el cual veremos los movimientos ya registrados en el sistema que estan pendientes por ser pagados. Este campo generara una Listbox en donde apareceran todos y cada uno de los pagos pendientes. Se crea una lista vacia llamada `pending_movements`.
+Below the Treeview there will be a field called `Pending Movements`, where we will see the movements already registered in the system that are pending payment. This field will generate a Listbox where each of the pending payments will appear. An empty list called `pending_movements` is created.
 
 ```python
         ttk.Label(main_frame, text="Pending Movements:").pack(pady=5)
@@ -2717,7 +2716,7 @@ Abajo del Treeview habra un campo llamado `Pending Movements`, en el cual veremo
         pending_movements = []
 ```
 
-Definimos la funcion `update_pending_movements` para que, dependiendo del actor seleccionado ya sea cliente o proveedor, se muestren todos los movimientos pendientes que tienen estos, y se muestren en la listbox uno por uno.
+We define the function `update_pending_movements` so that, depending on the selected actor, whether client or supplier, all the pending movements they have are displayed one by one in the Listbox.
 
 ```python
         def update_pending_movements():
@@ -2751,7 +2750,7 @@ Definimos la funcion `update_pending_movements` para que, dependiendo del actor 
         update_pending_movements()
 ```
 
-Abajo de esto, se generara otro campo llamado `Payment Method` del que derivaran dos botones llamados `Cash` y `Card`, en el cual especificaremos el metodo de pago que vamos a añadir a la factura, ya sea dinero en efectivo, o por tarjeta respectivamente. Por defecto, las entradas de ambos metodos de pago se definen como `None` hasta que se agregue alguno luego.
+Below this, another field called `Payment Method` will be generated, from which two buttons named `Cash` and `Card` will derive, where we will specify the payment method to be added to the bill, either cash or card respectively. By default, the entries of both payment methods are set as `None` until one is added later.
 
 ```python
         ttk.Label(main_frame, text="Payment Method:").pack(pady=5)
@@ -2770,7 +2769,7 @@ Abajo de esto, se generara otro campo llamado `Payment Method` del que derivaran
         payment_frame.card_entry_ = None
 ```
 
-Definimos la funcion `update_payment_fields` para que, en caso de que hayamos escogido dinero en efectivo como metodo de pago, se genere un campo llamado `Amount delivered`, en el cual va a haber un cuadro de texto donde debemos colocar la cantidad de dinero dada por el comprador para cancelar la cuenta de la factura. Este se almacenara en la entrada de `cash_entry`.
+We define the function `update_payment_fields` so that, in case cash is chosen as the payment method, a field called `Amount delivered` is generated, which will have a text box where we must enter the amount of money given by the buyer to settle the bill. This will be stored in the `cash_entry` input.
 
 ```python
         def update_payment_fields():
@@ -2786,7 +2785,7 @@ Definimos la funcion `update_payment_fields` para que, en caso de que hayamos es
                 payment_frame.card_entry_ = None
 ```
 
-En caso de que se haya escogido tarjeta como medio de pago, se generara entonces un campo llamado `Card Number (4 last numbers)` con un cuadro de texto en el cual debemos ingresar los ultimos cuatro digitos de la tarjeta designada como metodo de pago. Este se almacenara en la entrada de `card_entry`. Finalmente, sea cual haya sido el metodo de pago elegido, se ejecutara la funcion `update_payment_fields`.
+If card is chosen as the payment method, a field called `Card Number (4 last numbers)` will be generated with a text box where we must enter the last four digits of the card designated as payment method. This will be stored in the `card_entry` input. Finally, whatever the payment method chosen, the function `update_payment_fields` will be executed.
 
 ```python
             else:
@@ -2804,7 +2803,7 @@ En caso de que se haya escogido tarjeta como medio de pago, se generara entonces
         update_payment_fields()
 ```
 
-Definimos la funcion `submit`, con la cual vamos a crear nuestra factura en formato .PDF con todos los datos diligenciados previamente. Primeramente se debe verificar que, sea cual haya sido el actor de la factura, si se escogio un actor existente, este sea un actor valido y este en el sistema.
+We define the function `submit`, with which we will create our bill in .PDF format with all the data previously filled in. First, it must be verified that, whichever actor of the bill was chosen, if an existing actor was selected, it is a valid actor and is in the system.
 
 ```python
         def submit():
@@ -2829,7 +2828,7 @@ Definimos la funcion `submit`, con la cual vamos a crear nuestra factura en form
                         raise ValueError("You must select a valid actor.")
 ```
 
-Si se escogio crear un actor nuevo, entonces se debe verificar que todos los campos hayan sido diligenciados correctamente. En caso de que falte diligenciar algun campo de estos, retornara el mensaje `Enter the new actor's information`. Si todo esta diligenciado correctamente entonces se guardara la informacion diligenciada en un objeto `customer` o `supplier` dependiendo el caso.
+If creating a new actor was chosen, then it must be verified that all fields have been correctly filled. If any of these fields are missing, it will return the message `Enter the new actor's information`. If everything is correctly filled, then the entered information will be saved in an object called `customer` or `supplier` depending on the case.
 
 ```python
                 else:
@@ -2846,7 +2845,7 @@ Si se escogio crear un actor nuevo, entonces se debe verificar que todos los cam
                         )
 ```
 
-Se crea una lista vacia llamada `manual_movements`, en donde se guardaran todos los movimientos manuales que realicemos. Para cada producto y cantidad guardada en la lista de `items`, entonces crea un objeto `Movement` con los parametros de codigo, cantidad, actor y el texto `"Manual sell"`.
+An empty list called `manual_movements` is created, where all manual movements we make will be stored. For each product and quantity saved in the `items` list, a `Movement` object is created with the parameters of code, quantity, actor, and the text `"Manual sell"`.
 
 ```python
                 manual_movements = []
@@ -2856,7 +2855,7 @@ Se crea una lista vacia llamada `manual_movements`, en donde se guardaran todos 
                     )
 ```
 
-En caso de haber movimientos pendientes en la listbox de pendientes, estara la opcion de seleccionar cuales se quieren pagar, sin importar si es una, dos, todas, la primera, la ultima, o las que sean. Sin embargo, en caso de que no se hayan agregado productos para pagar, y que tampoco se hayan seleccionado movimientos pendientes o directamente no hayan movimientos pendientes, entonces el sistema retornara el mensaje `At least one movement is required for billing`.
+If there are pending movements in the pending Listbox, there will be the option to select which ones to pay, regardless if it is one, two, all, the first, the last, or any number of them. However, if no products have been added to pay, and no pending movements have been selected or there are no pending movements at all, then the system will return the message `At least one movement is required for billing`.
 
 ```python
                 selected_indexes = pending_listbox.curselection()
@@ -2871,7 +2870,7 @@ En caso de haber movimientos pendientes en la listbox de pendientes, estara la o
                     )
 ```
 
-Se crea una variable `total` que consta de la suma del precio total de todos los productos agregados y movimientos a pagar.
+A variable `total` is created that consists of the sum of the total price of all added products and movements to be paid.
 
 ```python
                 total = sum(
@@ -2879,7 +2878,7 @@ Se crea una variable `total` que consta de la suma del precio total de todos los
                 )
 ```
 
-Si el metodo de pago seleccionado es de `cash`, entonces se debe verificar que se haya ingresado un monto del dinero entregado, o retornara el error `"Cash entry not found"`. En caso de que si se haya ingresado, se debe verificar que el dato ingresado sea un valor flotante. Si la entrada es valida, entonces a la variable `payment` se le asigna `cash_entry` como un flotante.
+If the selected payment method is `cash`, then it must be verified that an amount of money delivered has been entered, or it will return the error `"Cash entry not found"`. If an amount has been entered, it must be verified that the input is a floating point number. If the input is valid, then the variable `payment` is assigned the value of `cash_entry` as a float.
 
 ```python
                 if payment_method.get() == "cash":
@@ -2889,7 +2888,7 @@ Si el metodo de pago seleccionado es de `cash`, entonces se debe verificar que s
                     payment = Cash(float(cash_entry.get().strip()))
 ```
 
-Si el metodo de pago seleccionado es de `card`, entonces se debe verificar que el campo se haya diligenciado, y en caso de que no, retornara el mensaje `"Card entry not found"`. Si el campo si fue diligenciado, entonces se revisa la entrada, y si esta no es un digito, o tiene una longitud diferente a 4 digitos, entonces retornara el error `"Card number must be 4 digits"`. Si la entrada es valida, entonces a la variable `payment` se le asigna la entrada de `card_entry` junto con `***` simulando el CVV de la tarjeta.
+If the selected payment method is `card`, then it must be verified that the field has been filled, and if not, it will return the message `"Card entry not found"`. If the field was filled, then the input is checked, and if it is not numeric or has a length different from 4 digits, it will return the error `"Card number must be 4 digits"`. If the input is valid, then the variable `payment` is assigned the value of `card_entry` along with `***` simulating the card’s CVV.
 
 ```python
                 else:
@@ -2902,14 +2901,14 @@ Si el metodo de pago seleccionado es de `card`, entonces se debe verificar que e
                     payment = Card(num, "***")
 ```
 
-En caso de que la cantidad de pago sea insuficiente, entonces el sistema retorna el mensaje `"Insufficient payment"`.
+If the payment amount is insufficient, then the system returns the message `"Insufficient payment"`.
 
 ```python
                 if not payment.pay(total):
                     raise ValueError("Insufficient payment.")
 ```
 
-Si se selecciono el modo de actor `new`, entonces, si se selecciono al cliente `customer`, el actor se guarda en `system.add_customer`, pero si se seleciono `supplier`, entonces el actor se guarda en `system. add_supplier`.
+If the actor mode `new` was selected, then if the client `customer` was chosen, the actor is saved using `system.add_customer`, but if `supplier` was selected, then the actor is saved using `system.add_supplier`.
 
 ```python
                 if actor_mode.get() == "new":
@@ -2919,14 +2918,14 @@ Si se selecciono el modo de actor `new`, entonces, si se selecciono al cliente `
                         self.system.add_supplier(actor)
 ```
 
-Cada movimiento en la lista `manual_movements` se guarda en `system.add_movement`.
+Each movement in the `manual_movements` list is saved with `system.add_movement`.
 
 ```python
                 for movement in manual_movements:
                     self.system.add_movement(movement)
 ```
 
-El objeto `bill` se guarda en `system.create_bill` y se le asignan los atributos `actor`, `all_movements` y `payment`. En caso de que ocurra un error, se retornara el mensaje `"Failed to create bill"`.
+The `bill` object is saved using `system.create_bill` and is assigned the attributes `actor`, `all_movements`, and `payment`. If an error occurs, the message `"Failed to create bill"` will be returned.
 
 ```python
                 bill = self.system.create_bill(actor, all_movements, payment)
@@ -2934,7 +2933,7 @@ El objeto `bill` se guarda en `system.create_bill` y se le asignan los atributos
                     raise RuntimeError("Failed to create bill")
 ```
 
-Si todo el proceso de la creacion de la factura se ejecuta correctamente, entonces se exportara la factura en formato .PDF con la funcion `export_bill_pdf` con el nombre de `Bill_{bill.entity.name}.pdf`. Se mostrara el mensaje `"Success", "Bill created with ID:"` y especifica el ID de la factura. Finalmente se cierra la ventana.
+If the entire bill creation process executes successfully, then the bill will be exported as a .PDF using the function `export_bill_pdf` with the name `Bill_{bill.entity.name}.pdf`. The message `"Success", "Bill created with ID:"` will be shown, specifying the bill ID. Finally, the window closes.
 
 ```python
                 self.system.export_bill_pdf(
@@ -2947,7 +2946,7 @@ Si todo el proceso de la creacion de la factura se ejecuta correctamente, entonc
                 dialog.destroy()
 ```
 
-En caso de que ocurra algun error, se genera un messagebox con el mensaje `"Error", "Couldn't create the bill"`.
+If an error occurs, a messagebox will be generated with the message `"Error", "Couldn't create the bill"`.
 
 ```python
             except Exception as e:
@@ -2956,7 +2955,7 @@ En caso de que ocurra algun error, se genera un messagebox con el mensaje `"Erro
                 )
 ```
 
-Al final de la ventana, se encuentra el boton llamado `Create bill` con el cual ejecutaremos el comando `submit`.
+At the bottom of the window, there is a button called `Create bill` which will execute the `submit` command.
 
 ```python
         ttk.Button(
@@ -2964,7 +2963,7 @@ Al final de la ventana, se encuentra el boton llamado `Create bill` con el cual 
         ).pack(pady=10)
 ```
 
-Definimos la función `export_movements_report` para poder exportar el reporte de movimientos en formato .PDF. Si la exportacion es exitosa, entonces se genera un messageboz con el mensaje `"Success", "Moevments report saved as 'movement_report.pdf'"`. Si hubo algun error en la exportacion, el messagebox tendra el mensaje `"Error"` y especificara el error ocurrido.
+We define the function `export_movements_report` to export the movements report as a .PDF. If the export is successful, a messagebox with the message `"Success", "Movements report saved as 'movement_report.pdf'"` is generated. If there is an error during export, the messagebox will show `"Error"` and specify the error.
 
 ```python
     def export_movements_report(self):
@@ -2977,7 +2976,7 @@ Definimos la función `export_movements_report` para poder exportar el reporte d
             messagebox.showerror("Error", str(e))
 ```
 
-Definimos la función `export_bill` para exportar la factura en formato .PDF. Se genera una ventana emergente de tipo `simple_input_dialog` donde debemos ingresar el ID de la factura que queremos exportar. Si esta factura no se encuentra registrada en el diccionario de facturas `system.bills`, entonces sale un messagebox con el mensaje `"Error", "No bill exists with ID:"` y el ID escrito.
+We define the function `export_bill` to export the bill as a .PDF. A popup window of type `simple_input_dialog` is generated where we must enter the ID of the bill we want to export. If this bill is not registered in the `system.bills` dictionary, a messagebox appears with the message `"Error", "No bill exists with ID:"` followed by the entered ID.
 
 ```python
     def export_bill(self):
@@ -2989,7 +2988,7 @@ Definimos la función `export_bill` para exportar la factura en formato .PDF. Se
             return
 ```
 
-Si el ID se encuentra vinculado a una factura, entonces se abre el explorador de archivos donde podremos escribir con que nombre queremos llamar la factura, siempre y cuando sea en formato .PDF (que se pondra como formato por defecto), pero si no se pone nada en el nombre igual exporta la factura, y se genera un messagebox con el mensaje `"Success", "Bill exported as"` y especifica el nombre del documento. En caso de que ocurra algun error, se genera un messagebox con el mensaje `"Error", "Couldn't export the bill"`.
+If the ID corresponds to a bill, a file explorer opens where we can specify the filename for the bill, which must be in .PDF format (set as the default). If no name is given, the bill will still be exported. A messagebox with the message `"Success", "Bill exported as"` and the filename is shown. If an error occurs, a messagebox with `"Error", "Couldn't export the bill"` is shown.
 
 ```python
         try:
@@ -3006,7 +3005,7 @@ Si el ID se encuentra vinculado a una factura, entonces se abre el explorador de
             )
 ```
 
-Definimos la función `generate_sales_summary` para generar el resumen de ventas. Se genera una ventana emergente llamada `Sales Summary` donde hay un campo donde nos preguntan `Do you want to generate for a specific product?`. En este campo deberiamos ingresar el producto al cual queramos generarle el resumen de ventas, y en caso de que este se encuentre guardado, se mostrara el texto `"Let it blank to generate the general report"`.
+We define the function `generate_sales_summary` to generate the sales summary. A popup window titled `Sales Summary` appears, with a field asking `Do you want to generate for a specific product?`. Here, we enter the product for which we want to generate the sales summary, and if it is stored, the text `"Let it blank to generate the general report"` will be shown.
 
 ```python
     def generate_sales_summary(self):
@@ -3030,7 +3029,7 @@ Definimos la función `generate_sales_summary` para generar el resumen de ventas
         ).pack(pady=5)
 ```
 
-Aqui definimos la funcion `submit` que sera la encargada de enviar al sistema el codigo que ingresamos previamente para verificar si dicho producto se encuentra en la biblioteca `system.records`. En caso de que no hayan productos, se genera un messagebox con el mensaje `"Error", "There're no registered products in the system"`.
+Here we define the function `submit`, responsible for sending the entered code to the system to verify if that product is in the `system.records` library. If there are no products, a messagebox with `"Error", "There're no registered products in the system"` appears.
 
 ```python
         def submit():
@@ -3042,7 +3041,7 @@ Aqui definimos la funcion `submit` que sera la encargada de enviar al sistema el
                 return
 ```
 
-El codigo del producto que ingresamos, la funcion la buscara en la biblioteca `system.movements`. En caso de que el codigo no se encuentre en la biblioteca, se generara un messagebox con el mensaje `"Error", "The product code doesn't exist"`.
+The product code entered will be searched in the `system.movements` library. If the code is not found, a messagebox with `"Error", "The product code doesn't exist"` is shown.
 
 ```python
             if product_code:
@@ -3055,7 +3054,7 @@ El codigo del producto que ingresamos, la funcion la buscara en la biblioteca `s
                     return
 ```
 
-Si el codigp ingresado si se encuentra registrado, entonces se creara el archivo llamado `Sales_summary.pdf` con el codigo del producto. Se generara un messagebox con el mensaje `"Success", "Summary generated in 'sales_summary.pdf'"` y se cerrara la ventana. En caso de que ocurra algun error, el messagebox tendra el mensaje `"Error", "Couldn't generate the summary"`. Al final de la ventana se encuentra el boton `Generate` el cual accionara la funcion `generate_sales_summary`.
+If the entered code is registered, a file called `Sales_summary.pdf` is created for that product code. A messagebox with `"Success", "Summary generated in 'sales_summary.pdf'"` is shown and the window closes. If an error occurs, the messagebox will show `"Error", "Couldn't generate the summary"`. At the bottom of the window, there is a `Generate` button which will trigger the `generate_sales_summary` function.
 
 ```python
             try:
@@ -3074,7 +3073,7 @@ Si el codigp ingresado si se encuentra registrado, entonces se creara el archivo
         ttk.Button(main_frame, text="Generate", command=submit).pack(pady=10)
 ```
 
-Definimos la función `show_restock_suggestions` para mostrar todas las sugerencias de restock que debemos hacer a nuestro inventario. Estas sugerencias las tomaremos del diccionario de sugerencias `system.restock_suggestions`. Si no hay sugerencias de restock de inventario registradas en dicho diccionario, entonces se generara un messagebox con el mensaje `"Info", "There are no restock suggestions"`.
+We define the function `show_restock_suggestions` to display all restock suggestions for our inventory. These suggestions are taken from the `system.restock_suggestions` dictionary. If there are no restock suggestions registered, a messagebox with `"Info", "There are no restock suggestions"` is generated.
 
 ```python
     def show_restock_suggestions(self):
@@ -3085,7 +3084,7 @@ Definimos la función `show_restock_suggestions` para mostrar todas las sugerenc
             return
 ```
 
-En caso de que si hayan sugerencias reportadas, se genera una nueva ventana emergente llamada `Restock Suggestions`, en donde vamos a encontrar un frame llamado `Low-Stock Products` y definiremos el objeto `cols` con los valores `Code`, `Product`, `Current` y `Minimum`. Con estos valores de `cols` generaremos un Treeview donde cada columna toma como nombre estos valores.
+If there are reported suggestions, a new popup window called `Restock Suggestions` is generated, where we will find a frame called `Low-Stock Products` and define the object `cols` with the values `Code`, `Product`, `Current`, and `Minimum`. With these `cols` values, we will generate a Treeview where each column is named accordingly.
 
 ```python
         dialog = tk.Toplevel(self.root)
@@ -3105,7 +3104,7 @@ En caso de que si hayan sugerencias reportadas, se genera una nueva ventana emer
         )
 ```
 
-A cada columna le asignaremos su respectivo titulo, y al Treeview le daremos una Scrollbar, esto para hacer la interfaz mas amigable con el usuario.
+Each column is assigned its respective title, and the Treeview is given a Scrollbar to make the interface more user-friendly.
 
 ```python
         for c in cols:
@@ -3121,7 +3120,7 @@ A cada columna le asignaremos su respectivo titulo, y al Treeview le daremos una
         main_frame.columnconfigure(0, weight=1)
 ```
 
-De cada item contenido en `suggestions`, traeremos sus valores de codigo, nombre, stock actual, y minimo requerido, y estos valores los colocaremos en el Treeview en su respectivo orden para crear una lista de sugerencias con todas las contenidas en su diccionario.
+From each item contained in `suggestions`, we will retrieve its code, name, current stock, and minimum required stock values, and place these values in the Treeview in their respective order to create a list of suggestions with all entries in the dictionary.
 
 ```python
         for item in suggestions:
@@ -3136,7 +3135,7 @@ De cada item contenido en `suggestions`, traeremos sus valores de codigo, nombre
         button_frame.grid(row=2, column=0, columnspan=2, pady=10)
 ```
 
-Definimos la funcion `export_pfd` para generar este documento con todas las sugerencias de restock, y exportarlo en formato .PDF. Se abrira el explorador donde le podemos colocar nombre a nuestro archivo, y se guardara en formato .PDF por defecto. Si el usuario no selecciono una ruta de guardado, se generea un messagebox con el mensaje `"Success", "PDF generated in"` y especifica la ruta seleccionada por defecto.
+We define the function `export_pdf` to generate this document with all the restock suggestions and export it as a .PDF. The file explorer will open where we can name our file, and it will be saved as a .PDF by default. If the user does not select a save path, a messagebox with the message `"Success", "PDF generated in"` will appear, specifying the selected default path.
 
 ```python
         def export_pdf():
@@ -3150,7 +3149,7 @@ Definimos la funcion `export_pfd` para generar este documento con todas las suge
                 messagebox.showinfo("Success", f"PDF generated in:\n{path}")
 ```
 
-Si no hay sugerencias de restock entonces el messagebox tendra el mensaje `"Info", "There're not critical stocks to generate a PDF"`. Al final se encuentra el boton llamado `Export PDF` con el cual se inicializa el comando `export_pdf`, y otro boton llamado `Close` para poder cerrar la ventana.
+If there are no restock suggestions, the messagebox will have the message `"Info", "There're not critical stocks to generate a PDF"`. At the bottom, there is a button called `Export PDF` which triggers the `export_pdf` command, and another button called `Close` to close the window.
 
 ```python
             else:
@@ -3166,7 +3165,7 @@ Si no hay sugerencias de restock entonces el messagebox tendra el mensaje `"Info
         ).grid(row=0, column=1, padx=5)
 ```
 
-Definimos la función `simple_input_dialog` como una ventana emergente llamada `Input` en la cual vamos a poder ingresar cualquier value que se requiera dependiendo de la seccion de donde se ejecute el comando.
+We define the function `simple_input_dialog` as a popup window called `Input` where we can enter any value required depending on the section from which the command is executed.
 
 ```python
 def simple_input_dialog(prompt):
