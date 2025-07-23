@@ -42,10 +42,6 @@ In addition, it offers extra features like:
 <h3 align="center"> Products </h3>
 
 ```mermaid
-config:
-  layout: elk
-  theme: dark
----
 classDiagram
 direction BT
     class Product {
@@ -63,6 +59,8 @@ class State {
     +is_expired()
     +to_dict
 }
+
+Product --> State
 ```
 
 #### Product
