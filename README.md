@@ -16,7 +16,6 @@ In addition, it offers extra features like:
 
 <h2 align="center"> Index </h2>
 
-- [Class Diagram]()
 - [Products]()
   - [Product]()
   - [State]()
@@ -40,12 +39,33 @@ In addition, it offers extra features like:
 
 -----------
 
-<h3 align="center"> Class Diagram </h3>
-
------------
-
 <h3 align="center"> Products </h3>
 
+```mermaid
+Products:
+---
+config:
+  layout: elk
+  theme: dark
+---
+classDiagram
+direction BT
+    class Product {
+    +str name
+    +str category
+    +str _code
+    +float _price
+    +State _state
+    +to_dict()
+}
+
+class State {
+    +str condition
+    +tuple expiration_date
+    +is_expired()
+    +to_dict
+}
+```
 
 #### Product
 
