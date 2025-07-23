@@ -2412,6 +2412,8 @@ Para registrar el movimiento en el sistema, definimos la opcion `register_moveme
                     raise ValueError("You have to enter a reason.")
 ```
 
+Para cada producto del diccionario `system.records.values`, 
+
 Definimos la función `créate_bill_method`
 
 Definimos la función `export_movements_report`
@@ -2423,6 +2425,10 @@ Definimos la función `generate_sales_summary`
 Definimos la función `show_restock_suggestions`
 
 Definimos la función `simple_input_dialog`
+
+---------
+
+
 
 
 
