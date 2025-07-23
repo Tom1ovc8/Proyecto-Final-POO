@@ -2,7 +2,7 @@
 
 <h2 align="center"> Final OOP Project </h2>
 
-The main goal of this project is to build an application that simulates an inventory management system for a warehouse using a graphical user interface (GUI). 
+The main goal of this project is build an application that simulates an inventory management system for a warehouse using a graphical user interface (GUI). 
 The program includes operations such as:
   - Creating objects to be stored  
   - Registering incoming and outgoing inventory
