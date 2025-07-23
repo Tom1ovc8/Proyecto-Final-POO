@@ -3191,7 +3191,7 @@ def simple_input_dialog(prompt):
     entry.focus_set()
 ```
 
-Definimos la funcion `submit` con la cual, el valor que hayamos colocado en esta pestaña lo mandaremos a la ventana de donde es solicitada, y cerrara la ventana. En la ventana hay un boton llamado `OK`, el cual tiene el comando `submit`.
+We define the function `submit` with which the value entered in this tab will be sent to the window from which it was requested, and the window will close. In the window, there is a button called `OK`, which has the command `submit`.
 
 ```python
     def submit():
