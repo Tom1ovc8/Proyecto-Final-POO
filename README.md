@@ -2499,7 +2499,19 @@ Sea cual haya sido la opcion seleccionada, si esta fue procesada correctamente, 
         ).pack(pady=15, fill="x")
 ```
 
-Definimos la función `créate_bill_method`, la cual nos va a servir para crear una factura
+Definimos la función `créate_bill_method`, la cual nos va a servir para crear una factura y exportarla al sistema en formato .PDF. Ya que los datos para crear la factura los traeremos del diccionario `system.records`, en caso de que este archivo no se encuentre o este vacio, se generara un messagebox con el mensaje `"No products available", "No registered products, it's not possible to create a bill"`
+
+```python
+    def create_bill_method(self):
+        if not self.system.records:
+            messagebox.showwarning(
+                "No products available", 
+                "No registered products, it's not possible to create a bill."
+            )
+            return
+```
+
+
 
 Definimos la función `export_movements_report`
 
