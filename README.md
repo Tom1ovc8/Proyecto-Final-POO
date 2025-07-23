@@ -2510,7 +2510,7 @@ Sea cual haya sido la opcion seleccionada, si esta fue procesada correctamente, 
         ).pack(pady=15, fill="x")
 ```
 
-Definimos la función `créate_bill_method`
+Definimos la función `créate_bill_method`, la cual nos va a servir para crear una factura
 
 Definimos la función `export_movements_report`
 
