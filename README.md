@@ -498,17 +498,17 @@ class Movement:
         self.type = "out" if isinstance(actor, Customer) else "in"
         self.reason = reason
 ```
--Se guarda la referencia del producto y la cantidad (`amount`) directamente.
+- Se guarda la referencia del producto y la cantidad (`amount`) directamente.
 
--Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
+- Se utiliza `datetime.now()` para capturar la fecha del movimiento al momento de su creación.
 
--Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
+- Se valida que el actor sea una instancia de `Customer` o `Supplier`; de lo contrario, lanza un error tipo `TypeError`.
 
--Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
+- Se almacena el identificador del actor (`_actor_id`) y se clasifica si es un cliente o un proveedor mediante `actor_type`.
 
--Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
+- Automáticamente, el tipo de movimiento se establece como `"out"` si lo realiza un cliente (salida del inventario), o como `"in"` si lo realiza un proveedor (entrada al inventario).
 
--Por último, se guarda la razón del movimiento.
+- Por último, se guarda la razón del movimiento.
 
 El metodo `get_delta` calcula el cambio que representa este movimiento sobre el inventario del producto.
 
